@@ -2,436 +2,377 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="description" content="李浩楠的个人主页 · 陕西财经职业技术学院 · 消防救援技术 · 备考专升本">
-<meta name="theme-color" content="#000000">
-<title>李浩楠</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0f0f1a">
+<title>方块叠叠乐 · 俄罗斯方块</title>
 <style>
-  /* ========== Apple 设计令牌 ========== */
-  :root{
-    --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
-            "PingFang SC", "Helvetica Neue", "Microsoft YaHei", sans-serif;
-    --ink: #1d1d1f;
-    --ink-2: #515154;
-    --gray: #86868b;
-    --line: #d2d2d7;
-    --bg: #ffffff;
-    --soft: #f5f5f7;       /* Apple 标准浅灰 */
-    --dark: #000000;
-    --accent: #0066cc;
-    --accent-2: #2997ff;
-    --col: 980px;          /* 统一内容宽度（栅格基准） */
-    --gutter: clamp(22px, 5vw, 44px);  /* 两侧留白随屏缩放 */
-  }
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue",sans-serif;
+  background:linear-gradient(160deg,#0f0f1a 0%,#1a1a2e 100%);color:#fff;
+  display:flex;flex-direction:column;align-items:center;min-height:100%;
+  padding:env(safe-area-inset-top) 12px env(safe-area-inset-bottom);
+  user-select:none;-webkit-user-select:none;touch-action:manipulation;overflow-x:hidden;
+}
+header{width:100%;max-width:440px;display:flex;align-items:center;justify-content:space-between;margin:12px 0 14px}
+h1{font-size:24px;font-weight:800;letter-spacing:-.5px;line-height:1}
+.subtitle{font-size:11px;color:#8a8aa8;margin-top:3px}
+.scores{display:flex;gap:8px}
+.score-box{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:6px 12px;text-align:center;min-width:66px}
+.score-box .label{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:#8a8aa8}
+.score-box .val{font-size:20px;font-weight:800;font-variant-numeric:tabular-nums;color:#fff}
 
-  *{ margin:0; padding:0; box-sizing:border-box; }
-  html{ scroll-behavior:smooth; -webkit-text-size-adjust:100%; }
-  body{
-    font-family:var(--font);
-    color:var(--ink);
-    background:var(--bg);
-    line-height:1.6;
-    -webkit-font-smoothing:antialiased;
-    -moz-osx-font-smoothing:grayscale;
-    overflow-x:hidden;
-  }
-  a{ color:var(--accent); text-decoration:none; }
-  img,svg{ display:block; max-width:100%; }
+.stage{display:flex;gap:12px;width:100%;max-width:440px}
+canvas{display:block;background:#0a0a14;border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,.4);touch-action:none}
+.side{display:flex;flex-direction:column;gap:12px;width:108px}
+.next-box,..info-box{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:10px}
+.next-box .label,.info-box .label{font-size:10px;color:#8a8aa8;margin-bottom:6px}
+#nextCanvas{background:#0a0a14;border-radius:6px;display:block}
+.info-box .lines{font-size:14px;font-weight:700;margin-bottom:4px}
+.info-box .lvl{font-size:13px;color:#c0c0e0}
 
-  /* ========== 统一容器：所有区块同一宽度、同一留白 ========== */
-  .wrap{
-    width:100%;
-    max-width:var(--col);
-    margin:0 auto;
-    padding: clamp(72px, 12vw, 120px) var(--gutter);
-    text-align:center;
-  }
-  .wrap.soft{ background:var(--soft); }
+.btn{border:none;border-radius:10px;font-weight:700;cursor:pointer;font-family:inherit;transition:transform .1s,background .2s;display:flex;align-items:center;justify-content:center}
+.btn:active{transform:scale(.94)}
+.btn-primary{background:linear-gradient(135deg,#7c5cff,#a06bff);color:#fff;padding:12px 0;font-size:15px;width:100%}
+.btn-ghost{background:rgba(255,255,255,.08);color:#fff;padding:10px 0;font-size:13px;width:100%;border:1px solid rgba(255,255,255,.12)}
 
-  .eyebrow{
-    font-size:clamp(15px, 2vw, 17px);
-    font-weight:600;
-    color:var(--accent);
-    letter-spacing:.06em;
-    text-transform:uppercase;
-    margin-bottom:14px;
-  }
-  .headline{
-    font-size:clamp(36px, 5.6vw, 56px);
-    font-weight:700;
-    letter-spacing:-0.025em;
-    line-height:1.08;
-    margin-bottom:16px;
-  }
-  .subhead{
-    font-size:clamp(19px, 2.8vw, 28px);
-    font-weight:400;
-    color:var(--ink-2);
-    letter-spacing:-0.01em;
-    line-height:1.35;
-    margin-bottom:14px;
-  }
-  .body-text{
-    font-size:clamp(14px, 1.8vw, 21px);
-    color:var(--gray);
-    line-height:1.7;
-    max-width:720px;
-    margin:0 auto;
-  }
+/* 触屏方向键（手机专属） */
+.pad{display:none;width:100%;max-width:440px;margin-top:16px;gap:10px;flex-direction:column}
+.pad-row{display:flex;gap:10px;justify-content:center}
+.pad .key{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:#fff;width:74px;height:58px;border-radius:12px;font-size:24px;display:flex;align-items:center;justify-content:center}
+.pad .key.wide{width:120px}
+.pad .key:active{background:rgba(124,92,255,.6)}
+@media (hover:none) and (pointer:coarse){.pad{display:flex}}
 
-  /* ========== 导航：完全透明，文字随背景变色 ========== */
-  .nav{
-    position:fixed;
-    top:0; left:0; right:0;
-    z-index:100;
-    height:52px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background:transparent;
-    color:#ffffff;          /* 默认白字（首屏深色） */
-    transition: color .4s ease;
-  }
-  .nav.light{ color:#1d1d1f; }  /* 浅色区块 → 黑字 */
-  .nav-in{
-    width:100%;
-    max-width:var(--col);    /* ← 与 .wrap 同宽，严格对齐 */
-    padding:0 var(--gutter);
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-  }
-  .brand{
-    font-size:18px;
-    font-weight:600;
-    letter-spacing:-0.01em;
-    color:inherit;
-    white-space:nowrap;
-  }
-  .links{ display:flex; gap:clamp(18px, 3vw, 32px); }
-  .links a{
-    color:inherit;
-    font-size:14px;
-    font-weight:400;
-    opacity:.88;
-    transition:opacity .2s;
-    white-space:nowrap;
-  }
-  .links a:hover{ opacity:1; }
-  @media (max-width:640px){
-    .links{ display:none; }  /* 移动端仅保留 logo，避免遮挡 */
-  }
+.overlay{position:fixed;inset:0;background:rgba(10,10,20,.85);backdrop-filter:blur(6px);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:50;padding:20px;text-align:center}
+.overlay.show{display:flex}
+.overlay h2{font-size:34px;font-weight:900;margin-bottom:8px}
+.overlay p{font-size:16px;color:#c0c0e0;margin-bottom:6px}
+.overlay .big{font-size:44px;font-weight:900;color:#a06bff;margin:8px 0}
+.overlay .btn{width:200px;margin-top:16px;padding:14px}
 
-  /* ========== Hero 首屏 ========== */
-  .hero{
-    position:relative;
-    height:100vh;
-    min-height:600px;
-    background:var(--dark);
-    color:#fff;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    text-align:center;
-    padding:0 var(--gutter);
-    overflow:hidden;
-  }
-  /* 大标题：clamp 下限 40px 保证 375px 手机单行（10字×40px≈400 < 414） */
-  .hero-title{
-    font-size:clamp(40px, 8.5vw, 80px);
-    font-weight:700;
-    letter-spacing:-0.04em;
-    line-height:1.05;
-    margin-bottom:32px;
-    white-space:nowrap;      /* ← 强制单行，绝不折行 */
-  }
-  .hero-cta{
-    display:inline-flex;
-    align-items:center;
-    gap:8px;
-    font-size:clamp(15px, 1.8vw, 17px);
-    font-weight:400;
-    color:var(--accent-2);
-  }
-  .hero-cta:hover{ text-decoration:underline; }
-
-  /* ========== 名片区 ========== */
-  .name{
-    font-size:clamp(48px, 8vw, 80px);
-    font-weight:700;
-    letter-spacing:-0.04em;
-    line-height:1.05;
-    margin-bottom:12px;
-  }
-  .name + .body-text{ font-size:clamp(15px, 2vw, 22px); }
-
-  /* ========== 三栏（严格三等分，移动端单列） ========== */
-  .grid3{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:clamp(24px, 4vw, 40px);
-    margin-top:64px;
-    text-align:left;
-  }
-  .cell .num{
-    font-size:15px;
-    font-weight:600;
-    color:var(--accent);
-    margin-bottom:8px;
-  }
-  .cell h3{
-    font-size:clamp(18px, 2.4vw, 24px);
-    font-weight:600;
-    letter-spacing:-0.01em;
-    margin-bottom:6px;
-  }
-  .cell p{ font-size:15px; color:var(--gray); line-height:1.6; }
-  @media (max-width:640px){
-    .grid3{ grid-template-columns:1fr; gap:48px; text-align:center; }
-    .grid3 .num{ text-align:center; }
-  }
-
-  /* ========== 引言 ========== */
-  .quote{
-    font-size:clamp(21px, 3.4vw, 32px);
-    font-weight:600;
-    letter-spacing:-0.02em;
-    line-height:1.4;
-    color:var(--ink);
-    max-width:820px;
-    margin:0 auto;
-  }
-  .quote em{ font-style:normal; color:var(--accent); }
-  .quote-source{
-    font-size:clamp(14px, 1.7vw, 17px);
-    color:var(--gray);
-    margin-top:24px;
-  }
-
-  /* ========== 卡片（2×2，统一圆角/留白） ========== */
-  .cards{
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:16px;
-    margin-top:56px;
-    text-align:left;
-  }
-  .card{
-    background:var(--soft);
-    border-radius:18px;
-    padding:clamp(28px, 4vw, 40px) clamp(24px, 3vw, 32px);
-  }
-  .card .num{
-    font-size:15px;
-    font-weight:600;
-    color:var(--accent);
-    margin-bottom:12px;
-  }
-  .card h3{
-    font-size:clamp(18px, 2.4vw, 24px);
-    font-weight:600;
-    letter-spacing:-0.01em;
-    margin-bottom:8px;
-  }
-  .card p{ font-size:15px; color:var(--gray); line-height:1.6; }
-  @media (max-width:640px){
-    .cards{ grid-template-columns:1fr; }
-  }
-
-  /* ========== 时间轴 ========== */
-  .timeline{
-    max-width:640px;
-    margin:64px auto 0;
-    text-align:left;
-    border-left:2px solid var(--line);
-    padding-left:32px;
-  }
-  .tl-item{ position:relative; padding-bottom:40px; }
-  .tl-item:last-child{ padding-bottom:0; }
-  .tl-item::before{
-    content:"";
-    position:absolute;
-    left:-39px; top:6px;
-    width:12px; height:12px;
-    border-radius:50%;
-    background:var(--accent);
-  }
-  .tl-item h4{ font-size:clamp(17px, 2.2vw, 21px); font-weight:600; margin-bottom:4px; }
-  .tl-item p{ font-size:17px; color:var(--gray); line-height:1.6; }
-
-  /* ========== 联系（深色大区） ========== */
-  .contact{
-    background:var(--dark);
-    color:#fff;
-    padding: clamp(72px, 12vw, 120px) var(--gutter);
-    text-align:center;
-  }
-  .contact .headline{ color:#fff; }
-  .contact .body-text{ color:#a1a1a6; }
-  .contact-list{
-    display:inline-flex;
-    flex-direction:column;
-    align-items:flex-start;
-    gap:20px;
-    width:100%;
-    max-width:420px;
-    margin:56px auto 0;
-    text-align:left;
-  }
-  .contact-row{
-    display:flex;
-    align-items:baseline;
-    gap:24px;
-    width:100%;
-    border-bottom:1px solid rgba(255,255,255,.15);
-    padding-bottom:16px;
-    white-space:nowrap;      /* 邮箱不折行 */
-  }
-  .contact-row:last-child{ border-bottom:none; }
-  .contact-row .k{
-    flex:0 0 64px;
-    font-size:13px;
-    color:#a1a1a6;
-    letter-spacing:.1em;
-    text-align:right;
-  }
-  .contact-row .v{ font-size:clamp(15px, 2vw, 20px); font-weight:500; color:#fff; }
-
-  footer{
-    background:var(--dark);
-    color:#6e6e73;
-    font-size:12px;
-    padding:32px var(--gutter) 40px;
-    text-align:center;
-  }
+footer{margin-top:16px;font-size:11px;color:#6a6a88;text-align:center;line-height:1.7}
+footer kbd{background:rgba(255,255,255,.12);padding:2px 7px;border-radius:5px;font-size:11px;font-weight:700}
 </style>
 </head>
 <body>
-
-<nav class="nav" id="nav">
-  <div class="nav-in">
-    <a href="#top" class="brand">李浩楠</a>
-    <div class="links">
-      <a href="#about">简介</a>
-      <a href="#interest">兴趣</a>
-      <a href="#certs">证书</a>
-      <a href="#growth">成长</a>
-      <a href="#contact">联系</a>
-    </div>
-  </div>
-</nav>
-
-<section class="hero" id="top">
+<header>
   <div>
-    <h1 class="hero-title">你好，我是 李浩楠。</h1>
-    <a href="#about" class="hero-cta">了解更多 ›</a>
+    <h1>方块叠叠乐</h1>
+    <div class="subtitle">Tetris · 俄罗斯方块</div>
   </div>
-</section>
-
-<section class="wrap" id="about">
-  <div class="name">李浩楠</div>
-  <p class="body-text">陕西财经职业技术学院 · 消防救援技术专业 · 备考专升本</p>
-</section>
-
-<section class="wrap soft" id="interest">
-  <div class="eyebrow">Interests</div>
-  <h2 class="headline">把热爱，交给每天。</h2>
-  <p class="body-text">学习之外，我用三件事把生活填满。</p>
-  <div class="grid3">
-    <div class="cell">
-      <div class="num">01</div>
-      <h3>摄影</h3>
-      <p>用镜头留住日常里容易被忽略的瞬间。</p>
-    </div>
-    <div class="cell">
-      <div class="num">02</div>
-      <h3>跑步</h3>
-      <p>几乎每天坚持，长跑让我学会保持节奏。</p>
-    </div>
-    <div class="cell">
-      <div class="num">03</div>
-      <h3>羽毛球</h3>
-      <p>享受一拍一拍把节奏夺回来的对抗感。</p>
-    </div>
+  <div class="scores">
+    <div class="score-box"><div class="label">分数</div><div class="val" id="score">0</div></div>
+    <div class="score-box"><div class="label">最高</div><div class="val" id="best">0</div></div>
   </div>
-</section>
+</header>
 
-<section class="wrap">
-  <p class="quote">
-    把眼前的每一步走扎实，也把<em>这条路</em>走得更远。<br>
-    手里握着电工证、救护证、驾驶证，<em>脚下还有专升本的路</em>。
-  </p>
-  <p class="quote-source">—— 比起「厉害」，更愿意做一个踏实、靠谱、持续学习的人。</p>
-</section>
-
-<section class="wrap soft" id="certs">
-  <div class="eyebrow">Certificates</div>
-  <h2 class="headline">一张张到手，这很 Pro。</h2>
-  <p class="body-text">在校期间持续积累的专业与实践能力凭证。</p>
-  <div class="cards">
-    <div class="card">
-      <div class="num">01</div>
-      <h3>四级 / 中级电工证</h3>
-      <p>高中毕业后、入学前考取，具备电气设备安装、维护与故障排查的实操能力。</p>
+<div class="stage">
+  <canvas id="board" width="240" height="480"></canvas>
+  <div class="side">
+    <div class="next-box">
+      <div class="label">下一个</div>
+      <canvas id="nextCanvas" width="96" height="96"></canvas>
     </div>
-    <div class="card">
-      <div class="num">02</div>
-      <h3>红十字救护培训证书</h3>
-      <p>大一期间考取，掌握心肺复苏、创伤包扎等现场急救技能。</p>
+    <div class="info-box">
+      <div class="label">已消除行</div>
+      <div class="lines" id="lines">0</div>
+      <div class="label" style="margin-top:8px">等级</div>
+      <div class="lvl" id="level">1</div>
     </div>
-    <div class="card">
-      <div class="num">03</div>
-      <h3>小型汽车驾驶证（C1）</h3>
-      <p>2026 年考取，可独立完成各类道路驾驶。</p>
-    </div>
-    <div class="card">
-      <div class="num">04</div>
-      <h3>荣誉证书 10 余项</h3>
-      <p>在校期间学习、训练与志愿服务中获得的各类荣誉。</p>
-    </div>
+    <button class="btn btn-primary" id="startBtn">开始游戏</button>
+    <button class="btn btn-ghost" id="pauseBtn">暂停</button>
   </div>
-</section>
+</div>
 
-<section class="wrap" id="growth">
-  <div class="eyebrow">Journey</div>
-  <h2 class="headline">一直往上走，升级自己。</h2>
-  <div class="timeline">
-    <div class="tl-item"><h4>高中毕业</h4><p>选择消防救援技术方向，进入陕西财经职业技术学院。</p></div>
-    <div class="tl-item"><h4>考取四级 / 中级电工证</h4><p>入学前考取，具备电气设备实操能力。</p></div>
-    <div class="tl-item"><h4>考取红十字救护培训证书</h4><p>掌握心肺复苏、创伤包扎等急救技能。</p></div>
-    <div class="tl-item"><h4>考取 C1 驾驶证 · 备考专升本</h4><p>2026 年拿下驾照，目前全力备考专升本。</p></div>
+<div class="pad" id="pad">
+  <div class="pad-row"><div class="key" data-act="rotate">↻</div></div>
+  <div class="pad-row">
+    <div class="key" data-act="left">◀</div>
+    <div class="key" data-act="down">▼</div>
+    <div class="key" data-act="right">▶</div>
   </div>
-</section>
+  <div class="pad-row"><div class="key wide" data-act="drop">⤓ 硬降</div></div>
+</div>
 
-<section class="contact" id="contact">
-  <h2 class="headline">写了号码，就有回响。</h2>
-  <p class="body-text">关于专业、专升本，或者只是想交个朋友，都欢迎。</p>
-  <div class="contact-list">
-    <div class="contact-row"><span class="k">邮箱</span><span class="v">2878697150@qq.com</span></div>
-    <div class="contact-row"><span class="k">微信</span><span class="v">LovHoeN-07</span></div>
-  </div>
-</section>
+<footer>
+  电脑：<kbd>←</kbd><kbd>→</kbd> 移动 · <kbd>↑</kbd> 或 <kbd>X</kbd> 旋转 · <kbd>↓</kbd> 加速 · <kbd>空格</kbd> 硬降<br>
+  手机：使用下方方向键 · 数据保存在本机
+</footer>
 
-<footer>© 2026 李浩楠 · 保留所有权利</footer>
+<div class="overlay" id="overlay">
+  <h2 id="ovTitle">方块叠叠乐</h2>
+  <p id="ovText">堆叠方块，消除满行，挑战最高分</p>
+  <div class="big" id="ovScore" style="display:none">0</div>
+  <button class="btn btn-primary" id="ovBtn">开始游戏</button>
+</div>
 
 <script>
-  // 导航文字色随所在区块切换：浅色区黑字 / 深色区(hero/contact)白字
-  (function(){
-    var nav = document.getElementById('nav');
-    var lightSections = ['about','interest','certs','growth'];
-    var io = new IntersectionObserver(function(es){
-      es.forEach(function(e){
-        if(e.isIntersecting){
-          if(lightSections.indexOf(e.target.id) >= 0){
-            nav.classList.add('light');
-          } else {
-            nav.classList.remove('light');
-          }
+(function(){
+  "use strict";
+  // ====== 安全存储（避免 localStorage 不可用时报错中断整个脚本）======
+  var storage={
+    get:function(k){
+      try{return localStorage.getItem(k);}catch(e){return null;}
+    },
+    set:function(k,v){
+      try{localStorage.setItem(k,v);}catch(e){/* 静默忽略（隐私模式/opaque origin） */}
+    }
+  };
+
+  // 全局错误兜底：任何未捕获异常都不会让页面"死掉"
+  window.addEventListener('error',function(e){console.warn('[tetris]',e.message);});
+
+  // ====== 常量 ======
+  var COLS=10, ROWS=20, SIZE=24;
+  var boardCv=document.getElementById('board'), ctx=boardCv.getContext('2d');
+  var nextCv=document.getElementById('nextCanvas'), nctx=nextCv.getContext('2d');
+  var scoreEl=document.getElementById('score'), bestEl=document.getElementById('best');
+  var linesEl=document.getElementById('lines'), levelEl=document.getElementById('level');
+  var overlay=document.getElementById('overlay');
+
+  // 7 种方块：I J L O S T Z，每个含 4 个旋转状态（矩阵）
+  var SHAPES={
+    I:{color:'#00e0d6',states:[[[0,0,0,0],[1,1,1,1],[0,0,0,0],[0,0,0,0]],[[0,0,1,0],[0,0,1,0],[0,0,1,0],[0,0,1,0]],[[0,0,0,0],[0,0,0,0],[1,1,1,1],[0,0,0,0]],[[0,1,0,0],[0,1,0,0],[0,1,0,0],[0,1,0,0]]]},
+    J:{color:'#3a7bff',states:[[[1,0,0],[1,1,1],[0,0,0]],[[0,1,1],[0,1,0],[0,1,0]],[[0,0,0],[1,1,1],[0,0,1]],[[0,1,0],[0,1,0],[1,1,0]]]},
+    L:{color:'#ff8c1a',states:[[[0,0,1],[1,1,1],[0,0,0]],[[0,1,0],[0,1,0],[0,1,1]],[[0,0,0],[1,1,1],[1,0,0]],[[1,1,0],[0,1,0],[0,1,0]]]},
+    O:{color:'#ffd500',states:[[[1,1],[1,1]],[[1,1],[1,1]],[[1,1],[1,1]],[[1,1],[1,1]]]},
+    S:{color:'#22c55e',states:[[[0,1,1],[1,1,0],[0,0,0]],[[0,1,0],[0,1,1],[0,0,1]],[[0,0,0],[0,1,1],[1,1,0]],[[1,0,0],[1,1,0],[0,1,0]]]},
+    T:{color:'#a855f7',states:[[[0,1,0],[1,1,1],[0,0,0]],[[0,1,0],[0,1,1],[0,1,0]],[[0,0,0],[1,1,1],[0,1,0]],[[0,1,0],[1,1,0],[0,1,0]]]},
+    Z:{color:'#ef4444',states:[[[1,1,0],[0,1,1],[0,0,0]],[[0,0,1],[0,1,1],[0,1,0]],[[0,0,0],[1,1,0],[0,1,1]],[[0,1,0],[1,1,0],[1,0,0]]]}
+  };
+  var TYPES=['I','J','L','O','S','T','Z'];
+
+  // ====== 状态 ======
+  var grid, current, next, score, best, lines, level, dropInterval, timer, running, paused;
+
+  function emptyGrid(){var g=[];for(var r=0;r<ROWS;r++){g.push(new Array(COLS).fill(0));}return g;}
+
+  function newPiece(type){
+    var def=SHAPES[type];
+    return {type:type, color:def.color, matrix:cloneMatrix(def.states[0]), state:0};
+  }
+  function cloneMatrix(m){return m.map(function(r){return r.slice();});}
+  function randomType(){return TYPES[Math.floor(Math.random()*TYPES.length)];}
+
+  function spawn(){
+    current=newPiece(next);
+    next=randomType();
+    // 居中顶部
+    current.x=Math.floor((COLS-current.matrix[0].length)/2);
+    current.y=0;
+    if(collides(current.x,current.y,current.matrix)){gameOver();}
+    drawNext();
+  }
+
+  function collides(x,y,matrix){
+    for(var r=0;r<matrix.length;r++){
+      for(var c=0;c<matrix[r].length;c++){
+        if(!matrix[r][c])continue;
+        var nx=x+c, ny=y+r;
+        if(nx<0||nx>=COLS||ny>=ROWS)return true;
+        if(ny>=0&&grid[ny][nx])return true;
+      }
+    }
+    return false;
+  }
+
+  function merge(){
+    var m=current.matrix;
+    for(var r=0;r<m.length;r++)for(var c=0;c<m[r].length;c++){
+      if(m[r][c]){var ny=current.y+r,nx=current.x+c;if(ny>=0&&ny<ROWS&&nx>=0&&nx<COLS)grid[ny][nx]=current.color;}
+    }
+  }
+
+  function rotate(){
+    var def=SHAPES[current.type];
+    var newState=(current.state+1)%def.states.length;
+    var newMatrix=cloneMatrix(def.states[newState]);
+    // 尝试旋转，遇障碍则左右墙踢(Wall Kick)试探
+    var kicks=[0,-1,1,-2,2];
+    for(var i=0;i<kicks.length;i++){
+      var kx=kicks[i];
+      if(!collides(current.x+kx,current.y,newMatrix)){current.x+=kx;current.state=newState;current.matrix=newMatrix;draw();return;}
+    }
+  }
+
+  function moveDown(){if(!collides(current.x,current.y+1,current.matrix)){current.y++;draw();return true;}return false;}
+
+  function softDrop(){if(moveDown()){score+=1;updateHUD();}else{lockPiece();} }
+
+  function hardDrop(){
+    while(moveDown()){score+=2;}
+    lockPiece();
+  }
+
+  function lockPiece(){
+    merge();
+    var cleared=clearLines();
+    if(cleared>0){
+      lines+=cleared;
+      // 标准计分：1行100, 2行300, 3行500, 4行800，乘等级
+      var gains=[0,100,300,500,800];
+      score+=gains[cleared]*level;
+      level=Math.floor(lines/10)+1;
+      dropInterval=Math.max(100,800-(level-1)*60);
+      updateHUD();
+    }
+    spawn();
+    draw();
+  }
+
+  function clearLines(){
+    var cleared=0;
+    for(var r=ROWS-1;r>=0;r--){
+      var full=true;
+      for(var c=0;c<COLS;c++){if(!grid[r][c]){full=false;break;}}
+      if(full){
+        grid.splice(r,1);
+        grid.unshift(new Array(COLS).fill(0));
+        cleared++;
+        r++; // 重新检查当前行（因为下移）
+      }
+    }
+    return cleared;
+  }
+
+  // ====== 渲染 ======
+  function draw(){
+    ctx.clearRect(0,0,boardCv.width,boardCv.height);
+    // 网格
+    ctx.strokeStyle='rgba(255,255,255,.04)';ctx.lineWidth=1;
+    for(var c=0;c<=COLS;c++){ctx.beginPath();ctx.moveTo(c*SIZE,0);ctx.lineTo(c*SIZE,ROWS*SIZE);ctx.stroke();}
+    for(var r=0;r<=ROWS;r++){ctx.beginPath();ctx.moveTo(0,r*SIZE);ctx.lineTo(COLS*SIZE,r*SIZE);ctx.stroke();}
+    // 已落方块
+    for(var r=0;r<ROWS;r++)for(var c=0;c<COLS;c++){if(grid[r][c])drawCell(ctx,c,r,grid[r][c]);}
+    // 当前方块
+    if(current){var m=current.matrix;for(var r=0;r<m.length;r++)for(var c=0;c<m[r].length;c++){if(m[r][c])drawCell(ctx,current.x+c,current.y+r,current.color);}}
+  }
+  function drawCell(context,x,y,color){
+    var px=x*SIZE, py=y*SIZE;
+    context.fillStyle=color;
+    context.fillRect(px+1,py+1,SIZE-2,SIZE-2);
+    // 高光
+    context.fillStyle='rgba(255,255,255,.25)';
+    context.fillRect(px+2,py+2,SIZE-6,4);
+    context.fillRect(px+2,py+2,4,SIZE-6);
+    context.fillStyle='rgba(0,0,0,.2)';
+    context.fillRect(px+SIZE-6,py+2,4,SIZE-4);
+    context.fillRect(px+2,py+SIZE-6,SIZE-4,4);
+    context.strokeStyle='rgba(0,0,0,.35)';
+    context.lineWidth=1;
+    context.strokeRect(px+.5,py+.5,SIZE-1,SIZE-1);
+  }
+  function drawNext(){
+    nctx.clearRect(0,0,nextCv.width,nextCv.height);
+    var def=SHAPES[next];
+    var m=def.states[0];
+    var cell=Math.floor(nextCv.width/4);
+    var offX=(4-m[0].length)*cell/2, offY=(4-m.length)*cell/2;
+    for(var r=0;r<m.length;r++)for(var c=0;c<m[r].length;c++){if(m[r][c]){nctx.fillStyle=def.color;nctx.fillRect(offX+c*cell+1,offY+r*cell+1,cell-2,cell-2);}}
+  }
+
+  function updateHUD(){
+    scoreEl.textContent=score;
+    linesEl.textContent=lines;
+    levelEl.textContent=level;
+    if(score>best){best=score;storage.set('tetris_best',best);}
+    bestEl.textContent=best;
+  }
+
+  // ====== 循环 ======
+  function loop(){
+    if(paused||!running)return;
+    if(!moveDown()){lockPiece();}
+    timer=setTimeout(loop,dropInterval);
+  }
+  function startLoop(){clearTimeout(timer);loop();}
+
+  function init(){
+    grid=emptyGrid();
+    score=0;lines=0;level=1;dropInterval=800;
+    next=randomType();
+    running=true;paused=false;
+    updateHUD();
+    spawn();
+    draw();
+    overlay.classList.remove('show');
+    startLoop();
+  }
+  function gameOver(){
+    running=false;clearTimeout(timer);
+    if(score>best){best=score;storage.set('tetris_best',best);bestEl.textContent=best;}
+    document.getElementById('ovTitle').textContent='游戏结束';
+    document.getElementById('ovText').textContent='最终得分';
+    document.getElementById('ovScore').textContent=score;
+    document.getElementById('ovScore').style.display='block';
+    document.getElementById('ovBtn').textContent='再来一局';
+    overlay.classList.add('show');
+  }
+  function togglePause(){
+    if(!running)return;
+    paused=!paused;
+    document.getElementById('pauseBtn').textContent=paused?'继续':'暂停';
+    if(paused){clearTimeout(timer);}
+    else{startLoop();}
+  }
+
+  // ====== 输入：键盘 ======
+  document.addEventListener('keydown',function(e){
+    if(!running)return;
+    switch(e.key){
+      case 'ArrowLeft':case 'a':case 'A':if(!collides(current.x-1,current.y,current.matrix)){current.x--;draw();}e.preventDefault();break;
+      case 'ArrowRight':case 'd':case 'D':if(!collides(current.x+1,current.y,current.matrix)){current.x++;draw();}e.preventDefault();break;
+      case 'ArrowDown':case 's':case 'S':softDrop();e.preventDefault();break;
+      case 'ArrowUp':case 'w':case 'W':case 'x':case 'X':rotate();e.preventDefault();break;
+      case ' ':case 'Spacebar':hardDrop();e.preventDefault();break;
+      case 'p':case 'P':togglePause();break;
+    }
+  });
+
+  // ====== 输入：触屏滑动（棋盘区）======
+  var sx,sy;
+  boardCv.addEventListener('touchstart',function(e){sx=e.touches[0].clientX;sy=e.touches[0].clientY;},{passive:true});
+  boardCv.addEventListener('touchend',function(e){
+    if(!running){return;}
+    var dx=e.changedTouches[0].clientX-sx, dy=e.changedTouches[0].clientY-sy;
+    var ax=Math.abs(dx), ay=Math.abs(dy);
+    if(Math.max(ax,ay)<20)return;
+    if(ay>ax){if(dy>0)softDrop();else hardDrop();}
+    else{if(dx>0){if(!collides(current.x+1,current.y,current.matrix)){current.x++;draw();}}else{if(!collides(current.x-1,current.y,current.matrix)){current.x--;draw();}}}
+  });
+  // 触屏方向键（点击）
+  var keys=document.querySelectorAll('.key');
+  for(var i=0;i<keys.length;i++){
+    keys[i].addEventListener('click',(function(){
+      var act=keys[i].dataset.act;
+      return function(){
+        if(!running)return;
+        switch(act){
+          case 'left':if(!collides(current.x-1,current.y,current.matrix)){current.x--;draw();}break;
+          case 'right':if(!collides(current.x+1,current.y,current.matrix)){current.x++;draw();}break;
+          case 'down':softDrop();break;
+          case 'rotate':rotate();break;
+          case 'drop':hardDrop();break;
         }
-      });
-    }, { threshold:0.4 });
-    document.querySelectorAll('section[id], .contact').forEach(function(s){ io.observe(s); });
-  })();
+      };
+    })());
+  }
+
+  // ====== 按钮 ======
+  document.getElementById('startBtn').onclick=init;
+  document.getElementById('pauseBtn').onclick=togglePause;
+  document.getElementById('ovBtn').onclick=init;
+
+  // ====== 启动 ======
+  best=+(storage.get('tetris_best')||0);
+  bestEl.textContent=best;
+  // 画一个初始空棋盘 + 演示
+  grid=emptyGrid();draw();
+  overlay.classList.add('show');
+})();
 </script>
 </body>
 </html>
