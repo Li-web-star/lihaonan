@@ -2,377 +2,948 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#0f0f1a">
-<title>方块叠叠乐 · 俄罗斯方块</title>
+<meta name="theme-color" content="#0f0f14">
+<title>人生模拟器 · Life Simulator</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{height:100%}
-body{
-  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue",sans-serif;
-  background:linear-gradient(160deg,#0f0f1a 0%,#1a1a2e 100%);color:#fff;
-  display:flex;flex-direction:column;align-items:center;min-height:100%;
-  padding:env(safe-area-inset-top) 12px env(safe-area-inset-bottom);
-  user-select:none;-webkit-user-select:none;touch-action:manipulation;overflow-x:hidden;
+:root{
+  --bg:#0f0f14; --panel:#1a1a24; --panel2:#22222f; --line:#2e2e3f;
+  --txt:#eeeef4; --sub:#9a9ab0; --accent:#7c5cff; --accent2:#00c2a8;
+  --good:#3ddc97; --warn:#ffb454; --bad:#ff5d6c; --gold:#ffcf5c;
+  --r:14px;
 }
-header{width:100%;max-width:440px;display:flex;align-items:center;justify-content:space-between;margin:12px 0 14px}
-h1{font-size:24px;font-weight:800;letter-spacing:-.5px;line-height:1}
-.subtitle{font-size:11px;color:#8a8aa8;margin-top:3px}
-.scores{display:flex;gap:8px}
-.score-box{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:6px 12px;text-align:center;min-width:66px}
-.score-box .label{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:#8a8aa8}
-.score-box .val{font-size:20px;font-weight:800;font-variant-numeric:tabular-nums;color:#fff}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro SC","PingFang SC","Microsoft YaHei",sans-serif;
+  background:var(--bg);color:var(--txt);line-height:1.5;
+  overscroll-behavior:contain;
+}
+#app{max-width:520px;margin:0 auto;min-height:100vh;position:relative;padding-bottom:170px;}
+.hidden{display:none !important;}
 
-.stage{display:flex;gap:12px;width:100%;max-width:440px}
-canvas{display:block;background:#0a0a14;border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,.4);touch-action:none}
-.side{display:flex;flex-direction:column;gap:12px;width:108px}
-.next-box,..info-box{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:10px}
-.next-box .label,.info-box .label{font-size:10px;color:#8a8aa8;margin-bottom:6px}
-#nextCanvas{background:#0a0a14;border-radius:6px;display:block}
-.info-box .lines{font-size:14px;font-weight:700;margin-bottom:4px}
-.info-box .lvl{font-size:13px;color:#c0c0e0}
+/* ===== 顶部状态栏 ===== */
+#topbar{position:sticky;top:0;z-index:50;background:rgba(15,15,20,.92);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line);padding:10px 14px 8px;}
+#name-line{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;}
+#name-line .nm{font-size:19px;font-weight:700;letter-spacing:.5px;}
+#name-line .age{color:var(--sub);font-size:13px;}
+#name-line .trait{font-size:11px;background:var(--accent);color:#fff;padding:2px 8px;border-radius:10px;margin-left:auto;}
+#stage-bar{font-size:12px;color:var(--sub);margin-top:3px;}
+#lifebar{height:5px;background:var(--panel2);border-radius:3px;margin-top:7px;overflow:hidden;}
+#lifebar>span{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0%;transition:width .4s;}
 
-.btn{border:none;border-radius:10px;font-weight:700;cursor:pointer;font-family:inherit;transition:transform .1s,background .2s;display:flex;align-items:center;justify-content:center}
-.btn:active{transform:scale(.94)}
-.btn-primary{background:linear-gradient(135deg,#7c5cff,#a06bff);color:#fff;padding:12px 0;font-size:15px;width:100%}
-.btn-ghost{background:rgba(255,255,255,.08);color:#fff;padding:10px 0;font-size:13px;width:100%;border:1px solid rgba(255,255,255,.12)}
+.attrs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px 14px 4px;}
+.attr{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:8px 10px;}
+.attr .lbl{font-size:10px;color:var(--sub);display:flex;justify-content:space-between;}
+.attr .lbl .ic{font-size:13px;}
+.attr .val{font-size:16px;font-weight:700;margin-top:2px;}
+.attr .bar{height:4px;background:var(--panel2);border-radius:2px;margin-top:5px;overflow:hidden;}
+.attr .bar>span{display:block;height:100%;width:50%;transition:width .3s;}
 
-/* 触屏方向键（手机专属） */
-.pad{display:none;width:100%;max-width:440px;margin-top:16px;gap:10px;flex-direction:column}
-.pad-row{display:flex;gap:10px;justify-content:center}
-.pad .key{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:#fff;width:74px;height:58px;border-radius:12px;font-size:24px;display:flex;align-items:center;justify-content:center}
-.pad .key.wide{width:120px}
-.pad .key:active{background:rgba(124,92,255,.6)}
-@media (hover:none) and (pointer:coarse){.pad{display:flex}}
+.needs{display:flex;gap:6px;padding:4px 14px 10px;font-size:10px;color:var(--sub);}
+.need{flex:1;text-align:center;}
+.need .nbar{height:4px;background:var(--panel2);border-radius:2px;margin:3px 0;overflow:hidden;}
+.need .nbar>span{display:block;height:100%;}
+.need.warn{color:var(--warn);}
 
-.overlay{position:fixed;inset:0;background:rgba(10,10,20,.85);backdrop-filter:blur(6px);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:50;padding:20px;text-align:center}
-.overlay.show{display:flex}
-.overlay h2{font-size:34px;font-weight:900;margin-bottom:8px}
-.overlay p{font-size:16px;color:#c0c0e0;margin-bottom:6px}
-.overlay .big{font-size:44px;font-weight:900;color:#a06bff;margin:8px 0}
-.overlay .btn{width:200px;margin-top:16px;padding:14px}
+/* ===== 消息流 ===== */
+#feed{padding:0 14px 12px;}
+.feed-item{padding:9px 11px;margin-bottom:7px;border-radius:11px;font-size:13px;
+  background:var(--panel);border-left:3px solid var(--line);animation:slidein .25s ease;}
+.feed-item.milestone{background:rgba(124,92,255,.14);border-left-color:var(--accent);}
+.feed-item.money{background:rgba(61,220,151,.10);border-left-color:var(--good);}
+.feed-item.choice{background:rgba(0,194,168,.10);border-left-color:var(--accent2);}
+.feed-item.achievement{background:rgba(255,207,92,.12);border-left-color:var(--gold);}
+.feed-item.death{background:rgba(255,93,108,.14);border-left-color:var(--bad);}
+.feed-item .age{color:var(--sub);font-size:11px;}
+@keyframes slidein{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:none;}}
 
-footer{margin-top:16px;font-size:11px;color:#6a6a88;text-align:center;line-height:1.7}
-footer kbd{background:rgba(255,255,255,.12);padding:2px 7px;border-radius:5px;font-size:11px;font-weight:700}
+/* ===== 事件弹窗 ===== */
+#modal{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;padding:20px;}
+#modal .card{background:var(--panel);border:1px solid var(--line);border-radius:18px;width:100%;max-width:440px;padding:20px;box-shadow:0 20px 60px rgba(0,0,0,.5);}
+#modal .ev-t{font-size:11px;color:var(--accent);font-weight:600;letter-spacing:.5px;}
+#modal h2{margin:6px 0 10px;font-size:20px;}
+#modal .ev-text{font-size:15px;color:#dcdce6;margin-bottom:16px;line-height:1.7;}
+.opt-btn{display:block;width:100%;text-align:left;background:var(--panel2);border:1px solid var(--line);
+  color:var(--txt);padding:13px 15px;margin-bottom:9px;border-radius:12px;font-size:14px;cursor:pointer;transition:.15s;}
+.opt-btn:hover,.opt-btn:active{background:var(--accent);border-color:var(--accent);}
+.opt-btn .hint{display:block;font-size:11px;color:var(--sub);margin-top:3px;}
+.opt-btn .ic{font-size:16px;margin-right:6px;}
+
+/* ===== 底部行动栏 ===== */
+#actionbar{position:fixed;bottom:0;left:0;right:0;background:rgba(15,15,20,.96);border-top:1px solid var(--line);
+  padding:8px 10px calc(8px + env(safe-area-inset-bottom));z-index:60;}
+#turn-row{display:flex;gap:8px;align-items:center;margin-bottom:8px;}
+#turn-row .spacer{flex:1;}
+.btn{background:var(--panel2);border:1px solid var(--line);color:var(--txt);padding:8px 14px;border-radius:10px;font-size:13px;cursor:pointer;white-space:nowrap;}
+.btn.primary{background:var(--accent);border-color:var(--accent);font-weight:600;}
+.btn.good{background:var(--good);border-color:var(--good);color:#04120d;}
+.btn:active{transform:scale(.96);}
+.btn:disabled{opacity:.4;cursor:not-allowed;}
+.actions{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;}
+.act{flex-direction:column;align-items:center;padding:8px 2px;font-size:10px;line-height:1.2;}
+.act .ic{font-size:20px;margin-bottom:2px;}
+
+/* ===== 结局页 ===== */
+#ending{padding:24px 20px;text-align:center;}
+#ending .eto{font-size:60px;margin:10px 0;}
+#ending h1{font-size:28px;margin:6px 0;}
+#ending .desc{color:#c8c8d6;font-size:15px;line-height:1.8;margin:14px 0 22px;}
+.score-ring{width:140px;height:140px;border-radius:50%;margin:0 auto 20px;display:flex;align-items:center;justify-content:center;
+  background:conic-gradient(var(--accent) calc(var(--p)*1%),var(--panel) 0);}
+.score-ring .inner{width:116px;height:116px;background:var(--bg);border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.score-ring .sc{font-size:34px;font-weight:800;}
+.score-ring .lb{font-size:12px;color:var(--sub);}
+.stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;text-align:left;margin:18px 0;}
+.stat-grid .cell{background:var(--panel);border-radius:12px;padding:12px;}
+.stat-grid .cell .k{font-size:11px;color:var(--sub);}
+.stat-grid .cell .v{font-size:18px;font-weight:700;margin-top:2px;}
+
+/* ===== 标签页 ===== */
+#tabs{display:flex;gap:0;border-bottom:1px solid var(--line);padding:0 14px;position:sticky;top:0;background:var(--bg);z-index:45;}
+.tab{flex:1;padding:11px 0;font-size:13px;color:var(--sub);text-align:center;border-bottom:2px solid transparent;cursor:pointer;}
+.tab.on{color:var(--txt);border-bottom-color:var(--accent);font-weight:600;}
+.tab-panel{padding:14px;display:none;}
+.tab-panel.on{display:block;}
+.job-card,.goal-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px;}
+.goal-card.done{opacity:.5;}
+.goal-card .p{height:4px;background:var(--panel2);border-radius:2px;margin-top:8px;overflow:hidden;}
+.goal-card .p>span{display:block;height:100%;background:var(--good);width:0;}
+.mini{font-size:12px;color:var(--sub);}
+.chip{display:inline-block;background:var(--panel2);border-radius:8px;padding:3px 8px;font-size:11px;margin:2px;}
+.empty{color:var(--sub);font-size:13px;text-align:center;padding:30px 0;}
 </style>
 </head>
 <body>
-<header>
-  <div>
-    <h1>方块叠叠乐</h1>
-    <div class="subtitle">Tetris · 俄罗斯方块</div>
-  </div>
-  <div class="scores">
-    <div class="score-box"><div class="label">分数</div><div class="val" id="score">0</div></div>
-    <div class="score-box"><div class="label">最高</div><div class="val" id="best">0</div></div>
-  </div>
-</header>
+<div id="app">
+  <!-- 开局屏 -->
+  <div id="setup" class="hidden"></div>
 
-<div class="stage">
-  <canvas id="board" width="240" height="480"></canvas>
-  <div class="side">
-    <div class="next-box">
-      <div class="label">下一个</div>
-      <canvas id="nextCanvas" width="96" height="96"></canvas>
+  <!-- 游戏主界面 -->
+  <div id="game" class="hidden">
+    <div id="topbar">
+      <div id="name-line">
+        <span class="nm" id="ui-name">—</span>
+        <span class="age" id="ui-age"></span>
+        <span class="trait" id="ui-trait"></span>
+      </div>
+      <div id="ui-stage"></div>
+      <div id="lifebar"><span id="ui-lifebar"></span></div>
     </div>
-    <div class="info-box">
-      <div class="label">已消除行</div>
-      <div class="lines" id="lines">0</div>
-      <div class="label" style="margin-top:8px">等级</div>
-      <div class="lvl" id="level">1</div>
+    <div class="attrs" id="attrs"></div>
+    <div class="needs" id="needs"></div>
+    <div id="feed"></div>
+  </div>
+
+  <!-- 结局页 -->
+  <div id="ending" class="hidden"></div>
+
+  <!-- 底部行动栏 -->
+  <div id="actionbar" class="hidden">
+    <div id="tabs">
+      <div class="tab on" data-tab="feed">📜 人生</div>
+      <div class="tab" data-tab="career">💼 事业</div>
+      <div class="tab" data-tab="goals">🎯 目标</div>
+      <div class="tab" data-tab="stats">📊 统计</div>
     </div>
-    <button class="btn btn-primary" id="startBtn">开始游戏</button>
-    <button class="btn btn-ghost" id="pauseBtn">暂停</button>
+    <div id="turn-row">
+      <button class="btn" id="btn-pause">⏸</button>
+      <button class="btn" id="btn-back">⏮ 回退</button>
+      <button class="btn primary" id="btn-next">▶ 下一个月</button>
+      <button class="btn good" id="btn-auto">⏩ 自动</button>
+      <span class="spacer"></span>
+      <button class="btn" id="btn-restart">↻</button>
+    </div>
+    <div class="actions" id="action-btns"></div>
   </div>
-</div>
 
-<div class="pad" id="pad">
-  <div class="pad-row"><div class="key" data-act="rotate">↻</div></div>
-  <div class="pad-row">
-    <div class="key" data-act="left">◀</div>
-    <div class="key" data-act="down">▼</div>
-    <div class="key" data-act="right">▶</div>
-  </div>
-  <div class="pad-row"><div class="key wide" data-act="drop">⤓ 硬降</div></div>
-</div>
-
-<footer>
-  电脑：<kbd>←</kbd><kbd>→</kbd> 移动 · <kbd>↑</kbd> 或 <kbd>X</kbd> 旋转 · <kbd>↓</kbd> 加速 · <kbd>空格</kbd> 硬降<br>
-  手机：使用下方方向键 · 数据保存在本机
-</footer>
-
-<div class="overlay" id="overlay">
-  <h2 id="ovTitle">方块叠叠乐</h2>
-  <p id="ovText">堆叠方块，消除满行，挑战最高分</p>
-  <div class="big" id="ovScore" style="display:none">0</div>
-  <button class="btn btn-primary" id="ovBtn">开始游戏</button>
+  <!-- 事件弹窗 -->
+  <div id="modal" class="hidden"></div>
 </div>
 
 <script>
-(function(){
-  "use strict";
-  // ====== 安全存储（避免 localStorage 不可用时报错中断整个脚本）======
-  var storage={
-    get:function(k){
-      try{return localStorage.getItem(k);}catch(e){return null;}
-    },
-    set:function(k,v){
-      try{localStorage.setItem(k,v);}catch(e){/* 静默忽略（隐私模式/opaque origin） */}
-    }
+/* ============================================================
+ *  [内联引擎] —— 以下代码源自 engine/ + events/，压缩为一文件
+ *  存档键名固定为 'life_sim_save_v1'，永不删除；新版本只追加字段
+ * ============================================================ */
+'use strict';
+const SAVE_KEY = 'life_sim_save_v1';   // ← 固定键名：你更新代码时此键不变，存档保留
+const SAVE_VER = 1;
+
+/* ---------- 常量 ---------- */
+const MONTHS_PER_YEAR=12, MAX_AGE=90, STAT_MAX=100, STAT_MIN=0;
+const LIFE_STAGES=[
+  {id:'toddler',name:'幼儿期',ageStart:0,ageEnd:5},{id:'child',name:'童年期',ageStart:5,ageEnd:12},
+  {id:'teen',name:'青春期',ageStart:12,ageEnd:18},{id:'young',name:'青年期',ageStart:18,ageEnd:30},
+  {id:'adult',name:'成年期',ageStart:30,ageEnd:50},{id:'middle',name:'中年期',ageStart:50,ageEnd:65},
+  {id:'senior',name:'老年期',ageStart:65,ageEnd:90},
+];
+const NEED_DECAY={hunger:8,energy:6,social:5,fun:7};
+const NEEDS=['hunger','energy','social','fun'];
+const ATTR_KEYS=['health','smarts','looks','wealth','happiness','relationships'];
+const ATTR_META={health:{ic:'❤️',n:'健康'},smarts:{ic:'🧠',n:'智力'},looks:{ic:'✨',n:'外貌'},
+  wealth:{ic:'💰',n:'财富'},happiness:{ic:'😊',n:'幸福'},relationships:{ic:'🤝',n:'人际'}};
+const NEED_META={hunger:{ic:'🍚',n:'饱食'},energy:{ic:'⚡',n:'精力'},social:{ic:'👫',n:'社交'},fun:{ic:'🎉',n:'娱乐'}};
+
+/* ---------- 静态数据 ---------- */
+const TRAITS=[
+  {id:'ambitious',name:'野心勃勃',desc:'+15% 收入，但幸福下降更快',effects:{salaryMul:1.15,happinessDecay:1.2}},
+  {id:'kind',name:'善良温和',desc:'人际关系更易提升',effects:{relationGain:1.3}},
+  {id:'genius',name:'天赋异禀',desc:'学习速度+30%，初始智力更高',effects:{learnMul:1.3,smartsStart:20}},
+  {id:'charismatic',name:'魅力四射',desc:'社交/恋爱成功率大幅提升',effects:{socialGain:1.4,romanceMul:1.4}},
+  {id:'lazy',name:'随性懒散',desc:'行动精力消耗更少，但收入-15%',effects:{energyCost:0.7,salaryMul:0.85}},
+  {id:'lucky',name:'天选之子',desc:'随机事件更易触发正面结果',effects:{luck:0.3}},
+  {id:'resilient',name:'坚韧不拔',desc:'健康下降更慢',effects:{healthDecay:0.6}},
+  {id:'creative',name:'富有创意',desc:'艺术类活动收益翻倍',effects:{artMul:1.8}},
+];
+const SURNAMES=['李','王','张','刘','陈','杨','赵','黄','周','吴','徐','孙','马','朱','林','郭','何','高','罗','郑','梁','谢','宋','唐','许','韩','冯','邓','曹','曾'];
+const NAMES_F={男:['伟','强','磊','洋','勇','杰','涛','明','超','鹏','宇','晨','浩','睿','轩','峰','毅','翔','俊','辉','凯','鑫','博','昊','天'],女:['娜','芳','娟','艳','霞','丽','玲','蕾','颖','婷','雪','萍','珍','琳','悦','欣','琪','萱','怡','佳','璐','茜','倩','莹','馨','薇','妍','诗','涵']};
+
+const JOBS={
+  'intern':{name:'实习生',industry:'通用',salaryBase:2000,req:{edu:4,smarts:30}},
+  'cashier':{name:'收银员',industry:'服务',salaryBase:2500,req:{edu:3,smarts:20}},
+  'waiter':{name:'服务员',industry:'餐饮',salaryBase:2200,req:{edu:2}},
+  'factory':{name:'工人',industry:'制造',salaryBase:3000,req:{edu:2}},
+  'delivery':{name:'外卖骑手',industry:'服务',salaryBase:4000,req:{edu:1}},
+  'sales':{name:'销售员',industry:'销售',salaryBase:2800,req:{edu:3,looks:30}},
+  'teacher':{name:'教师',industry:'教育',salaryBase:6000,req:{edu:5,smarts:55}},
+  'nurse':{name:'护士',industry:'医疗',salaryBase:5500,req:{edu:5}},
+  'clerk':{name:'文员',industry:'办公',salaryBase:4500,req:{edu:5}},
+  'designer':{name:'设计师',industry:'创意',salaryBase:7000,req:{edu:5,smarts:50,looks:40}},
+  'programmer':{name:'程序员',industry:'IT',salaryBase:9000,req:{edu:5,smarts:60}},
+  'doctor':{name:'医生',industry:'医疗',salaryBase:12000,req:{edu:6,smarts:75}},
+  'lawyer':{name:'律师',industry:'法律',salaryBase:11000,req:{edu:6,smarts:70,looks:40}},
+  'engineer':{name:'工程师',industry:'工程',salaryBase:8500,req:{edu:5,smarts:65}},
+  'manager':{name:'部门经理',industry:'管理',salaryBase:10000,req:{edu:5,smarts:60,relationships:50}},
+  'artist':{name:'自由艺术家',industry:'创意',salaryBase:5000,req:{smarts:55,looks:40}},
+  'streamer':{name:'网络主播',industry:'传媒',salaryBase:6000,req:{looks:50,smarts:40}},
+  'athlete':{name:'运动员',industry:'体育',salaryBase:8000,req:{health:70,looks:45}},
+  'ceo':{name:'CEO',industry:'管理',salaryBase:40000,req:{edu:6,smarts:80,relationships:70,wealth:200000}},
+  'scientist':{name:'科学家',industry:'科研',salaryBase:15000,req:{edu:7,smarts:90}},
+  'judge':{name:'法官',industry:'法律',salaryBase:18000,req:{edu:7,smarts:85}},
+  'star':{name:'明星',industry:'娱乐',salaryBase:30000,req:{looks:80,smarts:50,relationships:60}},
+  'entrepreneur':{name:'企业家',industry:'商业',salaryBase:0,req:{smarts:70,wealth:50000},isBusiness:true},
+};
+const EDU_ORDER=['未入学','幼儿园','小学','初中','高中','大学','硕士','博士'];
+const EDU_YEARS={'小学':6,'初中':3,'高中':3,'大学':4,'硕士':2,'博士':4};
+const SCHOOL_NAMES={'小学':'阳光实验小学','初中':'育才中学','高中':'市第一中学','大学':'国立综合大学','硕士':'国立综合大学研究生院','博士':'国立综合大学'};
+
+/* ---------- 工具 ---------- */
+function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+function ageYears(s){return Math.floor(s.ageMonths/MONTHS_PER_YEAR);}
+function getStage(s){const y=ageYears(s);return LIFE_STAGES.find(x=>y>=x.ageStart&&y<x.ageEnd)||LIFE_STAGES[LIFE_STAGES.length-1];}
+function createRNG(seed){let s=(seed>>>0)||1;return function(){s=(s+0x6D2B79F5)>>>0;let t=s;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return((t^(t>>>14))>>>0)/4294967296;};}
+function randInt(r,a,b){return Math.floor(r()*(b-a+1))+a;}
+function pick(r,arr){return arr[Math.floor(r()*arr.length)];}
+function chance(r,p){return r()<p;}
+function pushFeed(s,txt,type){s.messageFeed.unshift({id:(s.turn||0)+'_'+(s.messageFeed.length||0),turn:s.turn,age:ageYears(s),text:txt,type:type||'normal'});if(s.messageFeed.length>150)s.messageFeed.pop();}
+function addMoney(s,amt){s.money=Math.max(0,s.money+amt);if(amt>0)s.stats.totalEarned+=amt;}
+function addAttr(s,k,d){s.attrs[k]=clamp(s.attrs[k]+d,0,100);}
+function setNeed(s,k,v){s.needs[k]=clamp(v,0,100);}
+function lifeScore(s){
+  const a=s.attrs;
+  return Math.round(a.health*0.22+a.smarts*0.13+a.looks*0.08+Math.min(100,s.money/5000)*0.17+a.happiness*0.25+a.relationships*0.15);
+}
+function getLifeRating(sc){
+  if(sc>=85)return{label:'传奇人生',star:5,color:'#ffcf5c'};
+  if(sc>=70)return{label:'精彩人生',star:4,color:'#3ddc97'};
+  if(sc>=55)return{label:'幸福人生',star:4,color:'#3ddc97'};
+  if(sc>=40)return{label:'平凡人生',star:3,color:'#78909c'};
+  if(sc>=25)return{label:'坎坷人生',star:2,color:'#ffb454'};
+  return{label:'悲情人生',star:1,color:'#ff5d6c'};
+}
+function fillTpl(str,s,extra){if(!str)return'';return str.replace(/\{\{name\}\}/g,s.name).replace(/\{\{firstName\}\}/g,s.firstName).replace(/\{\{age\}\}/g,ageYears(s)).replace(/\{\{job\}\}/g,s.career?s.career.jobId:'待业');}
+
+/* ---------- 初始状态 ---------- */
+function createInitialState(opts){
+  opts=opts||{};
+  const seed=opts.seed!=null?opts.seed:Math.floor(Math.random()*2e9);
+  const r=createRNG(seed);
+  const gender=opts.gender||pick(r,['男','女']);
+  const trait=opts.trait?TRAITS.find(x=>x.id===opts.trait):pick(r,TRAITS);
+  const fn=opts.firstName||pick(r,NAMES_F[gender]||NAMES_F['男']);
+  const ln=opts.lastName||pick(r,SURNAMES);
+  return {
+    seed,version:SAVE_VER,turn:0,ageMonths:0,alive:true,paused:false,speed:1,
+    name:ln+fn,firstName:fn,lastName:ln,gender,trait,
+    attrs:{health:80,smarts:(trait.effects.smartsStart||0)+40,looks:50,wealth:0,happiness:60,relationships:30},
+    needs:{hunger:30,energy:20,social:40,fun:50},money:2000,
+    family:[],relationships:[],career:null,
+    education:{level:'未入学',school:null,gpa:0,yearsLeft:0},
+    inventory:[],achievements:[],flags:{},stats:{totalEarned:0,children:0,marriages:0,divorces:0,crimes:0,prisonTime:0,travels:0,booksRead:0,jobsHeld:0,promotions:0,booksPublished:0},
+    pendingChoices:null,eventLog:[],messageFeed:[],goals:GOAL_LIBRARY.map(g=>({...g,done:false})),currentGoal:null,ending:null,
+    _history:[], // 用于"回退"
   };
+}
 
-  // 全局错误兜底：任何未捕获异常都不会让页面"死掉"
-  window.addEventListener('error',function(e){console.warn('[tetris]',e.message);});
+/* ---------- 事件库（60个，全部内联） ---------- */
+const EVENTS=[];
+function reg(ev){EVENTS.push(ev);}
+// 幼儿
+reg({id:'first_steps',title:'👶 迈出第一步',minAge:1,maxAge:2,weight:3,once:true,text:'{{name}}摇摇晃晃地站了起来，迈出人生第一步，全家欢呼。',options:[{label:'鼓掌鼓励',effects:{attrs:{happiness:8,health:3}}},{label:'拍照记录',effects:{attrs:{happiness:5},flags:{photoFirstSteps:true}}}]});
+reg({id:'toddler_fall',title:'😢 跌了一跤',minAge:1,maxAge:4,weight:3,text:'学步时重重摔了一跤，膝盖擦破了皮，你哇哇大哭。',options:[{label:'赶紧抱起来哄',effects:{attrs:{happiness:5,health:-2}}},{label:'鼓励自己站起来',effects:{attrs:{health:-2,happiness:-2}}}]});
+// 童年
+reg({id:'school_bully',title:'🏫 校园小摩擦',minAge:6,maxAge:12,weight:3,text:'班上有人抢了你的文具还推了你一把，你委屈极了。',options:[{label:'告诉老师',effects:{attrs:{happiness:-2,relationships:2}}},{label:'据理力争',effects:{attrs:{smarts:2,happiness:-3}}},{label:'默默忍让',effects:{attrs:{happiness:-5,health:-1}}}]});
+reg({id:'good_grade',title:'📝 考试成绩',minAge:6,maxAge:17,weight:4,text:'期末考试成绩出来了，你考得还不错。',options:[{label:'继续努力',effects:{attrs:{smarts:6,happiness:-2}}},{label:'出去玩个痛快',effects:{attrs:{happiness:8},needs:{fun:-20}}},{label:'帮同学讲题',effects:{attrs:{relationships:6,smarts:2}}}]});
+reg({id:'best_friend',title:'👫 交到好朋友',minAge:6,maxAge:17,weight:3,text:'你和新同学很投缘，成了形影不离的好朋友。',options:[{label:'一起玩耍',effects:{attrs:{happiness:8,relationships:5},needs:{social:-30}}},{label:'一起学习',effects:{attrs:{smarts:4,relationships:4}}}]});
+reg({id:'extracurricular',title:'🎨 兴趣班选择',minAge:7,maxAge:14,weight:2,text:'爸妈问你想学什么兴趣班？',options:[{label:'学钢琴',effects:{attrs:{smarts:3,looks:2}}},{label:'踢足球',effects:{attrs:{health:5,relationships:3}}},{label:'画画',effects:{attrs:{smarts:4,happiness:3}}},{label:'不去，玩去',effects:{attrs:{happiness:6,smarts:-2}}}]});
+reg({id:'family_trip',title:'🚗 全家出游',minAge:5,maxAge:17,weight:2,text:'暑假全家开车去海边玩了一周，沙滩和海浪让你难忘。',options:[{label:'尽情玩耍',effects:{attrs:{happiness:10},needs:{fun:-40,social:-20}}},{label:'拍照留念',effects:{attrs:{happiness:6},needs:{fun:-30}}}]});
+reg({id:'pocket_money',title:'💰 零花钱',minAge:8,maxAge:17,weight:2,text:'过年收到压岁钱，加上平时攒的零花钱，有了一小笔积蓄。',options:[{label:'存起来',money:500,effects:{attrs:{smarts:1}}},{label:'买玩具',money:-300,effects:{attrs:{happiness:6}}},{label:'请朋友吃',money:-200,effects:{attrs:{relationships:6}}}]});
+reg({id:'sick_child',title:'🤒 生了一场病',minAge:3,maxAge:65,weight:2,text:'你发了高烧，浑身无力，不得不请假在家休息。',options:[{label:'好好休息',effects:{attrs:{health:12,happiness:-3},needs:{energy:-40}}},{label:'硬撑',effects:{attrs:{health:-5,smarts:1}}},{label:'看医生',money:-300,effects:{attrs:{health:18}}}]});
+// 青春
+reg({id:'first_crush',title:'💘 初恋的心动',minAge:12,maxAge:19,weight:3,text:'你发现自己总是忍不住去看那个TA，心跳会加速。',options:[{label:'偷偷暗恋',effects:{attrs:{happiness:5}}},{label:'写情书表白',effects:{attrs:{happiness:8,relationships:5}}},{label:'专注学习',effects:{attrs:{smarts:6,happiness:-3}}}]});
+reg({id:'peer_pressure',title:'👥 同伴压力',minAge:12,maxAge:19,weight:3,text:'朋友邀你一起逃课去网吧，说"不去就是胆小鬼"。',options:[{label:'一起去',effects:{attrs:{happiness:4,smarts:-5}}},{label:'婉拒离开',effects:{attrs:{smarts:3,happiness:-3}}},{label:'劝他们回去',effects:{attrs:{smarts:5,relationships:-3}}}]});
+reg({id:'exam_gaokao',title:'📚 升学大考',minAge:17,maxAge:19,weight:2,text:'决定命运的大考临近，所有人都绷紧了神经。',options:[{label:'拼命复习',effects:{attrs:{smarts:10,health:-5,happiness:-6},needs:{energy:-30}}},{label:'正常发挥',effects:{attrs:{smarts:4}}},{label:'心态崩了',effects:{attrs:{smarts:-3,happiness:-5}}}]});
+reg({id:'part_time',title:'🛒 第一次打工',minAge:15,maxAge:22,weight:2,text:'暑假你找了份兼职，第一次靠自己赚到了钱。',options:[{label:'发传单',money:800,effects:{attrs:{happiness:-2}}},{label:'当家教',money:1500,effects:{attrs:{smarts:2}}},{label:'专心学业',effects:{attrs:{smarts:5}}}]});
+reg({id:'online_game',title:'🎮 沉迷游戏',minAge:12,maxAge:22,weight:2,text:'你迷上了一款网络游戏，一玩就停不下来，成绩开始下滑。',options:[{label:'适度游戏',effects:{attrs:{happiness:5,smarts:-3}}},{label:'彻底戒掉',effects:{attrs:{smarts:6,happiness:-6}}},{label:'继续沉迷',effects:{attrs:{smarts:-8,health:-3,happiness:3}}}]});
+reg({id:'volunteer',title:'🤝 志愿服务',minAge:13,maxAge:30,weight:2,text:'学校组织去敬老院做志愿者，你会？',options:[{label:'认真陪伴老人',effects:{attrs:{happiness:6,relationships:5}}},{label:'敷衍了事',effects:{attrs:{happiness:-2}}}]});
+// 通用
+reg({id:'windfall',title:'🎁 意外之财',minAge:5,maxAge:89,weight:1,text:'你在旧书里翻出一张遗忘的购物卡，居然还有余额！',options:[{label:'开心花掉',money:1200,effects:{attrs:{happiness:5}}},{label:'存起来',money:1500,effects:{attrs:{smarts:1}}}]});
+reg({id:'neighbor_help',title:'🏠 邻里求助',minAge:8,maxAge:85,weight:2,text:'邻居奶奶拎着菜上不了楼，向你求助。',options:[{label:'帮忙拎上去',effects:{attrs:{happiness:4,relationships:3}}},{label:'假装没看见',effects:{attrs:{happiness:-2}}}]});
+reg({id:'lottery',title:'🎫 刮刮乐',minAge:18,maxAge:85,weight:1,text:'路过彩票站，你心血来潮买了张刮刮乐。',options:[{label:'刮开看看',money:-20,_messages:['没中奖，就当献爱心了。']},{label:'再买几张',money:-100,_result:'居然中了一笔小钱！',_messages:['🎉 中奖 +💰800！']},{label:'算了不买',effects:{attrs:{smarts:1}}}]});
+// 职场
+reg({id:'first_job_offer',title:'💼 第一份工作',minAge:18,maxAge:30,weight:3,once:true,requires:s=>!s.career||!s.career.jobId,text:'你拿到了人生第一份工作的录用通知，心情既激动又紧张。',options:[{label:'满怀热情入职',unlockJob:'intern',effects:{attrs:{happiness:8,relationships:3},stats:{jobsHeld:1}}},{label:'先缓缓再说',effects:{attrs:{happiness:3}}}]});
+reg({id:'work_overtime',title:'🌙 加班到深夜',minAge:20,maxAge:65,weight:3,requires:s=>s.career&&s.career.jobId,text:'项目赶进度，你连续加班一周，黑眼圈都出来了。',options:[{label:'继续坚持',money:2000,effects:{attrs:{health:-6,happiness:-4},stats:{overtime:1}}},{label:'委婉拒绝',effects:{attrs:{happiness:3},stats:{standUp:1}}},{label:'辞职换岗',effects:{attrs:{happiness:6},career:{satisfaction:30},stats:{jobsHeld:1}}}]});
+reg({id:'promotion_chance',title:'📈 晋升机会',minAge:24,maxAge:60,weight:2,requires:s=>s.career&&s.career.level>=2&&s.career.level<6,text:'领导暗示有个晋升名额，但需要你主动争取。',options:[{label:'全力以赴',effects:{attrs:{smarts:3,relationships:-3},stats:{triedPromo:1}}},{label:'顺其自然',effects:{attrs:{happiness:3}}}]});
+reg({id:'office_romance',title:'💕 办公室恋情',minAge:20,maxAge:55,weight:2,requires:s=>s.career&&s.career.jobId&&!s.flags.married,text:'你发现同事对你格外关照，眼神里似乎有不一样的意味。',options:[{label:'试着交往',effects:{attrs:{happiness:10,relationships:8}}},{label:'保持距离',effects:{attrs:{},career:{satisfaction:5}}}]});
+reg({id:'startup',title:'🚀 创业念头',minAge:25,maxAge:55,weight:1,requires:s=>s.attrs.smarts>=60&&s.money>=30000,text:'你有个不错的商业点子，朋友们都说值得一试。',options:[{label:'大胆创业',money:-30000,unlockJob:'entrepreneur',effects:{attrs:{happiness:10,health:-5},stats:{jobsHeld:1}}},{label:'稳妥上班',effects:{attrs:{happiness:-2,smarts:1}}}]});
+reg({id:'fired',title:'😱 被裁员',minAge:22,maxAge:60,weight:1,requires:s=>s.career&&s.career.jobId&&s.career.satisfaction<40,text:'公司效益不好，你所在部门被整体裁撤。',options:[{label:'争取补偿',money:15000,effects:{attrs:{happiness:-5}}},{label:'拿钱走人',money:8000,effects:{attrs:{happiness:-8}}},{label:'起诉维权',money:25000,effects:{attrs:{happiness:-10,smarts:2}}}]});
+// 恋爱/家庭
+reg({id:'meet_someone',title:'💘 邂逅心动',minAge:18,maxAge:60,weight:3,requires:s=>!s.flags.married&&!s.flags.dating,text:'在一次聚会上，你遇到了一位让你心跳加速的人。',options:[{label:'主动搭讪',effects:{attrs:{happiness:10,relationships:8},flags:{dating:true}}},{label:'默默关注',effects:{attrs:{happiness:4}}},{label:'不敢上前',effects:{attrs:{happiness:-3}}}]});
+reg({id:'dating_conflict',title:'💔 恋人争执',minAge:18,maxAge:65,weight:2,requires:s=>s.flags.dating&&!s.flags.married,text:'你们因为一件小事吵了起来，气氛很僵。',options:[{label:'主动道歉',effects:{attrs:{relationships:5,happiness:3}}},{label:'讲道理',effects:{attrs:{smarts:2,relationships:-3}}},{label:'冷战',effects:{attrs:{happiness:-6,relationships:-6}}}]});
+reg({id:'proposal',title:'💍 求婚',minAge:22,maxAge:55,weight:1,once:false,requires:s=>s.flags.dating&&!s.flags.married&&s.attrs.relationships>=50&&s.money>=10000,text:'交往多年，你觉得是时候给对方一个承诺了。',options:[{label:'浪漫求婚',money:-10000,effects:{attrs:{happiness:20,relationships:15},flags:{married:true,spouse:1},stats:{marriages:1}}},{label:'再等等',effects:{attrs:{happiness:-3}}}]});
+reg({id:'marriage_life',title:'🏡 婚后生活',minAge:22,maxAge:65,weight:2,requires:s=>s.flags.married,text:'结婚后柴米油盐的日子，平淡中也有小摩擦。',options:[{label:'精心经营',money:-1000,effects:{attrs:{relationships:6,happiness:4}}},{label:'各忙各的',effects:{attrs:{relationships:-4,smarts:2}}}]});
+reg({id:'have_child',title:'👶 迎接新生命',minAge:23,maxAge:50,weight:1,requires:s=>s.flags.married&&s.stats.children<4&&s.money>=5000,text:'你们迎来了第一个孩子，小小的手紧紧攥着你的手指。',options:[{label:'满心欢喜',money:-5000,effects:{attrs:{happiness:25,relationships:15,health:-5},stats:{children:1}}},{label:'再考虑一下',effects:{attrs:{happiness:-2}}}]});
+reg({id:'child_growth',title:'👦 孩子成长',minAge:24,maxAge:65,weight:2,requires:s=>s.stats.children>0,text:'孩子一天天长大，开始有自己的想法和小脾气。',options:[{label:'耐心引导',effects:{attrs:{relationships:5,happiness:5}}},{label:'严格要求',effects:{attrs:{smarts:2,relationships:-3}}},{label:'放任自由',effects:{attrs:{happiness:3,relationships:-2}}}]});
+reg({id:'divorce',title:'💔 婚姻危机',minAge:28,maxAge:60,weight:1,requires:s=>s.flags.married&&s.attrs.relationships<35,text:'长期的矛盾终于爆发，你们都在认真考虑分开。',options:[{label:'努力修复',money:-3000,effects:{attrs:{relationships:10,happiness:-5}}},{label:'和平分手',money:-20000,effects:{attrs:{happiness:-15,relationships:-10},flags:{married:false,divorced:true},stats:{divorces:1}}}]});
+reg({id:'parent_ill',title:'🏥 父母生病',minAge:25,maxAge:70,weight:2,requires:s=>!s.flags.parentPassed,text:'你接到电话，父亲/母亲病倒了，需要有人照顾。',options:[{label:'回家照顾',money:-5000,effects:{attrs:{happiness:-5,relationships:10}}},{label:'请护工',money:-15000,effects:{attrs:{relationships:3}}},{label:'托给兄弟姐妹',effects:{attrs:{happiness:-3,relationships:-3}}}]});
+reg({id:'parent_pass',title:'⚱️ 失去至亲',minAge:30,maxAge:80,weight:1,once:true,requires:s=>!s.flags.parentPassed&&ageYears(s)>=30,text:'最不愿面对的那天还是来了，你失去了至亲之人。',options:[{label:'平静送别',effects:{attrs:{happiness:-15,health:-5},flags:{parentPassed:true}}},{label:'久久不能释怀',effects:{attrs:{happiness:-25,health:-10,smarts:3},flags:{parentPassed:true}}}]});
+reg({id:'inherit',title:'📦 一笔遗产',minAge:35,maxAge:80,weight:1,requires:s=>s.flags.parentPassed,text:'整理遗物时，发现父母留给你一笔存款和一封旧信。',options:[{label:'接受遗产',money:50000,effects:{attrs:{happiness:5}}},{label:'捐出大部分',money:10000,effects:{attrs:{happiness:8,relationships:5}}}]});
+// 健康
+reg({id:'exercise_ev',title:'🏃 坚持锻炼',minAge:10,maxAge:85,weight:3,text:'你决定养成运动的习惯，每天早起跑步。',options:[{label:'坚持下来',effects:{attrs:{health:8,happiness:4}}},{label:'三天打鱼',effects:{attrs:{health:2}}},{label:'懒得动',effects:{attrs:{health:-2,happiness:-1}}}]});
+reg({id:'bad_habit',title:'🚬 不良习惯',minAge:15,maxAge:70,weight:2,text:'压力大的时候，你学会了抽烟/酗酒来解压。',options:[{label:'及时戒掉',effects:{attrs:{health:5,happiness:-5}}},{label:'继续下去',effects:{attrs:{health:-10,happiness:3}}}]});
+reg({id:'car_accident',title:'🚗 意外事故',minAge:16,maxAge:80,weight:1,text:'出门时遇到了一场小事故，虽然不严重，但让你心有余悸。',options:[{label:'检查身体',money:-2000,effects:{attrs:{health:3}}},{label:'自认倒霉',effects:{attrs:{happiness:-8,health:-3}}}]});
+reg({id:'mental_health',title:'🧠 情绪低谷',minAge:15,maxAge:85,weight:2,requires:s=>s.attrs.happiness<30,text:'你最近总是提不起劲，对什么都没兴趣，夜里也睡不好。',options:[{label:'寻求专业帮助',money:-2000,effects:{attrs:{happiness:12,health:5}}},{label:'找朋友倾诉',effects:{attrs:{happiness:8,relationships:5}}},{label:'一个人扛',effects:{attrs:{happiness:-8,health:-3}}}]});
+// 财务
+reg({id:'stock_market',title:'📈 股市风云',minAge:22,maxAge:80,weight:2,requires:s=>s.money>=10000,text:'朋友推荐了一只"稳赚不赔"的股票，你心动了。',options:[{label:'重仓买入',money:-20000,_result:'股价大跌，你亏了不少。',_messages:['📉 亏损 -💰20000']},{label:'小试牛刀',money:-5000,effects:{attrs:{smarts:2}},_result:'小赚一笔！',_messages:['📈 赚到 +💰3000']},{label:'不碰股市',effects:{attrs:{smarts:1}}}]});
+reg({id:'buy_house',title:'🏠 买房大事',minAge:25,maxAge:60,weight:1,once:true,requires:s=>s.money>=80000&&!s.flags.boughtHouse,text:'房价虽然高，但你攒够了首付，准备买房安家。',options:[{label:'买下房子',money:-80000,effects:{attrs:{happiness:20,relationships:5},flags:{boughtHouse:true}}},{label:'再观望',effects:{attrs:{happiness:-2}}}]});
+reg({id:'debt',title:'💳 债务缠身',minAge:20,maxAge:70,weight:1,requires:s=>s.money<2000&&s.career,text:'信用卡账单堆积，你开始拆东墙补西墙。',options:[{label:'省吃俭用还债',money:3000,effects:{attrs:{happiness:-8}}},{label:'借新还旧',effects:{attrs:{happiness:-3}}}]});
+// 中年
+reg({id:'midlife_crisis',title:'🌪️ 中年危机',minAge:40,maxAge:55,weight:2,once:true,text:'镜子里的自己多了几道皱纹，你突然开始质疑过去的选择。',options:[{label:'重新审视人生',effects:{attrs:{happiness:8,smarts:3}}},{label:'买辆跑车',money:-40000,effects:{attrs:{happiness:12,relationships:-5}}},{label:'寻求咨询',money:-5000,effects:{attrs:{happiness:5}}}]});
+reg({id:'career_peak',title:'🏔️ 事业巅峰',minAge:35,maxAge:60,weight:1,requires:s=>s.career&&s.career.level>=4,text:'你终于坐上了梦寐以求的位置，下属们都仰仗你。',options:[{label:'乘胜追击',money:20000,effects:{attrs:{relationships:5}}},{label:'享受当下',effects:{attrs:{happiness:10}}}]});
+reg({id:'child_leave',title:'🎒 孩子离家',minAge:40,maxAge:70,weight:1,requires:s=>s.stats.children>0&&!s.flags.emptyNest,text:'孩子考上了外地的大学，家里一下子安静了下来。',options:[{label:'依依不舍',effects:{attrs:{happiness:-5,relationships:5},flags:{emptyNest:true}}},{label:'为孩子骄傲',effects:{attrs:{happiness:8},flags:{emptyNest:true}}}]});
+reg({id:'invest_business',title:'💡 投资副业',minAge:30,maxAge:60,weight:2,requires:s=>s.money>=50000,text:'朋友邀请你合伙投资一个项目，声称回报可观。',options:[{label:'投资入股',money:-40000,_result:'项目大获成功！',_messages:['📈 投资收益 +💰60000']},{label:'观望拒绝',effects:{attrs:{smarts:2}}}]});
+// 老年
+reg({id:'retire_hobby',title:'🎣 退休生活',minAge:65,maxAge:89,weight:3,requires:s=>!s.career,text:'退休后时间一下子多了起来，你想好怎么度过了吗？',options:[{label:'培养爱好',effects:{attrs:{happiness:10,health:3}}},{label:'帮子女带娃',effects:{attrs:{relationships:8,health:-3}}},{label:'四处旅行',money:-15000,effects:{attrs:{happiness:15}}}]});
+reg({id:'grandchild',title:'👶 子孙满堂',minAge:50,maxAge:89,weight:2,requires:s=>s.stats.children>=1,text:'儿孙绕膝，家里热闹极了，你也终于体会到了隔代亲。',options:[{label:'享受天伦',effects:{attrs:{happiness:15,relationships:8}}},{label:'给孙辈讲故事',effects:{attrs:{happiness:10,smarts:2}}}]});
+reg({id:'health_decline',title:'🩺 身体走下坡',minAge:60,maxAge:89,weight:3,text:'年纪大了，各种小毛病开始找上门，你不得不放慢脚步。',options:[{label:'定期体检',money:-5000,effects:{attrs:{health:8}}},{label:'养生锻炼',effects:{attrs:{health:6,happiness:3}}},{label:'听之任之',effects:{attrs:{health:-10}}}]});
+reg({id:'will',title:'📝 立下遗嘱',minAge:65,maxAge:89,weight:1,once:true,text:'你想趁清醒时把身后事安排妥当。',options:[{label:'仔细安排',effects:{attrs:{happiness:3,relationships:3},flags:{madeWill:true}}},{label:'以后再说',effects:{}}]});
+reg({id:'memory_fade',title:'🧩 记忆模糊',minAge:70,maxAge:89,weight:2,requires:s=>s.attrs.health<45,text:'你偶尔会想不起熟悉的名字，医生说这是正常的老化现象。',options:[{label:'坚持用脑',effects:{attrs:{smarts:3,health:-2}}},{label:'顺其自然',effects:{attrs:{happiness:-3}}}]});
+// 特殊/机遇
+reg({id:'find_wallet',title:'👝 捡到钱包',minAge:10,maxAge:85,weight:2,text:'路上捡到一个鼓鼓的钱包，里面有不少现金。',options:[{label:'归还失主',effects:{attrs:{happiness:8,relationships:5}}},{label:'交给警察',effects:{attrs:{happiness:5,smarts:1}}},{label:'据为己有',money:3000,effects:{attrs:{happiness:-3},stats:{crimes:1}}}]});
+reg({id:'bribe',title:'🤝 利益诱惑',minAge:25,maxAge:65,weight:1,requires:s=>s.career&&s.career.level>=3&&s.money<20000,text:'有人暗示可以"通融一下"，事成之后有重谢。',options:[{label:'拒绝诱惑',effects:{attrs:{smarts:3}}},{label:'半推半就',money:25000,effects:{attrs:{happiness:-8,relationships:-5},stats:{crimes:2}}}]});
+reg({id:'help_stranger',title:'🚶 路见不平',minAge:15,maxAge:80,weight:2,text:'你看到有人遭遇困难，犹豫要不要伸出援手。',options:[{label:'出手相助',effects:{attrs:{happiness:10,health:-3,relationships:5}}},{label:'报警求助',effects:{attrs:{happiness:4}}},{label:'匆匆离开',effects:{attrs:{happiness:-5}}}]});
+reg({id:'travel_abroad',title:'✈️ 出国旅行',minAge:18,maxAge:75,weight:1,requires:s=>s.money>=20000,text:'你决定给自己安排一次长途旅行，去看看外面的世界。',options:[{label:'说走就走',money:-20000,effects:{attrs:{happiness:18,smarts:3},stats:{travels:1}}},{label:'省点钱算了',effects:{attrs:{smarts:1}}}]});
+reg({id:'lucky_break',title:'🍀 贵人相助',minAge:18,maxAge:80,weight:1,text:'一位前辈看中了你的潜力，愿意给你指条明路。',options:[{label:'虚心求教',effects:{attrs:{smarts:6,relationships:5}}},{label:'不以为意',effects:{attrs:{happiness:-2}}}]});
+reg({id:'publish_book',title:'📖 出版作品',minAge:25,maxAge:80,weight:1,requires:s=>s.attrs.smarts>=70&&(s.stats.booksRead||0)>=5,text:'你多年笔耕不辍，终于有机会出版自己的书。',options:[{label:'努力出版',money:20000,effects:{attrs:{happiness:15,smarts:5},stats:{booksPublished:1}}},{label:'继续打磨',effects:{attrs:{smarts:8}}}]});
+reg({id:'win_award',title:'🏆 获得荣誉',minAge:25,maxAge:85,weight:1,requires:s=>s.attrs.smarts>=80&&s.career&&s.career.level>=4,text:'你因出色的工作获得了业内一项重要奖项。',options:[{label:'谦逊接受',effects:{attrs:{happiness:12,relationships:8},achievement:'win_award'}},{label:'感言致谢',effects:{attrs:{happiness:15,relationships:12},achievement:'win_award'}}]});
 
-  // ====== 常量 ======
-  var COLS=10, ROWS=20, SIZE=24;
-  var boardCv=document.getElementById('board'), ctx=boardCv.getContext('2d');
-  var nextCv=document.getElementById('nextCanvas'), nctx=nextCv.getContext('2d');
-  var scoreEl=document.getElementById('score'), bestEl=document.getElementById('best');
-  var linesEl=document.getElementById('lines'), levelEl=document.getElementById('level');
-  var overlay=document.getElementById('overlay');
+/* ---------- 目标 ---------- */
+const GOAL_LIBRARY=[
+  {id:'wealth',name:'财务自由',desc:'积累 💰200,000',condition:s=>s.money>=200000},
+  {id:'education',name:'学海无涯',desc:'获得博士学位',condition:s=>s.education.level==='博士'},
+  {id:'family',name:'儿孙满堂',desc:'养育 3 个孩子',condition:s=>s.stats.children>=3},
+  {id:'love',name:'白头偕老',desc:'结婚并维持婚姻',condition:s=>s.flags.married&&s.attrs.relationships>=60},
+  {id:'career',name:'行业翘楚',desc:'晋升至职业顶级',condition:s=>s.career&&s.career.level>=6},
+  {id:'health',name:'健康长寿',desc:'健康保持 80 至老年',condition:s=>ageYears(s)>=65&&s.attrs.health>=80},
+  {id:'fame',name:'名扬天下',desc:'获得重要荣誉',condition:s=>s.achievements.some(a=>a.id==='win_award')},
+  {id:'happiness',name:'快乐至上',desc:'幸福达到 90',condition:s=>s.attrs.happiness>=90},
+];
 
-  // 7 种方块：I J L O S T Z，每个含 4 个旋转状态（矩阵）
-  var SHAPES={
-    I:{color:'#00e0d6',states:[[[0,0,0,0],[1,1,1,1],[0,0,0,0],[0,0,0,0]],[[0,0,1,0],[0,0,1,0],[0,0,1,0],[0,0,1,0]],[[0,0,0,0],[0,0,0,0],[1,1,1,1],[0,0,0,0]],[[0,1,0,0],[0,1,0,0],[0,1,0,0],[0,1,0,0]]]},
-    J:{color:'#3a7bff',states:[[[1,0,0],[1,1,1],[0,0,0]],[[0,1,1],[0,1,0],[0,1,0]],[[0,0,0],[1,1,1],[0,0,1]],[[0,1,0],[0,1,0],[1,1,0]]]},
-    L:{color:'#ff8c1a',states:[[[0,0,1],[1,1,1],[0,0,0]],[[0,1,0],[0,1,0],[0,1,1]],[[0,0,0],[1,1,1],[1,0,0]],[[1,1,0],[0,1,0],[0,1,0]]]},
-    O:{color:'#ffd500',states:[[[1,1],[1,1]],[[1,1],[1,1]],[[1,1],[1,1]],[[1,1],[1,1]]]},
-    S:{color:'#22c55e',states:[[[0,1,1],[1,1,0],[0,0,0]],[[0,1,0],[0,1,1],[0,0,1]],[[0,0,0],[0,1,1],[1,1,0]],[[1,0,0],[1,1,0],[0,1,0]]]},
-    T:{color:'#a855f7',states:[[[0,1,0],[1,1,1],[0,0,0]],[[0,1,0],[0,1,1],[0,1,0]],[[0,0,0],[1,1,1],[0,1,0]],[[0,1,0],[1,1,0],[0,1,0]]]},
-    Z:{color:'#ef4444',states:[[[1,1,0],[0,1,1],[0,0,0]],[[0,0,1],[0,1,1],[0,1,0]],[[0,0,0],[1,1,0],[0,1,1]],[[0,1,0],[1,1,0],[1,0,0]]]}
-  };
-  var TYPES=['I','J','L','O','S','T','Z'];
+/* ---------- 主动行动 ---------- */
+const ACTIONS=[
+  {id:'eat',name:'吃饭',ic:'🍚',desc:'恢复饱食与精力',apply:s=>{setNeed(s,'hunger',Math.max(0,s.needs.hunger-40));setNeed(s,'energy',Math.max(0,s.needs.energy-25));addMoney(s,-50);addAttr(s,'happiness',2);pushFeed(s,'你美餐了一顿，元气满满。','action');},cost:s=>({money:50,energy:0}),visible:()=>true},
+  {id:'sleep',name:'睡眠',ic:'😴',desc:'好好休息',apply:s=>{setNeed(s,'energy',0);addAttr(s,'health',3);pushFeed(s,'你睡了个好觉，精神焕发。','action');},cost:()=>({money:0,energy:0}),visible:()=>true},
+  {id:'study',name:'学习',ic:'📖',desc:'提升智力',apply:s=>{addAttr(s,'smarts',6);addAttr(s,'happiness',-2);setNeed(s,'energy',s.needs.energy+15);pushFeed(s,'你专注地学习了一段时间。','action');s.stats.booksRead+=0.1;},cost:()=>({money:0,energy:15}),visible:s=>ageYears(s)>=5},
+  {id:'work',name:'加班',ic:'💼',desc:'多赚钱，耗精力',apply:s=>{const e=computeSalary(s)*0.4;addMoney(s,Math.round(e));setNeed(s,'energy',s.needs.energy+20);addAttr(s,'health',-2);pushFeed(s,`加班工作，额外 +💰${Math.round(e)}。`,'money');},cost:()=>({money:0,energy:20}),visible:s=>!!(s.career&&s.career.jobId)},
+  {id:'socialize',name:'社交',ic:'👫',desc:'聚会交友',apply:s=>{addAttr(s,'relationships',6);addAttr(s,'happiness',4);setNeed(s,'social',0);addMoney(s,-150);pushFeed(s,'你和朋友度过了愉快的时光。','action');},cost:()=>({money:150,energy:10}),visible:()=>true},
+  {id:'exercise',name:'运动',ic:'🏃',desc:'强身健体',apply:s=>{addAttr(s,'health',5);addAttr(s,'happiness',2);setNeed(s,'energy',s.needs.energy+10);pushFeed(s,'运动后神清气爽！','action');},cost:()=>({money:0,energy:10}),visible:()=>true},
+  {id:'hobby',name:'爱好',ic:'🎨',desc:'发展兴趣',apply:s=>{addAttr(s,'happiness',8);addAttr(s,'smarts',2);setNeed(s,'fun',0);addMoney(s,-100);pushFeed(s,'沉浸在爱好里，你感到充实。','action');},cost:()=>({money:100,energy:8}),visible:()=>true},
+  {id:'meditate',name:'冥想',ic:'🧘',desc:'缓解压力',apply:s=>{addAttr(s,'happiness',6);setNeed(s,'fun',s.needs.fun-20);pushFeed(s,'你让自己安静下来，内心平和。','action');},cost:()=>({money:0,energy:0}),visible:()=>true},
+  {id:'invest',name:'理财',ic:'📈',desc:'学习投资',apply:s=>{addAttr(s,'smarts',3);addMoney(s,-200);pushFeed(s,'你研究了市场与投资知识。','action');},cost:()=>({money:200,energy:5}),visible:s=>ageYears(s)>=18},
+  {id:'travel',name:'旅行',ic:'✈️',desc:'短途旅行',apply:s=>{addAttr(s,'happiness',12);addMoney(s,-3000);setNeed(s,'fun',-30);s.stats.travels+=0.2;pushFeed(s,'旅行让你开阔了眼界。','action');},cost:()=>({money:3000,energy:5}),visible:s=>ageYears(s)>=15&&s.money>=3000},
+];
+function getActionBudget(s){const a=ageYears(s);if(a<5)return 1;if(a<12)return 2;if(!s.career)return 3;return 2;}
+function getVisibleActions(s){return ACTIONS.filter(a=>!a.visible||a.visible(s));}
+function performAction(s,id){const a=ACTIONS.find(x=>x.id===id);if(!a)return{ok:false,reason:'未知行动'};if(a.visible&&!a.visible(s))return{ok:false,reason:'当前不可用'};const c=a.cost(s);if(s.money<c.money)return{ok:false,reason:'💰 钱不够'};if(s.needs.energy+c.energy>110)return{ok:false,reason:'😩 精力不足'};a.apply(s);return{ok:true};}
+function getAvailableJobs(s){const ei=EDU_ORDER.indexOf(s.education.level)||0;return Object.entries(JOBS).filter(([id,j])=>{const r=j.req||{};return(ei>=(r.edu||0))&&(s.attrs.smarts>=(r.smarts||0))&&(s.attrs.looks>=(r.looks||0))&&(s.attrs.relationships>=(r.relationships||0))&&(s.money>=(r.wealth||0));}).map(([id,j])=>({id,...j}));}
+function takeJob(s,jobId){const j=JOBS[jobId];if(!j)return{ok:false};s.career={jobId,level:1,salary:j.salaryBase,company:'某公司',years:0,satisfaction:60};pushFeed(s,`你成为了一名${j.name}！`,'milestone');return{ok:true};}
+function salaryOf(s){const c=s.career;if(!c||!c.jobId)return 0;const j=JOBS[c.jobId];if(!j)return 0;const base=j.salaryBase+j.salaryBase*(c.level-1)*0.25;const sb=1+(s.attrs.smarts-50)/200;return Math.round(base*sb*(c.satisfaction/70));}
+function canPromote(s){const c=s.career;if(!c)return false;const j=JOBS[c.jobId];if(!j)return false;const max=j.isBusiness?10:6;if(c.level>=max)return false;const ny=c.level*0.8;return c.years>=ny&&c.satisfaction>=50+c.level*5&&s.attrs.smarts>=40+c.level*6;}
+function tryPromote(s){if(!canPromote(s))return{ok:false};s.career.level+=1;s.stats.promotions+=1;addAttr(s,'relationships',3);return{ok:true};}
 
-  // ====== 状态 ======
-  var grid, current, next, score, best, lines, level, dropInterval, timer, running, paused;
-
-  function emptyGrid(){var g=[];for(var r=0;r<ROWS;r++){g.push(new Array(COLS).fill(0));}return g;}
-
-  function newPiece(type){
-    var def=SHAPES[type];
-    return {type:type, color:def.color, matrix:cloneMatrix(def.states[0]), state:0};
-  }
-  function cloneMatrix(m){return m.map(function(r){return r.slice();});}
-  function randomType(){return TYPES[Math.floor(Math.random()*TYPES.length)];}
-
-  function spawn(){
-    current=newPiece(next);
-    next=randomType();
-    // 居中顶部
-    current.x=Math.floor((COLS-current.matrix[0].length)/2);
-    current.y=0;
-    if(collides(current.x,current.y,current.matrix)){gameOver();}
-    drawNext();
-  }
-
-  function collides(x,y,matrix){
-    for(var r=0;r<matrix.length;r++){
-      for(var c=0;c<matrix[r].length;c++){
-        if(!matrix[r][c])continue;
-        var nx=x+c, ny=y+r;
-        if(nx<0||nx>=COLS||ny>=ROWS)return true;
-        if(ny>=0&&grid[ny][nx])return true;
-      }
+/* ---------- 人生节点 ---------- */
+function applyLifeNodes(s){
+  const evs=[];const age=ageYears(s);
+  if(s._lastNodeAge===age)return evs;
+  s._lastNodeAge=age;
+  // 入学/升学
+  const enrollMap=[{level:'小学',a:6},{level:'初中',a:12},{level:'高中',a:15},{level:'大学',a:18}];
+  for(const {level,a}of enrollMap){
+    if(age===a&&s.education.level!==level&&EDU_ORDER.indexOf(level)>EDU_ORDER.indexOf(s.education.level)){
+      if(level==='大学'&&s.attrs.smarts<45){pushFeed(s,'📉 成绩不理想，你决定先工作再考虑升学。','normal');return evs;}
+      s.education.level=level;s.education.school=SCHOOL_NAMES[level];s.education.yearsLeft=EDU_YEARS[level];
+      pushFeed(s,`📚 你进入了${level}（${s.education.school}）！`,'milestone');addAttr(s,'smarts',3);
+      evs.push({id:'enroll_'+level,title:'入学',text:'进入'+level,milestone:true});
+      break;
     }
-    return false;
   }
-
-  function merge(){
-    var m=current.matrix;
-    for(var r=0;r<m.length;r++)for(var c=0;c<m[r].length;c++){
-      if(m[r][c]){var ny=current.y+r,nx=current.x+c;if(ny>=0&&ny<ROWS&&nx>=0&&nx<COLS)grid[ny][nx]=current.color;}
+  // 毕业推进
+  if(s.education.yearsLeft>0){
+    s.education.yearsLeft-=1/12;
+    if(s.education.yearsLeft<=0){
+      const lvl=s.education.level,next=EDU_ORDER[EDU_ORDER.indexOf(lvl)+1];
+      if(next&&!['硕士','博士'].includes(next)){s.education.level=next;s.education.school=SCHOOL_NAMES[next];s.education.yearsLeft=EDU_YEARS[next];pushFeed(s,`🎓 你从${lvl}毕业，升入${next}！`,'milestone');addAttr(s,'smarts',5);addAttr(s,'happiness',5);}
+      else if(lvl==='大学'){s.education.yearsLeft=0;pushFeed(s,'🎓 你大学毕业了！','milestone');addAttr(s,'smarts',8);addAttr(s,'happiness',8);}
+      else{s.education.yearsLeft=0;if(lvl==='博士'){pushFeed(s,'🎓 你拿到了博士学位！','milestone');addAttr(s,'smarts',10);}}
     }
   }
+  // 读研选择（大学毕业后）
+  if(age>=22&&s.education.level==='大学'&&s.attrs.smarts>=70&&!s._gradChecked&&!s.flags.gradSchool){
+    s._gradChecked=true;
+    // 以事件形式触发
+    s.pendingChoices={
+      id:'grad_school',title:'🎓 是否读研？',text:'你成绩优异，导师建议你继续深造。',image:'🎓',requiresChoice:true,
+      options:[{index:0,label:'攻读硕士',hint:'智力大幅提升'},{index:1,label:'直接工作',hint:'早点赚钱'}],
+      _def:{id:'grad_school',once:false,options:[{label:'攻读硕士',effects:{education:{level:'硕士',school:SCHOOL_NAMES['硕士'],yearsLeft:EDU_YEARS['硕士']},attrs:{smarts:10,happiness:5}}},{label:'直接工作',effects:{attrs:{money:5000,happiness:3}}}]},
+    };
+  }
+  // 退休
+  if(age===65&&s.career){pushFeed(s,`🏖️ 到了退休年龄，你从 ${JOBS[s.career.jobId]?JOBS[s.career.jobId].name:'岗位'} 退休了。`,'milestone');s.career=null;evs.push({id:'retire',title:'退休',text:'结束职业生涯',milestone:true});}
+  // 生日
+  if(s.ageMonths%12===0&&age>0){pushFeed(s,`🎂 生日快乐！你满 ${age} 岁了。`,'milestone');addAttr(s,'happiness',3);if(age%10===0){pushFeed(s,`✨ 这是你的 ${age} 岁整寿，家人朋友齐聚一堂。`,'milestone');addAttr(s,'relationships',5);}}
+  return evs;
+}
 
-  function rotate(){
-    var def=SHAPES[current.type];
-    var newState=(current.state+1)%def.states.length;
-    var newMatrix=cloneMatrix(def.states[newState]);
-    // 尝试旋转，遇障碍则左右墙踢(Wall Kick)试探
-    var kicks=[0,-1,1,-2,2];
-    for(var i=0;i<kicks.length;i++){
-      var kx=kicks[i];
-      if(!collides(current.x+kx,current.y,newMatrix)){current.x+=kx;current.state=newState;current.matrix=newMatrix;draw();return;}
-    }
-  }
-
-  function moveDown(){if(!collides(current.x,current.y+1,current.matrix)){current.y++;draw();return true;}return false;}
-
-  function softDrop(){if(moveDown()){score+=1;updateHUD();}else{lockPiece();} }
-
-  function hardDrop(){
-    while(moveDown()){score+=2;}
-    lockPiece();
-  }
-
-  function lockPiece(){
-    merge();
-    var cleared=clearLines();
-    if(cleared>0){
-      lines+=cleared;
-      // 标准计分：1行100, 2行300, 3行500, 4行800，乘等级
-      var gains=[0,100,300,500,800];
-      score+=gains[cleared]*level;
-      level=Math.floor(lines/10)+1;
-      dropInterval=Math.max(100,800-(level-1)*60);
-      updateHUD();
-    }
-    spawn();
-    draw();
-  }
-
-  function clearLines(){
-    var cleared=0;
-    for(var r=ROWS-1;r>=0;r--){
-      var full=true;
-      for(var c=0;c<COLS;c++){if(!grid[r][c]){full=false;break;}}
-      if(full){
-        grid.splice(r,1);
-        grid.unshift(new Array(COLS).fill(0));
-        cleared++;
-        r++; // 重新检查当前行（因为下移）
-      }
-    }
-    return cleared;
-  }
-
-  // ====== 渲染 ======
-  function draw(){
-    ctx.clearRect(0,0,boardCv.width,boardCv.height);
-    // 网格
-    ctx.strokeStyle='rgba(255,255,255,.04)';ctx.lineWidth=1;
-    for(var c=0;c<=COLS;c++){ctx.beginPath();ctx.moveTo(c*SIZE,0);ctx.lineTo(c*SIZE,ROWS*SIZE);ctx.stroke();}
-    for(var r=0;r<=ROWS;r++){ctx.beginPath();ctx.moveTo(0,r*SIZE);ctx.lineTo(COLS*SIZE,r*SIZE);ctx.stroke();}
-    // 已落方块
-    for(var r=0;r<ROWS;r++)for(var c=0;c<COLS;c++){if(grid[r][c])drawCell(ctx,c,r,grid[r][c]);}
-    // 当前方块
-    if(current){var m=current.matrix;for(var r=0;r<m.length;r++)for(var c=0;c<m[r].length;c++){if(m[r][c])drawCell(ctx,current.x+c,current.y+r,current.color);}}
-  }
-  function drawCell(context,x,y,color){
-    var px=x*SIZE, py=y*SIZE;
-    context.fillStyle=color;
-    context.fillRect(px+1,py+1,SIZE-2,SIZE-2);
-    // 高光
-    context.fillStyle='rgba(255,255,255,.25)';
-    context.fillRect(px+2,py+2,SIZE-6,4);
-    context.fillRect(px+2,py+2,4,SIZE-6);
-    context.fillStyle='rgba(0,0,0,.2)';
-    context.fillRect(px+SIZE-6,py+2,4,SIZE-4);
-    context.fillRect(px+2,py+SIZE-6,SIZE-4,4);
-    context.strokeStyle='rgba(0,0,0,.35)';
-    context.lineWidth=1;
-    context.strokeRect(px+.5,py+.5,SIZE-1,SIZE-1);
-  }
-  function drawNext(){
-    nctx.clearRect(0,0,nextCv.width,nextCv.height);
-    var def=SHAPES[next];
-    var m=def.states[0];
-    var cell=Math.floor(nextCv.width/4);
-    var offX=(4-m[0].length)*cell/2, offY=(4-m.length)*cell/2;
-    for(var r=0;r<m.length;r++)for(var c=0;c<m[r].length;c++){if(m[r][c]){nctx.fillStyle=def.color;nctx.fillRect(offX+c*cell+1,offY+r*cell+1,cell-2,cell-2);}}
-  }
-
-  function updateHUD(){
-    scoreEl.textContent=score;
-    linesEl.textContent=lines;
-    levelEl.textContent=level;
-    if(score>best){best=score;storage.set('tetris_best',best);}
-    bestEl.textContent=best;
-  }
-
-  // ====== 循环 ======
-  function loop(){
-    if(paused||!running)return;
-    if(!moveDown()){lockPiece();}
-    timer=setTimeout(loop,dropInterval);
-  }
-  function startLoop(){clearTimeout(timer);loop();}
-
-  function init(){
-    grid=emptyGrid();
-    score=0;lines=0;level=1;dropInterval=800;
-    next=randomType();
-    running=true;paused=false;
-    updateHUD();
-    spawn();
-    draw();
-    overlay.classList.remove('show');
-    startLoop();
-  }
-  function gameOver(){
-    running=false;clearTimeout(timer);
-    if(score>best){best=score;storage.set('tetris_best',best);bestEl.textContent=best;}
-    document.getElementById('ovTitle').textContent='游戏结束';
-    document.getElementById('ovText').textContent='最终得分';
-    document.getElementById('ovScore').textContent=score;
-    document.getElementById('ovScore').style.display='block';
-    document.getElementById('ovBtn').textContent='再来一局';
-    overlay.classList.add('show');
-  }
-  function togglePause(){
-    if(!running)return;
-    paused=!paused;
-    document.getElementById('pauseBtn').textContent=paused?'继续':'暂停';
-    if(paused){clearTimeout(timer);}
-    else{startLoop();}
-  }
-
-  // ====== 输入：键盘 ======
-  document.addEventListener('keydown',function(e){
-    if(!running)return;
-    switch(e.key){
-      case 'ArrowLeft':case 'a':case 'A':if(!collides(current.x-1,current.y,current.matrix)){current.x--;draw();}e.preventDefault();break;
-      case 'ArrowRight':case 'd':case 'D':if(!collides(current.x+1,current.y,current.matrix)){current.x++;draw();}e.preventDefault();break;
-      case 'ArrowDown':case 's':case 'S':softDrop();e.preventDefault();break;
-      case 'ArrowUp':case 'w':case 'W':case 'x':case 'X':rotate();e.preventDefault();break;
-      case ' ':case 'Spacebar':hardDrop();e.preventDefault();break;
-      case 'p':case 'P':togglePause();break;
+/* ---------- 事件系统 ---------- */
+function normalizeEffects(opt){
+  const eff=Object.assign({},opt.effects||{});
+  ['money','attrs','needs','flags','stats','career','education','achievement','relationDelta','relationTarget','unlockJob','_messages','_result','result'].forEach(k=>{
+    if(opt[k]!==undefined){
+      if(k==='money')eff.money=(eff.money||0)+opt.money;
+      else if(k==='result')eff._result=opt.result;
+      else if(k==='_messages'||k==='_result')eff[k]=opt[k];
+      else if(typeof opt[k]==='object'&&!Array.isArray(opt[k]))eff[k]=Object.assign({},eff[k]||{},opt[k]);
+      else eff[k]=opt[k];
     }
   });
-
-  // ====== 输入：触屏滑动（棋盘区）======
-  var sx,sy;
-  boardCv.addEventListener('touchstart',function(e){sx=e.touches[0].clientX;sy=e.touches[0].clientY;},{passive:true});
-  boardCv.addEventListener('touchend',function(e){
-    if(!running){return;}
-    var dx=e.changedTouches[0].clientX-sx, dy=e.changedTouches[0].clientY-sy;
-    var ax=Math.abs(dx), ay=Math.abs(dy);
-    if(Math.max(ax,ay)<20)return;
-    if(ay>ax){if(dy>0)softDrop();else hardDrop();}
-    else{if(dx>0){if(!collides(current.x+1,current.y,current.matrix)){current.x++;draw();}}else{if(!collides(current.x-1,current.y,current.matrix)){current.x--;draw();}}}
+  return eff;
+}
+function applyEffects(s,eff){
+  if(!eff)return;
+  if(eff.attrs)Object.entries(eff.attrs).forEach(([k,v])=>{s.attrs[k]=clamp(s.attrs[k]+v,0,100);});
+  if(eff.money!=null){s.money=Math.max(0,s.money+eff.money);if(eff.money>0)s.stats.totalEarned+=eff.money;}
+  if(eff.needs)Object.entries(eff.needs).forEach(([k,v])=>{s.needs[k]=clamp(s.needs[k]+v,0,100);});
+  if(eff.flags)Object.entries(eff.flags).forEach(([k,v])=>{s.flags[k]=v;});
+  if(eff.career&&s.career)Object.assign(s.career,eff.career);
+  if(eff.education)Object.assign(s.education,eff.education);
+  if(eff.achievement&&!s.achievements.find(a=>a.id===eff.achievement))s.achievements.push({id:eff.achievement,turn:s.turn});
+  if(eff.stats)Object.entries(eff.stats).forEach(([k,v])=>{s.stats[k]=(s.stats[k]||0)+v;});
+  if(eff.unlockJob){const r=takeJob(s,eff.unlockJob);}
+}
+function triggerRandomEvent(s,rng){
+  if(!s.alive)return null;
+  const age=ageYears(s),stage=getStage(s);
+  const cands=EVENTS.filter(ev=>{
+    if(ev.minAge!=null&&age<ev.minAge)return false;
+    if(ev.maxAge!=null&&age>ev.maxAge)return false;
+    if(ev.stage&&!ev.stage.includes(stage.id))return false;
+    if(ev.requires&&!ev.requires(s))return false;
+    if(ev.once&&s.flags['ev_'+ev.id])return false;
+    return true;
   });
-  // 触屏方向键（点击）
-  var keys=document.querySelectorAll('.key');
-  for(var i=0;i<keys.length;i++){
-    keys[i].addEventListener('click',(function(){
-      var act=keys[i].dataset.act;
-      return function(){
-        if(!running)return;
-        switch(act){
-          case 'left':if(!collides(current.x-1,current.y,current.matrix)){current.x--;draw();}break;
-          case 'right':if(!collides(current.x+1,current.y,current.matrix)){current.x++;draw();}break;
-          case 'down':softDrop();break;
-          case 'rotate':rotate();break;
-          case 'drop':hardDrop();break;
-        }
-      };
-    })());
+  if(!cands.length)return null;
+  const tot=cands.reduce((a,b)=>a+(b.weight||1),0);let x=rng()*tot;let chosen=cands[0];
+  for(const c of cands){x-=(c.weight||1);if(x<=0){chosen=c;break;}}
+  return {id:chosen.id,title:chosen.title,text:fillTpl(chosen.text,s),image:chosen.image||'💬',options:chosen.options.map((o,i)=>({index:i,label:o.label,hint:o.hint||''})),_def:chosen,requiresChoice:true};
+}
+function applyChoice(s,evId,optIdx){
+  const def=EVENTS.find(e=>e.id===evId);
+  if(!def)return{s,resultText:'（该事件已过期）'};
+  const opt=def.options[optIdx];if(!opt)return{s,resultText:'（无效选项）'};
+  if(def.once)s.flags['ev_'+def.id]=true;
+  const eff=normalizeEffects(opt);
+  // 兼容事件库中可能残留的 apply 函数
+  if(opt.apply)opt.apply(s);
+  applyEffects(s,eff);
+  const resultText=fillTpl(opt.result||eff._result||'你做出了选择。',s);
+  pushFeed(s,`${def.title}：${opt.label}`,'choice');
+  const msgs=opt._messages||eff._messages||[];
+  msgs.forEach(m=>pushFeed(s,m,'normal'));
+  s.pendingChoices=null;
+  return{s,resultText,effects:eff};
+}
+
+/* ---------- 结局 ---------- */
+function computeEnding(s){
+  const a=s.attrs,sc=lifeScore(s),age=ageYears(s),w=s.money;
+  if((s.stats.crimes||0)>=5&&(s.stats.prisonTime||0)>=10)return{id:'criminal',title:'阶下之囚',desc:'你选择了违法的道路，最终在铁窗中度过余生。',tier:'bad'};
+  if((s.stats.marriages||0)>=3&&(s.stats.divorces||0)>=3)return{id:'lonely',title:'形单影只',desc:'经历多次婚姻破裂，你最终习惯了独自一人。',tier:'bittersweet'};
+  if(w>=500000&&a.smarts>=80)return{id:'tycoon',title:'商业传奇',desc:'你白手起家，建立起属于自己的商业帝国，名留青史。',tier:'legendary'};
+  if(a.smarts>=90&&s.education.level==='博士')return{id:'nobel',title:'学术巨匠',desc:'你的研究改变了世界，名字被写进教科书。',tier:'legendary'};
+  if(sc>=80)return{id:'happy',title:'幸福美满',desc:'你拥有健康、财富与爱，度过充实而快乐的一生。',tier:'good'};
+  if(sc>=60)return{id:'ordinary',title:'平凡是真',desc:'没有惊天动地，但平淡中自有温暖。',tier:'good'};
+  if(sc>=35)return{id:'struggle',title:'艰难前行',desc:'生活不易，你一直在努力撑下去。',tier:'bittersweet'};
+  return{id:'tragic',title:'唏嘘一生',desc:'命运多舛，你的人生充满遗憾。',tier:'bad'};
+}
+
+/* ---------- 回合推进 ---------- */
+function computeMonthlyExpense(s){
+  const age=ageYears(s);let base=0;
+  if(age>=22)base=1500;else if(age>=18)base=800;else if(age>=6)base=200;
+  if(s.career&&s.career.level>=3)base+=1000;
+  if(s.stats.children>0)base+=s.stats.children*500;
+  return Math.round(base);
+}
+function checkGoals(s){s.goals.forEach(g=>{if(g.done)return;if(g.condition&&g.condition(s)){g.done=true;if(!s.achievements.find(a=>a.id===g.id))s.achievements.push({id:g.id,name:g.name,turn:s.turn});pushFeed(s,`🏆 达成目标：${g.name}`,'achievement');}});}
+function advanceTurn(s){
+  if(!s.alive)return{s,choice:null,events:[]};
+  const events=[];
+  // 保存历史（用于回退，最多保留 200 步）
+  s._history.push(JSON.stringify(s));
+  if(s._history.length>200)s._history.shift();
+
+  s.turn+=1;s.ageMonths+=1;const age=ageYears(s);
+  const exp=computeMonthlyExpense(s);addMoney(s,-exp);if(exp>0)pushFeed(s,`本月生活开支 -💰${exp}`,'normal');
+
+  // 需求衰减
+  const isChild=age<12;const sc=isChild?0.25:1.0;
+  setNeed(s,'hunger',s.needs.hunger+NEED_DECAY.hunger*0.6*sc);
+  setNeed(s,'energy',s.needs.energy+NEED_DECAY.energy*0.5*sc);
+  setNeed(s,'social',s.needs.social+NEED_DECAY.social*0.4*sc);
+  setNeed(s,'fun',s.needs.fun+NEED_DECAY.fun*0.5*sc);
+  const aging=age>60?0.3:age>40?0.1:0;const hd=(s.trait.effects.healthDecay||1);
+  if(!isChild)addAttr(s,'health',-aging*hd);
+
+  const avg=(s.needs.hunger+s.needs.energy+s.needs.social+s.needs.fun)/4;
+  if(avg>70){addAttr(s,'health',-1);addAttr(s,'happiness',-2);}
+  if(avg>85){addAttr(s,'health',-2);addAttr(s,'happiness',-3);}
+  if(isChild&&s.attrs.health<85)addAttr(s,'health',1);
+  else if(age<18&&s.attrs.health<90)addAttr(s,'health',0.5);
+
+  // 职业收入
+  if(s.career&&s.career.jobId){const sal=salaryOf(s);if(sal>0){addMoney(s,sal);s.career.years+=1/12;pushFeed(s,`工作收入 +💰${sal}`,'money');}}
+
+  // 人生节点
+  const nodeEvs=applyLifeNodes(s);events.push(...nodeEvs);
+
+  // 随机事件（若没有待处理选择，才触发新事件）
+  if(!s.pendingChoices){
+    const rng=createRNG((s.seed+(s.turn*7+13))>>>0);
+    const ev=triggerRandomEvent(s,rng);
+    if(ev){s.pendingChoices=ev;events.push(ev);}
   }
 
-  // ====== 按钮 ======
-  document.getElementById('startBtn').onclick=init;
-  document.getElementById('pauseBtn').onclick=togglePause;
-  document.getElementById('ovBtn').onclick=init;
+  // 关系衰减
+  s.relationships.forEach(r=>{r.level=clamp(r.level-0.3,0,100);});
+  s.relationships=s.relationships.filter(r=>r.level>=10||r.type==='family');
 
-  // ====== 启动 ======
-  best=+(storage.get('tetris_best')||0);
-  bestEl.textContent=best;
-  // 画一个初始空棋盘 + 演示
-  grid=emptyGrid();draw();
-  overlay.classList.add('show');
-})();
+  checkGoals(s);
+
+  let choice=null;
+  if(s.attrs.health<=0||age>=MAX_AGE){s.alive=false;s.ending=computeEnding(s);pushFeed(s,'💀 生命走到尽头……','death');}
+  else{choice=s.pendingChoices||null;if(choice)s.paused=true;}
+
+  if(age>=MAX_AGE&&s.alive){s.alive=false;s.ending=computeEnding(s);}
+  return{s,choice,events};
+}
+
+/* ---------- 存档（固定键名，永不删除） ---------- */
+function loadSave(){
+  try{
+    const raw=localStorage.getItem(SAVE_KEY);
+    if(!raw)return null;
+    const d=JSON.parse(raw);
+    if(!d||typeof d!=='object'||!d.name)return null;  // 损坏存档：当作无存档
+    return migrate(d);
+  }catch(e){
+    // 存档损坏（手动改过 / 版本不兼容）一律忽略，相当于重新开始，绝不阻断开局
+    console.warn('[人生模拟器] 存档读取失败，已忽略：',e.message);
+    return null;
+  }
+}
+function migrate(old){
+  // 未来版本在此做字段兼容；当前直接保留，并补齐缺失字段
+  const def=createInitialState({});
+  old.attrs=old.attrs||def.attrs;old.needs=old.needs||def.needs;
+  old.stats=old.stats||def.stats;old.goals=old.goals||def.goals;
+  old.messageFeed=old.messageFeed||[];
+  return old;
+}
+function saveGame(s){try{localStorage.setItem(SAVE_KEY,JSON.stringify(s));}catch(e){}}
+function clearSave(){/* 注意：此函数不会被自动调用，仅供玩家手动"重置" */localStorage.removeItem(SAVE_KEY);}
+
+/* ============================================================
+ *  UI 层
+ * ============================================================ */
+const $=id=>document.getElementById(id);
+const game={state:null,autoTimer:null,currentTab:'feed'};
+// 暴露给测试 / 调试（window 全局），生产环境无害
+window.__game = game;
+window.__engine = { createInitialState, advanceTurn, applyChoice, takeJob, tryPromote, performAction, computeEnding, lifeScore, getLifeRating, JOBS, ACTIONS, EVENTS, GOAL_LIBRARY, saveGame, loadSave, clearSave, SAVE_KEY };
+// 暴露 UI 函数（便于测试校验完整性，生产无副作用）
+window.__ui = { render, renderSetup, renderEnding, renderModal, renderCareer, renderGoals, renderStats, nextTurn, undo, flash, bind, init };
+
+function init(){
+  try{
+    const saved=loadSave();
+    if(saved&&saved.alive&&saved.name){// 有进行中的存档 → 直接恢复
+      game.state=saved;render();showGame();
+    }else if(saved&&!saved.alive){// 有一局已结束的存档 → 显示结局，可重开
+      game.state=saved;renderEnding();
+    }else{
+      renderSetup();
+    }
+  }catch(e){
+    // 任何异常都不能阻断开局界面渲染（否则按钮永远绑不上 = 点不了）
+    console.error('[人生模拟器] init 出错，已降级为新建人生：',e);
+    try{renderSetup();}catch(e2){/* 最后兜底：手动显示 setup */$('setup').classList.remove('hidden');}
+  }
+  try{bindTabs();}catch(e){console.error(e);}
+}
+
+/* ---- 开局界面 ---- */
+function renderSetup(){
+  $('setup').innerHTML='';
+  const wrap=document.createElement('div');
+  wrap.style.cssText='padding:30px 22px;';
+  wrap.innerHTML=`
+    <div style="text-align:center;margin:20px 0 30px;">
+      <div style="font-size:54px;">🎲</div>
+      <h1 style="font-size:26px;margin:10px 0 6px;">人生模拟器</h1>
+      <p style="color:var(--sub);font-size:13px;margin:0;">从出生到死亡，书写属于你的人生故事</p>
+    </div>
+    <div style="background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:16px;">
+      <label style="font-size:12px;color:var(--sub);">选择性别</label>
+      <div style="display:flex;gap:8px;margin-top:8px;">
+        <button class="sg-btn on" data-gender="男">👦 男</button>
+        <button class="sg-btn" data-gender="女">👧 女</button>
+      </div>
+    </div>
+    <div style="background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:16px;">
+      <label style="font-size:12px;color:var(--sub);">你的性格（影响一生）</label>
+      <div id="trait-list" style="display:grid;gap:8px;margin-top:10px;"></div>
+    </div>
+    <div style="background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:20px;">
+      <label style="font-size:12px;color:var(--sub);">姓名（可选，留空随机）</label>
+      <div style="display:flex;gap:8px;margin-top:8px;">
+        <select id="sg-ln" style="flex:1;padding:10px;border-radius:10px;background:var(--panel2);border:1px solid var(--line);color:var(--txt);"></select>
+        <input id="sg-fn" placeholder="名" style="flex:1;padding:10px;border-radius:10px;background:var(--panel2);border:1px solid var(--line);color:var(--txt);">
+      </div>
+    </div>
+    <button id="sg-start" class="btn primary" style="width:100%;padding:16px;font-size:16px;border-radius:14px;">🎬 开始我的人生</button>
+    <p id="sg-hint" style="color:var(--sub);font-size:11px;text-align:center;margin-top:14px;line-height:1.6;">
+      💾 进度自动保存在本机（localStorage）<br>更新代码后存档自动保留，无需担心
+    </p>
+  `;
+  $('setup').appendChild(wrap);
+  $('setup').classList.remove('hidden');
+
+  // 姓氏下拉
+  const ln=$('sg-ln');SURNAMES.forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s+'（姓）';ln.appendChild(o);});
+  // 性格
+  const tl=$('trait-list');
+  let chosenTrait=TRAITS[0].id;
+  TRAITS.forEach(t=>{
+    const d=document.createElement('div');
+    d.className='trait-opt'+(t.id===chosenTrait?' on':'');
+    d.dataset.id=t.id;
+    d.innerHTML=`<b>${t.name}</b> <span style="color:var(--sub);font-size:11px;float:right;">${t.desc}</span>`;
+    d.onclick=()=>{chosenTrait=t.id;tl.querySelectorAll('.trait-opt').forEach(x=>x.classList.remove('on'));d.classList.add('on');};
+    tl.appendChild(d);
+  });
+  // 性别
+  let gender='男';
+  wrap.querySelectorAll('.sg-btn').forEach(b=>{
+    b.onclick=()=>{gender=b.dataset.gender;wrap.querySelectorAll('.sg-btn').forEach(x=>x.classList.remove('on'));b.classList.add('on');populateFirstNames(gender);};
+    b.style.cssText='flex:1;padding:12px;border-radius:10px;background:var(--panel2);border:1px solid var(--line);color:var(--txt);cursor:pointer;';
+  });
+  wrap.querySelector('.sg-btn.on').style.background='var(--accent)';
+  populateFirstNames('男');
+  function populateFirstNames(g){
+    const fn=$('sg-fn');fn.value=pick(createRNG(Date.now()),NAMES_F[g]||NAMES_F['男']);
+  }
+
+  $('sg-start').onclick=()=>{
+    const fn=$('sg-fn').value.trim();
+    const lastNameVal=$('sg-ln').value;  // 直接用 $('sg-ln')，避免与下方 ln 变量 TDZ 冲突
+    const st=createInitialState({gender,trait:chosenTrait,firstName:fn||undefined,lastName:lastNameVal||undefined,seed:Math.floor(Math.random()*2e9)});
+    st.goals=GOAL_LIBRARY.map(g=>({...g,done:false}));
+    pushFeed(st,`🌟 你降生了。家人给你取名「${st.name}」。`,'milestone');
+    game.state=st;saveGame(st);
+    $('setup').classList.add('hidden');
+    render();showGame();
+  };
+  // 复用样式
+  const style=document.createElement('style');
+  style.textContent=`.sg-btn.on{background:var(--accent)!important;border-color:var(--accent)!important;}.trait-opt{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:11px 12px;font-size:13px;cursor:pointer;}.trait-opt.on{border-color:var(--accent);background:rgba(124,92,255,.15);}`;
+  document.head.appendChild(style);
+}
+
+/* ---- 主渲染 ---- */
+function showGame(){
+  $('setup').classList.add('hidden');
+  $('ending').classList.add('hidden');
+  $('game').classList.remove('hidden');
+  $('actionbar').classList.remove('hidden');
+  renderAttrs();renderActions();renderFeed();renderTopbar();
+}
+function renderTopbar(){
+  const s=game.state;const age=ageYears(s);
+  $('ui-name').textContent=s.name;
+  $('ui-age').textContent=`· ${age}岁${s.gender}`;
+  $('ui-trait').textContent=s.trait.name;
+  $('ui-stage').textContent=`${getStage(s).name} · 回合 ${s.turn}`;
+  const pct=clamp(age/MAX_AGE*100,0,100);
+  $('ui-lifebar').style.width=pct+'%';
+}
+function renderAttrs(){
+  const s=game.state;const box=$('attrs');box.innerHTML='';
+  ATTR_KEYS.forEach(k=>{
+    const m=ATTR_META[k];const v=s.attrs[k];
+    const div=document.createElement('div');div.className='attr';
+    div.innerHTML=`<div class="lbl"><span>${m.ic} ${m.n}</span></div><div class="val">${Math.round(v)}</div><div class="bar"><span style="width:${v}%;background:${k==='health'?v<30?'var(--bad)':'var(--good)':k==='happiness'?v<40?'var(--warn)':'var(--gold)':'var(--accent2)'}"></span></div>`;
+    box.appendChild(div);
+  });
+  // 金钱 + 寿命条
+  const moneyRow=document.createElement('div');
+  moneyRow.style.cssText='grid-column:1/-1;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:8px 10px;display:flex;justify-content:space-between;font-size:12px;';
+  moneyRow.innerHTML=`<span>💰 现金</span><b>¥${s.money.toLocaleString()}</b>`;
+  box.appendChild(moneyRow);
+  // 需求条
+  const needs=$('needs');needs.innerHTML='';
+  NEEDS.forEach(k=>{
+    const m=NEED_META[k];const v=s.needs[k];
+    const d=document.createElement('div');d.className='need'+(v>75?' warn':'');
+    d.innerHTML=`<div class="nbar"><span style="width:${v}%;background:${v>75?'var(--bad)':'var(--accent2)'}"></span></div>${m.ic} ${Math.round(v)}`;
+    needs.appendChild(d);
+  });
+}
+function renderActions(){
+  const s=game.state;const box=$('action-btns');box.innerHTML='';
+  const acts=getVisibleActions(s).slice(0,5);
+  acts.forEach(a=>{
+    const b=document.createElement('button');b.className='btn act';
+    b.innerHTML=`<span class="ic">${a.ic}</span><span>${a.name}</span>`;
+    b.onclick=()=>{const r=performAction(s,a.id);if(!r.ok)flash(r.reason);else{saveGame(s);render();}};
+    box.appendChild(b);
+  });
+  // 若行动超过5个，塞进"更多"（简单处理：这里固定显示前5，其余通过tab面板）
+}
+function renderFeed(){
+  const s=game.state;const box=$('feed');box.innerHTML='';
+  const items=s.messageFeed.slice(0,40);
+  if(!items.length){box.innerHTML='<div class="empty">人生尚未开始……</div>';return;}
+  items.forEach(it=>{
+    const d=document.createElement('div');d.className='feed-item'+(it.type||'');
+    d.innerHTML=`<span class="age">${it.age}岁</span> ${it.text}`;
+    box.appendChild(d);
+  });
+}
+function renderCareer(){
+  const s=game.state;const box=$('tab-career');if(!box)return;box.innerHTML='';
+  if(s.career&&s.career.jobId){
+    const j=JOBS[s.career.jobId];
+    box.innerHTML=`
+      <div class="job-card">
+        <div style="font-size:16px;font-weight:700;">${j.name} <span style="font-size:11px;color:var(--sub);">Lv.${s.career.level}</span></div>
+        <div class="mini" style="margin:6px 0;">${j.desc||j.industry}</div>
+        <div style="height:6px;background:var(--panel2);border-radius:3px;margin:8px 0;overflow:hidden;"><div style="width:${clamp(s.career.satisfaction,0,100)}%;height:100%;background:var(--good);"></div></div>
+        <div class="mini">满意度 ${Math.round(s.career.satisfaction)} · 在职 ${Math.round(s.career.years*10)/10} 年</div>
+        <div style="margin-top:10px;font-size:13px;">月薪 💰${salaryOf(s).toLocaleString()}</div>
+        <button id="btn-promo" class="btn primary" style="width:100%;margin-top:10px;">📈 尝试晋升</button>
+      </div>`;
+    $('btn-promo').onclick=()=>{const r=tryPromote(s);flash(r.ok?`🎉 晋升到 Lv.${s.career.level}`:r.reason||'暂不满足晋升条件');if(r.ok)saveGame(s);render();};
+  }else{
+    box.innerHTML='<div class="empty">尚未就业。成年后会自动触发求职事件。</div>';
+  }
+  // 可申请职业
+  const avail=getAvailableJobs(s);
+  if(avail.length){box.innerHTML+=`<div class="mini" style="margin:8px 0;">可申请的职业：</div>`;}
+  avail.slice(0,8).forEach(j=>{
+    box.innerHTML+=`<div class="job-card" style="display:flex;justify-content:space-between;align-items:center;"><div><b>${j.name}</b> <span class="mini">${j.industry}</span><div class="mini">起薪 💰${j.salaryBase.toLocaleString()}/月</div></div><button class="btn primary" data-job="${j.id}">入职</button></div>`;
+  });
+  box.querySelectorAll('[data-job]').forEach(b=>{b.onclick=()=>{const r=takeJob(s,b.dataset.job);flash(r.ok?`你成为了${JOBS[b.dataset.job].name}！`:r.reason);if(r.ok)saveGame(s);render();};});
+}
+function renderGoals(){
+  const s=game.state;const box=$('tab-goals');if(!box)return;box.innerHTML='';
+  s.goals.forEach(g=>{
+    box.innerHTML+=`<div class="goal-card${g.done?' done':''}"><div style="display:flex;justify-content:space-between;"><b>${g.done?'✅':'🎯'} ${g.name}</b>${g.done?'<span class="chip">已完成</span>':''}</div><div class="mini" style="margin-top:4px;">${g.desc}</div></div>`;
+  });
+  // 成就
+  box.innerHTML+=`<h3 style="font-size:14px;margin:16px 0 8px;">🏆 成就墙 (${s.achievements.length})</h3>`;
+  if(s.achievements.length){s.achievements.slice().reverse().forEach(a=>{box.innerHTML+=`<span class="chip">${a.name||a.id}</span>`;});}
+  else box.innerHTML+=`<div class="empty">尚无成就</div>`;
+}
+function renderStats(){
+  const s=game.state;const box=$('tab-stats');if(!box)return;box.innerHTML='';
+  const st=s.stats;
+  const rows=[
+    ['💰 累计收入',`¥${st.totalEarned.toLocaleString()}`],['👶 子女',st.children],['💍 结婚',st.marriages],['💔 离婚',st.divorces],
+    ['📚 读书',Math.floor(st.booksRead||0)],['📖 出版',st.booksPublished||0],['✈️ 旅行',Math.floor(st.travels||0)],['💼 跳槽',st.jobsHeld],['📈 晋升',st.promotions],['⚖️ 犯罪',st.crimes||0],
+  ];
+  box.innerHTML='<div class="stat-grid" style="grid-template-columns:repeat(2,1fr);"></div>';
+  const grid=box.querySelector('.stat-grid');
+  rows.forEach(([k,v])=>{grid.innerHTML+=`<div class="cell"><div class="k">${k}</div><div class="v">${v}</div></div>`;});
+  box.innerHTML+=`<div class="mini" style="margin-top:10px;">人生评分 <b style="color:var(--accent2)">${lifeScore(s)}</b> / 100 · ${getLifeRating(lifeScore(s)).label}</div>`;
+}
+function renderTabs(){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('on'));
+  const map={feed:'feed',career:'tab-career',goals:'tab-goals',stats:'tab-stats'};
+  let panel=$(map[game.currentTab]);
+  if(!panel){
+    panel=document.createElement('div');panel.id=map[game.currentTab];panel.className='tab-panel on';
+    $('game').insertBefore(panel,$('feed').nextSibling);
+  }else panel.classList.add('on');
+  if(game.currentTab==='career')renderCareer();
+  if(game.currentTab==='goals')renderGoals();
+  if(game.currentTab==='stats')renderStats();
+  // feed 标签默认就是 #feed 区域
+  if(game.currentTab==='feed'){$('feed').style.display='';}
+  else{$('feed').style.display='none';}
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.dataset.tab===game.currentTab));
+}
+function bindTabs(){
+  document.querySelectorAll('.tab').forEach(t=>{
+    t.onclick=()=>{game.currentTab=t.dataset.tab;renderTabs();};
+  });
+}
+
+/* ---- 事件弹窗 ---- */
+function renderModal(){
+  const s=game.state;const m=$('modal');
+  if(!s.pendingChoices||!s.alive){m.classList.add('hidden');return;}
+  const ev=s.pendingChoices;
+  m.classList.remove('hidden');
+  m.innerHTML=`
+    <div class="card">
+      <div class="ev-t">${ev.image||'💬'} 人生抉择 · ${ageYears(s)}岁</div>
+      <h2>${ev.title}</h2>
+      <div class="ev-text">${ev.text}</div>
+      ${ev.options.map(o=>`<button class="opt-btn" data-i="${o.index}"><span class="ic">${optionIcon(o.label)}</span>${o.label}${o.hint?`<span class="hint">${o.hint}</span>`:''}</button>`).join('')}
+    </div>`;
+  m.querySelectorAll('[data-i]').forEach(b=>{
+    b.onclick=()=>{
+      const r=applyChoice(s,ev.id,parseInt(b.dataset.i));
+      saveGame(s);
+      if(!s.alive){renderEnding();return;}
+      renderModal();render();
+    };
+  });
+}
+function optionIcon(label){
+  const map={'🎓':'🎓','💍':'💍','👶':'👶','🏠':'🏠','🚀':'🚀','📈':'📈','💰':'💰','🏥':'🏥','🏆':'🏆','✈️':'✈️','🎮':'🎮','📖':'📖'};
+  for(const k in map)if(label.includes(k))return map[k];
+  return '▪️';
+}
+
+/* ---- 结局页 ---- */
+function renderEnding(){
+  $('game').classList.add('hidden');
+  $('actionbar').classList.add('hidden');
+  $('modal').classList.add('hidden');
+  $('ending').classList.remove('hidden');
+  const s=game.state;const en=s.ending||computeEnding(s);const sc=lifeScore(s);const rt=getLifeRating(sc);
+  const tierEmoji={legendary:'🏆',good:'😊',bittersweet:'🌤️',bad:'🌧️'}[en.tier]||'🎭';
+  const ach=s.achievements.map(a=>a.name||a.id);
+  $('ending').innerHTML=`
+    <div class="eto">${tierEmoji}</div>
+    <div style="font-size:12px;color:var(--sub);">你的一生 · ${ageYears(s)} 岁</div>
+    <h1>${en.title}</h1>
+    <div class="score-ring" style="--p:${sc}"><div class="inner"><div class="sc">${sc}</div><div class="lb">${rt.label}</div></div></div>
+    <div class="desc">${en.desc}</div>
+    <div class="stat-grid">
+      <div class="cell"><div class="k">💰 现金</div><div class="v">¥${s.money.toLocaleString()}</div></div>
+      <div class="cell"><div class="k">👶 子女</div><div class="v">${s.stats.children}</div></div>
+      <div class="cell"><div class="k">💼 职业</div><div class="v">${s.career?JOBS[s.career.jobId].name:'—'}</div></div>
+      <div class="cell"><div class="k">🎓 学历</div><div class="v">${s.education.level}</div></div>
+      <div class="cell"><div class="k">💍 婚姻</div><div class="v">${s.stats.marriages}次</div></div>
+      <div class="cell"><div class="k">🏆 成就</div><div class="v">${s.achievements.length}</div></div>
+    </div>
+    ${ach.length?`<div class="mini" style="margin-bottom:20px;">成就：${ach.join(' · ')}</div>`:''}
+    <button id="end-restart" class="btn primary" style="width:100%;padding:16px;font-size:16px;border-radius:14px;">🔄 再活一次</button>
+    <p class="mini" style="margin-top:14px;line-height:1.6;">💾 你的存档已保留在本机<br>想继续修改代码？存档键名固定为 <b>life_sim_save_v1</b>，更新后自动读取</p>
+  `;
+  $('end-restart').onclick=()=>{clearSave();game.state=null;location.reload();};
+}
+
+/* ---- 全局刷新 ---- */
+function render(){
+  if(!game.state.alive){renderEnding();return;}
+  renderTopbar();renderAttrs();renderActions();renderFeed();renderTabs();renderModal();
+}
+
+/* ---- 操作：下一个月 / 自动 / 回退 ---- */
+function nextTurn(){
+  const s=game.state;if(!s||!s.alive)return;
+  if(s.pendingChoices){flash('请先处理当前的抉择');return;}
+  const {choice}=advanceTurn(s);
+  saveGame(s);
+  render();
+  if(choice){/* 弹窗由 render 自动显示 */}
+}
+function autoLive(){
+  const s=game.state;if(!s.alive)return;
+  if(s.pendingChoices){flash('遇到抉择，自动暂停');stopAuto();return;}
+  nextTurn();
+}
+function startAuto(){
+  if(game.autoTimer)return;
+  $('btn-auto').textContent='⏹ 停止';
+  game.autoTimer=setInterval(autoLive,900);
+}
+function stopAuto(){
+  if(game.autoTimer){clearInterval(game.autoTimer);game.autoTimer=null;}
+  $('btn-auto').textContent='⏩ 自动';
+}
+function undo(){
+  const s=game.state;
+  if(!s._history||!s._history.length){flash('没有可回退的步骤');return;}
+  const prev=JSON.parse(s._history.pop());
+  // 回退时清除死亡/结局状态，允许继续
+  prev.alive=true;prev.ending=null;prev.paused=false;
+  game.state=prev;saveGame(prev);render();flash('↩️ 已回退一个月');
+}
+
+/* ---- 提示 ---- */
+let flashTimer;
+function flash(msg){
+  let el=$('toast');
+  if(!el){el=document.createElement('div');el.id='toast';el.style.cssText='position:fixed;bottom:180px;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;padding:10px 18px;border-radius:20px;font-size:13px;z-index:200;opacity:0;transition:.3s;pointer-events:none;';document.body.appendChild(el);}
+  el.textContent=msg;el.style.opacity='1';
+  clearTimeout(flashTimer);flashTimer=setTimeout(()=>{el.style.opacity='0';},1600);
+}
+
+/* ---- 事件绑定 ---- */
+function safeOn(target, evt, fn){
+  try{ if(target&&typeof target.addEventListener==='function'){target.addEventListener(evt,fn);return true;} }catch(e){}
+  return false;
+}
+function bind(){
+  $('btn-next').onclick=nextTurn;
+  $('btn-auto').onclick=()=>{game.autoTimer?stopAuto():startAuto();};
+  $('btn-pause').onclick=()=>{stopAuto();flash('已暂停');};
+  $('btn-back').onclick=undo;
+  $('btn-restart').onclick=()=>{if(confirm('确定要放弃当前人生，重新来过吗？\n（存档将被清除）')){clearSave();location.reload();}};
+  // 页面隐藏时自动存档（保险）—— 用兼容写法，避免老旧环境报错阻断初始化
+  safeOn(window,'beforeunload',()=>{try{if(game.state)saveGame(game.state);}catch(e){}});
+  safeOn(document,'visibilitychange',()=>{try{if(game.state)saveGame(game.state);}catch(e){}});
+}
+
+/* ---- 启动 ---- */
+bind();init();
 </script>
 </body>
 </html>
