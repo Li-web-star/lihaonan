@@ -1,162 +1,258 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="国华大学 Guohua University - 创立于1905年的百年名校">
-    <title>国华大学 | Guohua University</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>李浩楠 · Li Haonan</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;color:#1d1d1f;background:#f5f5f7;line-height:1.6}
+img{max-width:100%}
+
+/* 导航 */
+nav{position:fixed;top:0;left:0;width:100%;z-index:100;background:rgba(0,0,0,.8);backdrop-filter:blur(20px)}
+.nav-in{max-width:900px;margin:0 auto;height:50px;display:flex;align-items:center;justify-content:space-between;padding:0 16px}
+.brand{color:#fff;font-size:17px;font-weight:600}
+.links{overflow-x:auto;white-space:nowrap;scrollbar-width:none}
+.links::-webkit-scrollbar{display:none}
+.links a{color:#eee;font-size:13px;margin-left:18px}
+
+/* 通用 */
+.wrap{max-width:900px;margin:0 auto;padding:80px 20px;text-align:center}
+.dark{background:#0a0a0a;color:#fff}
+.light{background:#fff;color:#1d1d1f}
+.tag{color:#e53935;font-size:12px;letter-spacing:2px;font-weight:700;margin-bottom:14px}
+h1,h2{font-size:clamp(32px,7vw,52px);font-weight:800;line-height:1.2;margin-bottom:16px;letter-spacing:-.02em}
+.sub{font-size:clamp(16px,3.5vw,20px);color:#a1a1a6;margin-bottom:10px}
+.desc{font-size:17px;color:#444;max-width:680px;margin:0 auto 14px;line-height:1.8}
+strong{color:#e53935}
+
+/* Hero */
+.hero{height:100vh;min-height:520px;background:#0a0a0a;color:#fff;display:flex;align-items:center;justify-content:center;padding:0 20px;text-align:center}
+.glow{position:fixed;top:20%;left:50%;width:min(90vw,600px);height:min(90vw,600px);transform:translateX(-50%);border-radius:50%;background:radial-gradient(circle,rgba(229,57,53,.3),transparent 65%);z-index:-1}
+
+/* 规格表 */
+.spec{max-width:680px;margin:32px auto 0;text-align:left}
+.row{display:flex;justify-content:space-between;padding:15px 4px;border-bottom:1px solid #e0e0e0;gap:12px;font-size:16px}
+.row:first-child{border-top:1px solid #e0e0e0}
+.k{color:#666;flex:0 0 auto}
+.v{font-weight:600;text-align:right;word-break:break-word}
+.red{color:#e53935}
+
+/* 卡片网格 */
+.grid{display:grid;gap:16px;margin-top:40px;text-align:left}
+.grid.cols-3{grid-template-columns:repeat(3,1fr)}
+.grid.cols-4{grid-template-columns:repeat(4,1fr)}
+.card{background:#fafafa;border-radius:18px;padding:26px 20px}
+.card.dark-card{background:#1c1c1e;color:#fff;border:1px solid #333}
+.num{color:#e53935;font-weight:800;font-size:14px;letter-spacing:1px;margin-bottom:12px}
+.card h3{font-size:22px;margin-bottom:8px}
+.tag2{color:#e53935;font-weight:600;margin-bottom:10px;font-size:15px}
+.card p{color:#666;font-size:14px;line-height:1.6}
+.card.dark-card p,.card.dark-card .level{color:#aaa}
+.level{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#999;margin-bottom:8px}
+
+/* 时间轴（无年份） */
+.tl{display:grid;grid-template-columns:repeat(2,1fr);gap:32px;margin-top:44px;text-align:left}
+.node{padding-left:24px;border-left:3px solid #e53935}
+.node-label{color:#e53935;font-weight:800;font-size:13px;letter-spacing:1px;margin-bottom:8px}
+.node h4{font-size:19px;margin-bottom:8px}
+.node p{color:#666;font-size:15px}
+
+/* 联系 */
+.contact{min-height:440px;display:flex;align-items:center;justify-content:center}
+a.cta{color:#e53935;font-size:18px;border-bottom:1px solid #e53935;padding-bottom:2px}
+
+/* Footer */
+footer{background:#000;color:#aaa;padding:40px 20px 30px;font-size:13px}
+.ft{max-width:900px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr;gap:30px;padding-bottom:28px;border-bottom:1px solid #333}
+.ft .b{color:#fff;font-size:16px;font-weight:600;margin-bottom:8px}
+.ft a{display:block;color:#aaa;line-height:2}
+.copy{max-width:900px;margin:20px auto 0;color:#666;font-size:12px}
+
+/* 滚动动画 */
+.reveal{opacity:0;transform:translateY(30px);transition:.8s}
+.reveal.in{opacity:1;transform:none}
+
+/* ===== 手机端（核心） ===== */
+@media(max-width:760px){
+  .wrap{padding:60px 18px}
+  .links a{margin-left:0;margin-right:16px}
+  .grid.cols-3,.grid.cols-4{grid-template-columns:1fr}
+  .tl{grid-template-columns:1fr}
+  .node{padding-left:18px}
+  .row{font-size:15px;padding:13px 2px}
+  .card{padding:22px 18px}
+  .ft{grid-template-columns:1fr;gap:22px}
+  h1,h2{font-size:clamp(30px,10vw,44px)}
+}
+</style>
 </head>
 <body>
-    <!-- 顶部通知栏 -->
-    <div class="top-bar">
-        <div class="container top-bar-inner">
-            <span class="notice">📢 2026年秋季招生现已开启 | 欢迎全球学子报考</span>
-            <nav class="top-bar-links" aria-label="顶部快捷入口">
-                <a href="#library">图书馆</a>
-                <a href="#mail">邮箱登录</a>
-                <a href="#en">EN</a>
-            </nav>
-        </div>
+<nav>
+  <div class="nav-in">
+    <span class="brand">李浩楠</span>
+    <div class="links">
+      <a href="#about">关于</a>
+      <a href="#info">基本信息</a>
+      <a href="#interest">兴趣</a>
+      <a href="#certs">证书</a>
+      <a href="#timeline">成长</a>
+      <a href="#contact">联系</a>
     </div>
+  </div>
+</nav>
 
-    <!-- 主导航 -->
-    <header class="header" id="header">
-        <div class="container header-inner">
-            <a href="#top" class="logo" aria-label="国华大学首页">
-                <span class="logo-mark" aria-hidden="true">华</span>
-                <span class="logo-text">
-                    <b>国华大学</b>
-                    <small>Guohua University</small>
-                </span>
-            </a>
-            <nav class="nav" id="mainNav" aria-label="主导航">
-                <a href="#about">学校概况</a>
-                <a href="#academics">院系设置</a>
-                <a href="#research">科学研究</a>
-                <a href="#campus">校园生活</a>
-                <a href="#news">新闻动态</a>
-                <a href="#admission" class="nav-cta">招生信息</a>
-            </nav>
-            <button class="mobile-menu-btn" id="menuBtn" aria-label="打开菜单" aria-expanded="false">☰</button>
-        </div>
-    </header>
+<section class="hero" id="top">
+  <div class="glow"></div>
+  <div>
+    <h1>你好，我是&nbsp;李浩楠。</h1>
+    <p class="sub">一名 19 岁的消防救援技术专业学生。</p>
+    <p class="sub">现居陕西西安 · 正在备考专升本。</p>
+    <p style="margin-top:24px"><a href="#contact" class="cta">了解我</a></p>
+  </div>
+</section>
 
-    <main id="top">
-        <!-- Hero 区域 -->
-        <section class="hero">
-            <canvas class="hero-canvas" id="starfield" aria-hidden="true"></canvas>
-            <div class="container hero-content">
-                <span class="hero-badge">✦ 创立于 1905 年 · 百年名校 · 全球 TOP 50</span>
-                <h1 class="hero-title">格物致知<br>经世致用</h1>
-                <p class="hero-desc">坐落于钟灵毓秀的燕山脚下，国华大学以"厚德博学、笃行致远"为训，百年间薪火相传。<br>这里，每一颗求知的心都能找到属于自己的广阔天地。</p>
-                <div class="hero-actions">
-                    <a href="#admission" class="btn btn-primary">立即报考</a>
-                    <a href="#about" class="btn btn-outline">了解更多 →</a>
-                </div>
-                <dl class="hero-stats">
-                    <div class="stat"><dt>在校学生</dt><dd><span class="counter" data-target="42000">0</span>+</dd></div>
-                    <div class="stat"><dt>全职教授</dt><dd><span class="counter" data-target="3200">0</span>+</dd></div>
-                    <div class="stat"><dt>国际合作院校</dt><dd><span class="counter" data-target="320">0</span>+</dd></div>
-                    <div class="stat"><dt>两院院士</dt><dd><span class="counter" data-target="68">0</span></dd></div>
-                </dl>
-            </div>
-            <a href="#about" class="hero-scroll" aria-label="向下滚动"><span>↓</span> 向下滚动探索</a>
-        </section>
+<section class="wrap light" id="about">
+  <div class="tag">ABOUT</div>
+  <h2>把基本盘说清楚，<br>比什么都重要。</h2>
+  <p class="desc">我是<strong>李浩楠</strong>，今年 19 岁，男生，现居<strong>陕西西安</strong>。就读于<strong>陕西财经职业技术学院</strong>，2025 年入学，目前<strong>大二</strong>，专业是<strong>消防救援技术</strong>。</p>
+  <p class="desc">我喜欢<strong>摄影、跑步、羽毛球</strong>，目前正在<strong>备考专升本</strong>。手里已有<strong>四级电工证、C1 驾驶证、红十字救护培训证书</strong>，累计<strong>荣誉证书 10 余项</strong>。</p>
+  <p class="desc">比起「厉害」，我更想做一个踏实、靠谱、愿意持续学习的人。</p>
+</section>
 
-        <!-- 学校概况 -->
-        <section id="about" class="section">
-            <div class="container">
-                <header class="section-header">
-                    <span class="section-tag">ABOUT GHU</span>
-                    <h2>学校概况</h2>
-                    <p>一所有着百年积淀的综合性研究型大学</p>
-                </header>
-                <div class="about-grid">
-                    <div class="about-text">
-                        <p>国华大学（Guohua University，简称GHU）是一所坐落于中国北方的综合性研究型大学，始创于1905年。学校占地 5200 亩，拥有四个校区，以"厚德博学、笃行致远"为核心理念。</p>
-                        <p>百余年来，国华大学在基础科学、工程技术、人文社科等领域取得了举世瞩目的成就，培养了包括 15 位诺贝尔奖得主、百余位两院院士在内的众多杰出校友。</p>
-                        <ul class="about-features">
-                            <li><span class="fi">🏛️</span><div><b>四大校区</b><p>燕南主校区 · 燕北科技园 · 滨海国际校区 · 西山书院</p></div></li>
-                            <li><span class="fi">🔬</span><div><b>前沿研究</b><p>年均科研经费超 57 亿元</p></div></li>
-                            <li><span class="fi">🌍</span><div><b>全球合作</b><p>与 320 所世界名校建立合作</p></div></li>
-                            <li><span class="fi">💡</span><div><b>创新创业</b><p>孵化科技型企业 800 余家</p></div></li>
-                        </ul>
-                    </div>
-                    <figure class="about-visual">
-                        <div class="campus-card">
-                            <div class="campus-img" role="img" aria-label="燕南主校区"></div>
-                            <figcaption class="campus-info">
-                                <h3>燕南主校区</h3>
-                                <p>占地 3600 亩，坐落于燕山南麓，融合中式古典与现代建筑风格。校内设有国家图书馆分馆（藏书 680 万册）、国家重点实验室、百年礼堂等地标建筑。</p>
-                            </figcaption>
-                        </div>
-                    </figure>
-                </div>
-            </div>
-        </section>
+<section class="wrap light" id="info" style="background:#fff">
+  <div class="tag">PROFILE</div>
+  <h2>先把基本盘<br>说清楚。</h2>
+  <p class="sub" style="color:#555;font-weight:600">一表看懂。</p>
+  <div class="spec">
+    <div class="row"><span class="k">姓名</span><span class="v red">李浩楠</span></div>
+    <div class="row"><span class="k">性别</span><span class="v">男</span></div>
+    <div class="row"><span class="k">年龄</span><span class="v red">19 岁</span></div>
+    <div class="row"><span class="k">现居</span><span class="v">陕西西安</span></div>
+    <div class="row"><span class="k">入学</span><span class="v">2025 年</span></div>
+    <div class="row"><span class="k">年级</span><span class="v">大二</span></div>
+    <div class="row"><span class="k">专业</span><span class="v red">消防救援技术</span></div>
+    <div class="row"><span class="k">目标</span><span class="v">备考专升本</span></div>
+    <div class="row"><span class="k">兴趣</span><span class="v">摄影 · 跑步 · 羽毛球</span></div>
+    <div class="row"><span class="k">荣誉证书</span><span class="v red">10 余项</span></div>
+    <div class="row"><span class="k">邮箱</span><span class="v">2878697150@qq.com</span></div>
+    <div class="row"><span class="k">微信</span><span class="v">LovHoeN-07</span></div>
+  </div>
+</section>
 
-        <!-- 院系设置（JS 动态渲染） -->
-        <section id="academics" class="section section-alt">
-            <div class="container">
-                <header class="section-header">
-                    <span class="section-tag">SCHOOLS & COLLEGES</span>
-                    <h2>院系设置</h2>
-                    <p>16 个学院，80+ 本科专业，覆盖文、理、工、商、医、法</p>
-                </header>
-                <div class="academics-grid" id="academicsGrid"></div>
-            </div>
-        </section>
+<section class="wrap light" id="interest">
+  <div class="tag">INTERESTS</div>
+  <h2>热爱，是最高效的<br>学习。</h2>
+  <div class="grid cols-3">
+    <div class="card">
+      <div class="num">01</div>
+      <h3>摄影</h3>
+      <p class="tag2">把日常留住。</p>
+      <p>用手机记录生活里容易被忽略的瞬间。好照片不靠设备，靠的是「刚好在场」。</p>
+    </div>
+    <div class="card">
+      <div class="num">02</div>
+      <h3>跑步</h3>
+      <p class="tag2">把身体练扎实。</p>
+      <p>几乎每天都跑步，既保持体能，也用来释放压力。长跑教会我：节奏比爆发更重要。</p>
+    </div>
+    <div class="card">
+      <div class="num">03</div>
+      <h3>羽毛球</h3>
+      <p class="tag2">把节奏抢回来。</p>
+      <p>周末的固定项目。喜欢一拍一拍把节奏夺回来的对抗感，也练反应和协调性。</p>
+    </div>
+  </div>
+</section>
 
-        <!-- 科学研究（Tab 组件） -->
-        <section id="research" class="section">
-            <div class="container">
-                <header class="section-header">
-                    <span class="section-tag">RESEARCH</span>
-                    <h2>科学研究</h2>
-                    <p>以原创性研究推动人类知识边界</p>
-                </header>
-                <div class="tabs" role="tablist">
-                    <button class="tab-btn active" role="tab" aria-selected="true" data-tab="achievement">重大成果</button>
-                    <button class="tab-btn" role="tab" aria-selected="false" data-tab="platform">科研平台</button>
-                    <button class="tab-btn" role="tab" aria-selected="false" data-tab="funding">科研经费</button>
-                </div>
-                <div class="tab-panel active" id="panel-achievement">
-                    <div class="research-grid" id="achievementGrid"></div>
-                </div>
-                <div class="tab-panel" id="panel-platform">
-                    <ul class="platform-list" id="platformList"></ul>
-                </div>
-                <div class="tab-panel" id="panel-funding">
-                    <div class="funding-chart" id="fundingChart"></div>
-                    <p class="funding-total">📊 年度科研总经费：<b>57.4 亿元</b>（2025年数据）</p>
-                </div>
-            </div>
-        </section>
+<section class="wrap dark" id="certs">
+  <div class="tag">CERTIFICATES</div>
+  <h2>手里拿着的，<br>都是走过的路。</h2>
+  <div class="grid cols-4">
+    <div class="card dark-card">
+      <div class="num">01</div>
+      <div class="level">职业资格 · 电气实操</div>
+      <h3>四级 / 中级电工证</h3>
+      <p>具备电气设备安装、维护与故障排查的实操能力。</p>
+    </div>
+    <div class="card dark-card">
+      <div class="num">02</div>
+      <div class="level">小型汽车驾驶资格</div>
+      <h3>C1 驾驶证</h3>
+      <p>具备小型汽车驾驶资格，可独立完成道路驾驶。</p>
+    </div>
+    <div class="card dark-card">
+      <div class="num">03</div>
+      <div class="level">CPR · 创伤包扎</div>
+      <h3>红十字救护培训证书</h3>
+      <p>掌握心肺复苏、创伤包扎等现场急救技能。</p>
+    </div>
+    <div class="card dark-card">
+      <div class="num">04</div>
+      <div class="level">学习 · 训练 · 志愿</div>
+      <h3>荣誉证书 10 余项</h3>
+      <p>在校期间学习、训练与志愿服务中获得的各类荣誉。</p>
+    </div>
+  </div>
+</section>
 
-        <!-- 校园生活 / 新闻动态 / 招生信息 结构同上，均由 JS 数据驱动渲染 -->
-        ...
-    </main>
+<section class="wrap light" id="timeline">
+  <div class="tag">JOURNEY</div>
+  <h2>每一步，<br>都算数。</h2>
+  <div class="tl">
+    <div class="node">
+      <div class="node-label">入学</div>
+      <h4>进入陕西财经职业技术学院</h4>
+      <p>选择消防救援技术专业，正式开启系统的应急救援学习。</p>
+    </div>
+    <div class="node">
+      <div class="node-label">当下</div>
+      <h4>大二精进中，备考专升本</h4>
+      <p>把学历和专业都再往上推一步，目标明确，一步步往前走。</p>
+    </div>
+  </div>
+</section>
 
-    <!-- 页脚 -->
-    <footer class="footer">
-        <div class="container footer-grid">
-            <div class="footer-col footer-brand">
-                <a href="#top" class="logo logo-light">
-                    <span class="logo-mark" aria-hidden="true">华</span>
-                    <span class="logo-text"><b>国华大学</b><small>Guohua University</small></span>
-                </a>
-                <p class="footer-desc">格物致知，经世致用。国华大学致力于培养引领未来的栋梁之才。</p>
-            </div>
-            <div class="footer-col"><h4>快速链接</h4>...</div>
-            <div class="footer-col"><h4>联系我们</h4>...</div>
-            <div class="footer-col"><h4>关注我们</h4>...</div>
-        </div>
-        <div class="footer-bottom">
-            <p>© 2026 国华大学 Guohua University. 本站为虚构演示网站，仅供设计展示用途。</p>
-        </div>
-    </footer>
+<section class="wrap dark contact" id="contact">
+  <div>
+    <div class="tag">CONTACT</div>
+    <h2>随时，都可以聊聊。</h2>
+    <p class="sub">关于专业、专升本，或者只是想交个朋友——都欢迎。</p>
+    <div style="margin-top:32px;display:flex;flex-direction:column;align-items:center;gap:16px">
+      <a href="mailto:2878697150@qq.com" class="cta">写信给我 →</a>
+      <a href="mailto:2878697150@qq.com" style="color:#aaa;font-size:16px">2878697150@qq.com</a>
+      <span style="color:#555;font-size:14px">微信 · LovHoeN-07</span>
+    </div>
+  </div>
+</section>
 
-    <script src="script.js"></script>
+<footer>
+  <div class="ft">
+    <div><div class="b">李浩楠</div>
+      <p>陕西财经职业技术学院 · 大二 · 消防救援技术</p>
+      <p>现居陕西西安 · 备考专升本</p>
+    </div>
+    <div><div class="b">站点</div>
+      <a href="#about">关于</a><a href="#info">基本信息</a><a href="#interest">兴趣</a><a href="#certs">证书</a><a href="#timeline">成长</a>
+    </div>
+    <div><div class="b">联系</div>
+      <a href="mailto:2878697150@qq.com">邮箱 · 2878697150@qq.com</a>
+      <a href="#">微信 · LovHoeN-07</a>
+    </div>
+  </div>
+  <div class="copy">© 2026 李浩楠 · 保留所有权利。</div>
+</footer>
+
+<script>
+var nav=document.getElementById('nav');
+window.addEventListener('scroll',function(){
+  nav.style.background = window.scrollY>30 ? 'rgba(0,0,0,.9)' : 'rgba(0,0,0,.8)';
+});
+var io=new IntersectionObserver(function(es){
+  es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});
+},{threshold:0.1});
+document.querySelectorAll('.wrap,.hero,.ft').forEach(function(el){el.classList.add('reveal');io.observe(el);});
+</script>
 </body>
 </html>
