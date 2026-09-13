@@ -1,605 +1,162 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>俄罗斯方块</title>
-<style>
-  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  html, body {
-    height: 100%;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
-    background: #0f0f1a;
-    color: #e8e8f0;
-    overflow: hidden;
-    user-select: none;
-    -webkit-user-select: none;
-  }
-  #app {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    padding: env(safe-area-inset-top) 12px env(safe-area-inset-bottom);
-    gap: 14px;
-  }
-  h1 {
-    font-size: 22px;
-    font-weight: 700;
-    letter-spacing: 4px;
-    color: #ffffff;
-  }
-
-  /* 顶部状态栏 */
-  .status-bar {
-    display: flex;
-    gap: 10px;
-    width: 100%;
-    max-width: 420px;
-  }
-  .stat {
-    flex: 1;
-    background: #1a1a2e;
-    border: 1px solid #2a2a44;
-    border-radius: 10px;
-    padding: 8px 10px;
-    text-align: center;
-  }
-  .stat .label {
-    font-size: 10px;
-    color: #8a8aa8;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-  }
-  .stat .value {
-    font-size: 20px;
-    font-weight: 700;
-    color: #ffffff;
-    margin-top: 2px;
-    font-variant-numeric: tabular-nums;
-  }
-
-  /* 主游戏区：棋盘 + 侧栏 */
-  .game-area {
-    display: flex;
-    gap: 12px;
-    align-items: flex-start;
-  }
-  #board {
-    display: block;
-    background: #12121f;
-    border: 2px solid #2a2a44;
-    border-radius: 8px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
-  }
-  .side {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    width: 110px;
-  }
-  .panel {
-    background: #1a1a2e;
-    border: 1px solid #2a2a44;
-    border-radius: 10px;
-    padding: 10px;
-  }
-  .panel h2 {
-    font-size: 10px;
-    color: #8a8aa8;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    margin-bottom: 8px;
-    text-align: center;
-  }
-  #next-canvas {
-    display: block;
-    margin: 0 auto;
-  }
-
-  /* 按钮 */
-  .btn {
-    display: block;
-    width: 100%;
-    padding: 12px;
-    border: none;
-    border-radius: 10px;
-    font-size: 14px;
-    font-weight: 600;
-    letter-spacing: 1px;
-    cursor: pointer;
-    transition: transform 0.1s, opacity 0.2s;
-    font-family: inherit;
-  }
-  .btn:active { transform: scale(0.96); }
-  .btn-primary { background: #5b6cff; color: #fff; }
-  .btn-primary:hover { opacity: 0.9; }
-  .btn-ghost { background: #2a2a44; color: #e8e8f0; }
-  .btn-danger { background: #c0392b; color: #fff; }
-
-  /* 触屏控制 */
-  .touch-controls {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-    width: 100%;
-    max-width: 420px;
-  }
-  .tc {
-    background: #1a1a2e;
-    border: 1px solid #2a2a44;
-    border-radius: 12px;
-    padding: 16px 0;
-    text-align: center;
-    font-size: 20px;
-    font-weight: 700;
-    color: #c0c0e0;
-    cursor: pointer;
-  }
-  .tc:active { background: #2a2a44; }
-  .tc span { display: block; font-size: 9px; color: #6a6a8a; font-weight: 400; margin-top: 2px; }
-
-  /* 遮罩 / 弹窗 */
-  .overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(8,8,16,0.85);
-    backdrop-filter: blur(6px);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 100;
-    padding: 24px;
-  }
-  .overlay.show { display: flex; }
-  .modal {
-    background: #16162a;
-    border: 1px solid #2a2a44;
-    border-radius: 16px;
-    padding: 28px 24px;
-    max-width: 340px;
-    width: 100%;
-    text-align: center;
-  }
-  .modal h2 { font-size: 24px; margin-bottom: 12px; color: #fff; }
-  .modal p { font-size: 14px; color: #a0a0c0; line-height: 1.6; margin-bottom: 20px; }
-  .modal .btn { margin-bottom: 10px; }
-
-  .hidden { display: none !important; }
-
-  @media (max-width: 380px) {
-    .side { width: 92px; }
-    h1 { font-size: 18px; }
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="国华大学 Guohua University - 创立于1905年的百年名校">
+    <title>国华大学 | Guohua University</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div id="app">
-  <h1>俄罗斯方块</h1>
-
-  <div class="status-bar">
-    <div class="stat"><div class="label">分数</div><div class="value" id="score">0</div></div>
-    <div class="stat"><div class="label">等级</div><div class="value" id="level">1</div></div>
-    <div class="stat"><div class="label">行数</div><div class="value" id="lines">0</div></div>
-  </div>
-
-  <div class="game-area">
-    <canvas id="board"></canvas>
-    <div class="side">
-      <div class="panel">
-        <h2>下一个</h2>
-        <canvas id="next-canvas" width="96" height="96"></canvas>
-      </div>
-      <div class="panel">
-        <h2>最高分</h2>
-        <div class="value" id="best" style="text-align:center; font-size:18px;">0</div>
-      </div>
-      <button class="btn btn-ghost" id="btn-pause">暂停</button>
-      <button class="btn btn-danger" id="btn-restart">重开</button>
+    <!-- 顶部通知栏 -->
+    <div class="top-bar">
+        <div class="container top-bar-inner">
+            <span class="notice">📢 2026年秋季招生现已开启 | 欢迎全球学子报考</span>
+            <nav class="top-bar-links" aria-label="顶部快捷入口">
+                <a href="#library">图书馆</a>
+                <a href="#mail">邮箱登录</a>
+                <a href="#en">EN</a>
+            </nav>
+        </div>
     </div>
-  </div>
 
-  <div class="touch-controls">
-    <div class="tc" id="tc-left">&lt;<span>左移</span></div>
-    <div class="tc" id="tc-rotate">R<span>旋转</span></div>
-    <div class="tc" id="tc-right">&gt;<span>右移</span></div>
-    <div class="tc" id="tc-hard">D<span>硬降</span></div>
-    <div class="tc" id="tc-down">v<span>软降</span></div>
-    <div class="tc" id="tc-drop">__<span>到底</span></div>
-  </div>
-</div>
+    <!-- 主导航 -->
+    <header class="header" id="header">
+        <div class="container header-inner">
+            <a href="#top" class="logo" aria-label="国华大学首页">
+                <span class="logo-mark" aria-hidden="true">华</span>
+                <span class="logo-text">
+                    <b>国华大学</b>
+                    <small>Guohua University</small>
+                </span>
+            </a>
+            <nav class="nav" id="mainNav" aria-label="主导航">
+                <a href="#about">学校概况</a>
+                <a href="#academics">院系设置</a>
+                <a href="#research">科学研究</a>
+                <a href="#campus">校园生活</a>
+                <a href="#news">新闻动态</a>
+                <a href="#admission" class="nav-cta">招生信息</a>
+            </nav>
+            <button class="mobile-menu-btn" id="menuBtn" aria-label="打开菜单" aria-expanded="false">☰</button>
+        </div>
+    </header>
 
-<div class="overlay show" id="start-overlay">
-  <div class="modal">
-    <h2>俄罗斯方块</h2>
-    <p>用方向键或屏幕按钮移动与旋转方块，填满整行即可消除。加油，挑战更高分数！</p>
-    <button class="btn btn-primary" id="btn-start">开始游戏</button>
-  </div>
-</div>
+    <main id="top">
+        <!-- Hero 区域 -->
+        <section class="hero">
+            <canvas class="hero-canvas" id="starfield" aria-hidden="true"></canvas>
+            <div class="container hero-content">
+                <span class="hero-badge">✦ 创立于 1905 年 · 百年名校 · 全球 TOP 50</span>
+                <h1 class="hero-title">格物致知<br>经世致用</h1>
+                <p class="hero-desc">坐落于钟灵毓秀的燕山脚下，国华大学以"厚德博学、笃行致远"为训，百年间薪火相传。<br>这里，每一颗求知的心都能找到属于自己的广阔天地。</p>
+                <div class="hero-actions">
+                    <a href="#admission" class="btn btn-primary">立即报考</a>
+                    <a href="#about" class="btn btn-outline">了解更多 →</a>
+                </div>
+                <dl class="hero-stats">
+                    <div class="stat"><dt>在校学生</dt><dd><span class="counter" data-target="42000">0</span>+</dd></div>
+                    <div class="stat"><dt>全职教授</dt><dd><span class="counter" data-target="3200">0</span>+</dd></div>
+                    <div class="stat"><dt>国际合作院校</dt><dd><span class="counter" data-target="320">0</span>+</dd></div>
+                    <div class="stat"><dt>两院院士</dt><dd><span class="counter" data-target="68">0</span></dd></div>
+                </dl>
+            </div>
+            <a href="#about" class="hero-scroll" aria-label="向下滚动"><span>↓</span> 向下滚动探索</a>
+        </section>
 
-<div class="overlay" id="gameover-overlay">
-  <div class="modal">
-    <h2 id="go-title">游戏结束</h2>
-    <p id="go-stats"></p>
-    <button class="btn btn-primary" id="btn-retry">再来一局</button>
-  </div>
-</div>
+        <!-- 学校概况 -->
+        <section id="about" class="section">
+            <div class="container">
+                <header class="section-header">
+                    <span class="section-tag">ABOUT GHU</span>
+                    <h2>学校概况</h2>
+                    <p>一所有着百年积淀的综合性研究型大学</p>
+                </header>
+                <div class="about-grid">
+                    <div class="about-text">
+                        <p>国华大学（Guohua University，简称GHU）是一所坐落于中国北方的综合性研究型大学，始创于1905年。学校占地 5200 亩，拥有四个校区，以"厚德博学、笃行致远"为核心理念。</p>
+                        <p>百余年来，国华大学在基础科学、工程技术、人文社科等领域取得了举世瞩目的成就，培养了包括 15 位诺贝尔奖得主、百余位两院院士在内的众多杰出校友。</p>
+                        <ul class="about-features">
+                            <li><span class="fi">🏛️</span><div><b>四大校区</b><p>燕南主校区 · 燕北科技园 · 滨海国际校区 · 西山书院</p></div></li>
+                            <li><span class="fi">🔬</span><div><b>前沿研究</b><p>年均科研经费超 57 亿元</p></div></li>
+                            <li><span class="fi">🌍</span><div><b>全球合作</b><p>与 320 所世界名校建立合作</p></div></li>
+                            <li><span class="fi">💡</span><div><b>创新创业</b><p>孵化科技型企业 800 余家</p></div></li>
+                        </ul>
+                    </div>
+                    <figure class="about-visual">
+                        <div class="campus-card">
+                            <div class="campus-img" role="img" aria-label="燕南主校区"></div>
+                            <figcaption class="campus-info">
+                                <h3>燕南主校区</h3>
+                                <p>占地 3600 亩，坐落于燕山南麓，融合中式古典与现代建筑风格。校内设有国家图书馆分馆（藏书 680 万册）、国家重点实验室、百年礼堂等地标建筑。</p>
+                            </figcaption>
+                        </div>
+                    </figure>
+                </div>
+            </div>
+        </section>
 
-<script>
-"use strict";
-/* ============================================================
- *  俄罗斯方块 —— 无 emoji / 图标，纯 CSS + Canvas 绘制
- * ============================================================ */
+        <!-- 院系设置（JS 动态渲染） -->
+        <section id="academics" class="section section-alt">
+            <div class="container">
+                <header class="section-header">
+                    <span class="section-tag">SCHOOLS & COLLEGES</span>
+                    <h2>院系设置</h2>
+                    <p>16 个学院，80+ 本科专业，覆盖文、理、工、商、医、法</p>
+                </header>
+                <div class="academics-grid" id="academicsGrid"></div>
+            </div>
+        </section>
 
-// ---------- 常量 ----------
-const COLS = 10, ROWS = 20, CELL = 30;
-const BOARD_W = COLS * CELL, BOARD_H = ROWS * CELL;
-const COLORS = {
-  I: "#00e0e0",
-  O: "#e0c000",
-  T: "#a040c0",
-  S: "#40c060",
-  Z: "#d04040",
-  J: "#3060e0",
-  L: "#e08020",
-};
+        <!-- 科学研究（Tab 组件） -->
+        <section id="research" class="section">
+            <div class="container">
+                <header class="section-header">
+                    <span class="section-tag">RESEARCH</span>
+                    <h2>科学研究</h2>
+                    <p>以原创性研究推动人类知识边界</p>
+                </header>
+                <div class="tabs" role="tablist">
+                    <button class="tab-btn active" role="tab" aria-selected="true" data-tab="achievement">重大成果</button>
+                    <button class="tab-btn" role="tab" aria-selected="false" data-tab="platform">科研平台</button>
+                    <button class="tab-btn" role="tab" aria-selected="false" data-tab="funding">科研经费</button>
+                </div>
+                <div class="tab-panel active" id="panel-achievement">
+                    <div class="research-grid" id="achievementGrid"></div>
+                </div>
+                <div class="tab-panel" id="panel-platform">
+                    <ul class="platform-list" id="platformList"></ul>
+                </div>
+                <div class="tab-panel" id="panel-funding">
+                    <div class="funding-chart" id="fundingChart"></div>
+                    <p class="funding-total">📊 年度科研总经费：<b>57.4 亿元</b>（2025年数据）</p>
+                </div>
+            </div>
+        </section>
 
-// 七种方块：相对于旋转中心的 (x, y) 偏移
-const SHAPES = {
-  I: [[0,-1],[0,0],[0,1],[0,2]],
-  O: [[-1,0],[0,0],[-1,1],[0,1]],
-  T: [[-1,0],[0,0],[1,0],[0,1]],
-  S: [[-1,0],[0,0],[0,1],[1,1]],
-  Z: [[-1,1],[0,1],[0,0],[1,0]],
-  J: [[-1,1],[-1,0],[0,0],[1,0]],
-  L: [[-1,0],[0,0],[1,0],[1,1]],
-};
-const PIECE_TYPES = Object.keys(SHAPES);
+        <!-- 校园生活 / 新闻动态 / 招生信息 结构同上，均由 JS 数据驱动渲染 -->
+        ...
+    </main>
 
-// ---------- 安全存储 ----------
-const Store = {
-  get(key, fallback) {
-    try { const v = localStorage.getItem(key); return v === null ? fallback : JSON.parse(v); }
-    catch (e) { return fallback; }
-  },
-  set(key, val) {
-    try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) {}
-  },
-};
-const BEST_KEY = "tetris_best_v1";
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container footer-grid">
+            <div class="footer-col footer-brand">
+                <a href="#top" class="logo logo-light">
+                    <span class="logo-mark" aria-hidden="true">华</span>
+                    <span class="logo-text"><b>国华大学</b><small>Guohua University</small></span>
+                </a>
+                <p class="footer-desc">格物致知，经世致用。国华大学致力于培养引领未来的栋梁之才。</p>
+            </div>
+            <div class="footer-col"><h4>快速链接</h4>...</div>
+            <div class="footer-col"><h4>联系我们</h4>...</div>
+            <div class="footer-col"><h4>关注我们</h4>...</div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 国华大学 Guohua University. 本站为虚构演示网站，仅供设计展示用途。</p>
+        </div>
+    </footer>
 
-// ---------- 游戏状态 ----------
-let board, current, next, score, level, lines, gameOver, paused, dropInterval, dropTimer, rafId;
-
-const boardCanvas = document.getElementById("board");
-boardCanvas.width = BOARD_W; boardCanvas.height = BOARD_H;
-const ctx = boardCanvas.getContext("2d");
-
-const nextCanvas = document.getElementById("next-canvas");
-const nctx = nextCanvas.getContext("2d");
-
-// ---------- 工具函数 ----------
-function createBoard() {
-  return Array.from({ length: ROWS }, () => Array(COLS).fill(null));
-}
-
-function randomPieceType() {
-  return PIECE_TYPES[Math.floor(Math.random() * PIECE_TYPES.length)];
-}
-
-function makePiece(type) {
-  return { type, x: COLS / 2 | 0, y: 1, rot: 0 };
-}
-
-function getCells(piece) {
-  const shape = piece.shape || SHAPES[piece.type];
-  return shape.map(([dx, dy]) => ({
-    x: piece.x + dx,
-    y: piece.y + dy,
-  }));
-}
-
-function isValid(piece, boardRef) {
-  return getCells(piece).every(({ x, y }) => {
-    if (x < 0 || x >= COLS || y >= ROWS) return false;
-    if (y < 0) return true; // 还没完全进入棋盘的顶部允许
-    return boardRef[y][x] === null;
-  });
-}
-
-function rotate(piece, dir = 1) {
-  // 对形状做 90 度旋转（绕原点），然后尝试 + 墙踢
-  const shape = piece.shape || SHAPES[piece.type];
-  const rotated = shape.map(([x, y]) =>
-    dir > 0 ? [-y, x] : [y, -x]
-  );
-  const kicks = [[0,0],[-1,0],[1,0],[0,-1],[-2,0],[2,0]];
-  for (const [kx, ky] of kicks) {
-    const test = { type: piece.type, x: piece.x + kx, y: piece.y + ky, rot: 0, shape: rotated };
-    if (isValid(test, board)) {
-      piece.x = test.x; piece.y = test.y;
-      piece.shape = rotated;
-      piece.rot = (piece.rot + dir + 4) % 4;
-      return true;
-    }
-  }
-  return false;
-}
-
-function mergePiece(piece) {
-  for (const { x, y } of getCells(piece)) {
-    if (y >= 0 && y < ROWS && x >= 0 && x < COLS) {
-      board[y][x] = piece.type;
-    }
-  }
-}
-
-function clearLines() {
-  let cleared = 0;
-  for (let y = ROWS - 1; y >= 0; y--) {
-    if (board[y].every(c => c !== null)) {
-      board.splice(y, 1);
-      board.unshift(Array(COLS).fill(null));
-      cleared++;
-      y++; // 重新检查当前行（因为上方行下移）
-    }
-  }
-  if (cleared > 0) {
-    const points = [0, 100, 300, 500, 800][cleared] || 800;
-    score += points * level;
-    lines += cleared;
-    level = 1 + Math.floor(lines / 10);
-    dropInterval = Math.max(100, 800 - (level - 1) * 60);
-    updateHUD();
-  }
-}
-
-function spawn() {
-  current = next || makePiece(randomPieceType());
-  next = makePiece(randomPieceType());
-  if (!isValid(current, board)) {
-    gameOver = true;
-    endGame();
-  }
-}
-
-// ---------- 移动 ----------
-function move(dx, dy) {
-  const test = { ...current, x: current.x + dx, y: current.y + dy };
-  if (isValid(test, board)) {
-    current.x = test.x; current.y = test.y;
-    return true;
-  }
-  return false;
-}
-
-function softDrop() {
-  if (!move(0, 1)) lockPiece();
-}
-
-function hardDrop() {
-  while (move(0, 1)) { score += 2; }
-  lockPiece();
-  updateHUD();
-}
-
-function lockPiece() {
-  mergePiece(current);
-  clearLines();
-  spawn();
-  draw();
-}
-
-// ---------- 绘制 ----------
-function drawCell(context, x, y, size, type, alpha = 1) {
-  const px = x * size, py = y * size;
-  context.save();
-  context.globalAlpha = alpha;
-  // 方块主体
-  context.fillStyle = COLORS[type] || "#666";
-  context.fillRect(px + 1, py + 1, size - 2, size - 2);
-  // 高光
-  context.fillStyle = "rgba(255,255,255,0.18)";
-  context.fillRect(px + 1, py + 1, size - 2, size / 2 - 1);
-  // 边框
-  context.strokeStyle = "rgba(0,0,0,0.35)";
-  context.lineWidth = 1;
-  context.strokeRect(px + 0.5, py + 0.5, size - 1, size - 1);
-  context.restore();
-}
-
-function drawBoard() {
-  ctx.clearRect(0, 0, BOARD_W, BOARD_H);
-  // 背景网格
-  ctx.fillStyle = "#12121f";
-  ctx.fillRect(0, 0, BOARD_W, BOARD_H);
-  ctx.strokeStyle = "rgba(255,255,255,0.04)";
-  for (let x = 0; x <= COLS; x++) {
-    ctx.beginPath(); ctx.moveTo(x * CELL, 0); ctx.lineTo(x * CELL, BOARD_H); ctx.stroke();
-  }
-  for (let y = 0; y <= ROWS; y++) {
-    ctx.beginPath(); ctx.moveTo(0, y * CELL); ctx.lineTo(BOARD_W, y * CELL); ctx.stroke();
-  }
-  // 已落下的方块
-  for (let y = 0; y < ROWS; y++) {
-    for (let x = 0; x < COLS; x++) {
-      if (board[y][x]) drawCell(ctx, x, y, CELL, board[y][x]);
-    }
-  }
-  // 当前下落方块 + 幽灵（预测落点）
-  if (current && !gameOver) {
-    const ghost = { ...current };
-    while (isValid({ ...ghost, y: ghost.y + 1 }, board)) ghost.y++;
-    for (const { x, y } of getCells(ghost)) {
-      if (y >= 0) drawCell(ctx, x, y, CELL, current.type, 0.25);
-    }
-    for (const { x, y } of getCells(current)) {
-      if (y >= 0) drawCell(ctx, x, y, CELL, current.type);
-    }
-  }
-}
-
-function drawNext() {
-  nctx.clearRect(0, 0, nextCanvas.width, nextCanvas.height);
-  nctx.fillStyle = "#1a1a2e";
-  nctx.fillRect(0, 0, nextCanvas.width, nextCanvas.height);
-  if (!next) return;
-  const size = 22;
-  const shape = SHAPES[next.type];
-  const minX = Math.min(...shape.map(([x]) => x));
-  const maxX = Math.max(...shape.map(([x]) => x));
-  const minY = Math.min(...shape.map(([, y]) => y));
-  const w = (maxX - minX + 1) * size, h = 4 * size;
-  const ox = (nextCanvas.width - w) / 2 - minX * size;
-  const oy = (nextCanvas.height - h) / 2 - minY * size;
-  for (const [dx, dy] of shape) {
-    const px = ox + dx * size, py = oy + dy * size;
-    nctx.fillStyle = COLORS[next.type];
-    nctx.fillRect(px + 1, py + 1, size - 2, size - 2);
-    nctx.strokeStyle = "rgba(0,0,0,0.35)";
-    nctx.strokeRect(px + 0.5, py + 0.5, size - 1, size - 1);
-  }
-}
-
-function draw() { drawBoard(); drawNext(); }
-
-// ---------- HUD ----------
-function updateHUD() {
-  document.getElementById("score").textContent = score;
-  document.getElementById("level").textContent = level;
-  document.getElementById("lines").textContent = lines;
-  const best = Store.get(BEST_KEY, 0);
-  if (score > best) Store.set(BEST_KEY, score);
-  document.getElementById("best").textContent = Store.get(BEST_KEY, 0);
-}
-
-// ---------- 游戏流程 ----------
-function reset() {
-  board = createBoard();
-  score = 0; level = 1; lines = 0;
-  gameOver = false; paused = false;
-  dropInterval = 800; dropTimer = 0;
-  next = null;
-  current = null;
-  spawn();
-  updateHUD();
-  draw();
-}
-
-function startGame() {
-  reset();
-  hideOverlays();
-  last = performance.now();
-  loop(last);
-}
-
-let last = 0;
-function loop(now) {
-  if (gameOver) return;
-  rafId = requestAnimationFrame(loop);
-  if (!paused) {
-    dropTimer += now - last;
-    if (dropTimer >= dropInterval) {
-      dropTimer = 0;
-      softDrop();
-    }
-  }
-  last = now;
-  draw();
-}
-
-function endGame() {
-  cancelAnimationFrame(rafId);
-  const best = Store.get(BEST_KEY, 0);
-  if (score > best) Store.set(BEST_KEY, score);
-  document.getElementById("go-title").textContent = "游戏结束";
-  document.getElementById("go-stats").innerHTML =
-    "本局得分 <b>" + score + "</b><br>消除行数 " + lines + "<br>最高纪录 " + Store.get(BEST_KEY, 0);
-  document.getElementById("gameover-overlay").classList.add("show");
-}
-
-function hideOverlays() {
-  document.getElementById("start-overlay").classList.remove("show");
-  document.getElementById("gameover-overlay").classList.remove("show");
-}
-
-// ---------- 输入 ----------
-const Input = {
-  left: () => { if (!paused && !gameOver) { move(-1, 0); draw(); } },
-  right: () => { if (!paused && !gameOver) { move(1, 0); draw(); } },
-  rotate: () => { if (!paused && !gameOver) { rotate(current, 1); draw(); } },
-  soft: () => { if (!paused && !gameOver) softDrop(); },
-  hard: () => { if (!paused && !gameOver) hardDrop(); },
-  drop: () => { if (!paused && !gameOver) hardDrop(); },
-};
-
-document.addEventListener("keydown", (e) => {
-  if (gameOver) return;
-  switch (e.key) {
-    case "ArrowLeft": case "a": case "A": Input.left(); e.preventDefault(); break;
-    case "ArrowRight": case "d": case "D": Input.right(); e.preventDefault(); break;
-    case "ArrowUp": case "w": case "W": Input.rotate(); e.preventDefault(); break;
-    case "ArrowDown": case "s": case "S": Input.soft(); e.preventDefault(); break;
-    case " ": case "Spacebar": Input.hard(); e.preventDefault(); break;
-    case "p": case "P": togglePause(); break;
-  }
-});
-
-// 触屏按钮
-function bindTouch(id, action, repeat = false) {
-  const el = document.getElementById(id);
-  const start = (e) => { e.preventDefault(); action(); if (repeat) el._timer = setInterval(action, 120); };
-  const stop = () => clearInterval(el._timer);
-  el.addEventListener("touchstart", start, { passive: false });
-  el.addEventListener("touchend", stop);
-  el.addEventListener("touchcancel", stop);
-  el.addEventListener("mousedown", start);
-  el.addEventListener("mouseup", stop);
-  el.addEventListener("mouseleave", stop);
-}
-bindTouch("tc-left", Input.left, true);
-bindTouch("tc-right", Input.right, true);
-bindTouch("tc-rotate", Input.rotate);
-bindTouch("tc-down", Input.soft, true);
-bindTouch("tc-hard", Input.hard);
-bindTouch("tc-drop", Input.drop);
-
-// 棋盘区域滑动手势
-let touchStartX = 0, touchStartY = 0;
-boardCanvas.addEventListener("touchstart", (e) => {
-  const t = e.touches[0]; touchStartX = t.clientX; touchStartY = t.clientY;
-}, { passive: true });
-boardCanvas.addEventListener("touchend", (e) => {
-  const t = e.changedTouches[0];
-  const dx = t.clientX - touchStartX, dy = t.clientY - touchStartY;
-  if (Math.abs(dx) > Math.abs(dy)) {
-    if (dx > 30) Input.right(); else if (dx < -30) Input.left();
-  } else {
-    if (dy > 30) Input.hard(); else if (dy < -30) Input.rotate();
-  }
-}, { passive: true });
-
-// ---------- 按钮 ----------
-document.getElementById("btn-start").addEventListener("click", startGame);
-document.getElementById("btn-retry").addEventListener("click", startGame);
-document.getElementById("btn-restart").addEventListener("click", () => {
-  hideOverlays();
-  startGame();
-});
-function togglePause() {
-  if (gameOver) return;
-  paused = !paused;
-  document.getElementById("btn-pause").textContent = paused ? "继续" : "暂停";
-}
-document.getElementById("btn-pause").addEventListener("click", togglePause);
-
-// ---------- 启动 ----------
-(function init() {
-  board = createBoard();
-  updateHUD();
-  draw();
-})();
-</script>
+    <script src="script.js"></script>
 </body>
 </html>
