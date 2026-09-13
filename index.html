@@ -2,734 +2,436 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5, viewport-fit=cover">
-<meta name="description" content="李浩楠的个人主页 · 陕西财经职业技术学院 · 消防救援技术专业 · 备考专升本 摄影 跑步 羽毛球">
-
-<!-- ===== 添加到主屏幕：全屏 + 图标 + 状态栏颜色 ===== -->
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="李浩楠">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#0a0a0a">
-<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%230a0a0a'/%3E%3Ctext x='90' y='120' font-size='90' text-anchor='middle' fill='%23ffffff' font-family='sans-serif'%3E%E6%9D%8E%3C/text%3E%3C/svg%3E">
-
-<title>李浩楠 · Li Haonan</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="description" content="李浩楠的个人主页 · 陕西财经职业技术学院 · 消防救援技术 · 备考专升本">
+<meta name="theme-color" content="#000000">
+<title>李浩楠</title>
 <style>
-/* ====================================================================
-   设计令牌（Design Tokens）
-   --------------------------------------------------------------------
-   Apple 风格的核心是「一套比例、两端一致」。
-   所有字号/间距/圆角都基于以下令牌，桌面(1440)与手机(375)共用同一套公式，
-   只按视口等比缩放，结构、比例、间距关系完全不变。
-   ==================================================================== */
-:root{
-  /* 字体 */
-  --font:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC","Microsoft YaHei","Helvetica Neue",sans-serif;
-
-  /* 颜色（Apple 系统色板） */
-  --ink:#1d1d1f;        /* 主文字 */
-  --ink-soft:#515154;   /* 次要文字 */
-  --gray:#a1a1a6;       /* 辅助文字 */
-  --line:#e5e5ea;       /* 分隔线 */
-  --bg:#f5f5f7;         /* 系统灰背景 */
-  --card:#ffffff;       /* 卡片 */
-  --dark:#000000;       /* 深色背景 */
-  --dark-card:#1c1c1e;  /* 深色卡片 */
-
-  /* 响应式容器：内容最大宽度（Apple 产品页约 980px） */
-  --content:980px;
-
-  /* 基准间距单位：8px 网格 */
-  --u:clamp(6px, 1.6vw, 10px);
-}
-
-*{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%}
-body{
-  font-family:var(--font);
-  color:var(--ink);background:var(--bg);line-height:1.6;
-  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
-  width:100%;margin:0 auto;
-  overflow-x:clip;
-}
-/* 深色全宽区块（导航、hero、成长）背景要铺满整屏 → 用伪元素撑出外侧背景 */
-.dark, .hero{
-  position:relative;
-}
-/* 内容容器保持居中限宽，深色区块靠 .wrap 内控宽 + 自身背景 */
-.wrap{
-  position:relative;z-index:1;
-}
-img,picture,svg,video{max-width:100%;height:auto;display:block}
-a{text-decoration:none;color:inherit;-webkit-tap-highlight-color:transparent}
-button{font:inherit;cursor:pointer;border:none;background:none;-webkit-tap-highlight-color:transparent}
-ul{list-style:none}
-
-/* ====================================================================
-   布局容器
-   - .wrap：每个区块的内容容器，桌面/手机同一套居中逻辑
-   - 垂直内边距用 clamp，在 375→1440 之间平滑过渡，不跳变
-   ==================================================================== */
-.wrap{
-  width:100%;
-  max-width:var(--content);
-  margin:0 auto;
-  padding:clamp(56px, 12vw, 120px) clamp(20px, 6vw, 56px);
-  text-align:center;
-}
-.dark{background:var(--dark);color:#fff}
-.light{background:var(--card);color:var(--ink)}
-
-/* 区块小标签（INTERESTS / CERTIFICATES ...） */
-.tag{
-  display:block;
-  color:#b01e23;
-  font-size:clamp(12px, 1.6vw, 14px);
-  letter-spacing:0.18em;
-  font-weight:700;
-  margin-bottom:clamp(12px, 2.4vw, 20px);
-  text-transform:uppercase;
-}
-
-/* 区块大标题：Apple 风格的超大标题 */
-/* 关键 —— clamp 让桌面/手机用同一曲线，比例恒定 */
-h2{
-  font-size:clamp(28px, 5.6vw, 56px);
-  font-weight:700;
-  line-height:1.15;
-  letter-spacing:-0.025em;
-  margin-bottom:clamp(14px, 3vw, 24px);
-}
-.sub{
-  font-size:clamp(15px, 2.4vw, 21px);
-  color:var(--gray);
-  margin-bottom:clamp(8px, 2vw, 16px);
-  line-height:1.5;
-}
-.desc{
-  font-size:clamp(14px, 2vw, 17px);
-  color:var(--ink-soft);
-  max-width:680px;
-  margin:0 auto clamp(24px, 5vw, 48px);
-  line-height:1.7;
-}
-
-/* ====================================================================
-   导航栏（Apple 顶部导航复刻）
-   - 桌面：链接横向铺开
-   - 手机：汉堡菜单，点击展开全屏面板
-   ==================================================================== */
-nav{
-  position:sticky;top:0;left:0;width:100%;z-index:100;
-  background:rgba(0,0,0,.72);
-  backdrop-filter:saturate(180%) blur(20px);
-  -webkit-backdrop-filter:saturate(180%) blur(20px);
-  padding-top:env(safe-area-inset-top);
-  border-bottom:1px solid rgba(255,255,255,.08);
-}
-.nav-in{
-  height:52px;
-  display:flex;align-items:center;justify-content:space-between;
-  padding:0 clamp(16px, 4vw, 32px);
-  max-width:var(--content);margin:0 auto;
-}
-.brand{
-  color:#fff;
-  font-size:clamp(16px, 2.4vw, 19px);
-  font-weight:600;letter-spacing:-0.01em;
-  flex:0 0 auto;
-}
-.links{
-  display:flex;align-items:center;
-  gap:clamp(16px, 3vw, 32px);
-}
-.links a{
-  color:#f5f5f7;
-  font-size:clamp(13px, 1.8vw, 15px);
-  font-weight:400;
-  letter-spacing:-0.01em;
-  padding:4px 0;
-  transition:opacity .2s;
-  white-space:nowrap;
-}
-.links a:hover{opacity:0.7}
-.links a.active{opacity:1;font-weight:600}
-.burger{
-  display:none;
-  width:28px;height:22px;
-  flex-direction:column;justify-content:space-between;
-  cursor:pointer;
-  -webkit-tap-highlight-color:transparent;
-}
-.burger span{display:block;height:2px;background:#fff;border-radius:2px;transition:transform .3s,opacity .3s}
-
-/* ====================================================================
-   Hero（第一屏）—— Apple 产品 hero 复刻
-   ==================================================================== */
-.hero{
-  position:relative;overflow:hidden;
-  min-height:100dvh;
-  background:var(--dark);color:#fff;
-  display:flex;align-items:center;justify-content:center;
-  padding:0 clamp(20px, 6vw, 56px);
-  text-align:center;
-}
-.glow{
-  position:absolute;top:18%;left:50%;
-  width:min(88vw, 560px);height:min(88vw, 560px);
-  transform:translateX(-50%);border-radius:50%;
-  background:radial-gradient(circle,rgba(229,57,53,.28),transparent 65%);
-  z-index:0;pointer-events:none;
-}
-.hero-content{
-  position:relative;z-index:2;
-  width:100%;max-width:820px;
-  display:flex;flex-direction:column;align-items:center;
-  padding-bottom:env(safe-area-inset-bottom);
-}
-.hero-title{
-  display:flex;flex-wrap:wrap;justify-content:center;align-items:baseline;
-  font-size:clamp(40px, 9vw, 88px);
-  font-weight:700;
-  line-height:1.12;
-  letter-spacing:-0.035em;
-  margin-bottom:clamp(32px, 6vw, 56px);
-}
-.hero-title .ch{
-  display:inline-block;
-  opacity:0;
-  transform:translate3d(0, 20px, 0);
-  transition:opacity .5s cubic-bezier(.2,.8,.2,1),
-             transform .5s cubic-bezier(.2,.8,.2,1);
-  transition-delay:calc(var(--i) * .09s);
-  will-change:opacity,transform;
-}
-.hero-title.go .ch{opacity:1;transform:translate3d(0,0,0)}
-.hero-title .ch:nth-child(7),
-.hero-title .ch:nth-child(8),
-.hero-title .ch:nth-child(9){color:#fff}  /* 姓名始终白色 */
-.hero-title.is-done .ch{will-change:auto}
-
-/* CTA 按钮：Apple 胶囊按钮 */
-.hero-btn{
-  display:inline-flex;align-items:center;justify-content:center;gap:8px;
-  padding:clamp(13px, 2.4vw, 16px) clamp(26px, 5vw, 40px);
-  border-radius:999px;
-  background:#e53935;color:#fff!important;
-  font-size:clamp(15px, 2.2vw, 17px);
-  font-weight:600;
-  letter-spacing:0.01em;
-  transition:transform .3s,box-shadow .3s,background .3s;
-  box-shadow:0 8px 24px rgba(229,57,53,.32);
-}
-.hero-btn:hover{transform:translateY(-2px);box-shadow:0 14px 36px rgba(229,57,53,.45)}
-.hero-btn:active{transform:translateY(0) scale(.97)}
-.hero-btn svg{width:clamp(16px,2.4vw,20px);height:clamp(16px,2.4vw,20px);flex:0 0 auto}
-
-/* ====================================================================
-   基本盘 / 第二屏
-   ==================================================================== */
-.name-stage{
-  position:relative;
-  display:flex;justify-content:center;align-items:baseline;
-  margin-bottom:clamp(20px, 4vw, 32px);
-  line-height:1.05;
-  padding:0 1vw;
-}
-.ns-char{
-  position:relative;z-index:2;
-  display:inline-block;color:#111;
-  font-size:clamp(44px, 9vw, 88px);
-  font-weight:700;letter-spacing:0.02em;line-height:1.1;
-  margin:0 clamp(2px, 0.8vw, 6px);
-  opacity:0;transform:translateY(24px);
-  animation:charRise .65s cubic-bezier(.2,.8,.2,1) both;
-  animation-play-state:paused;
-}
-.name-stage.go .ns-char{animation-play-state:running}
-.ns-char:nth-child(1){animation-delay:.12s}
-.ns-char:nth-child(2){animation-delay:.24s}
-.ns-char:nth-child(3){animation-delay:.36s}
-.name-stage.is-done .ns-char:last-child{animation:letterBreathe 1.2s ease-in-out 1}
-@keyframes charRise{to{opacity:1;transform:translateY(0)}}
-@keyframes letterBreathe{0%,100%{letter-spacing:0.02em}50%{letter-spacing:0.14em}}
-.name-line{
-  position:absolute;left:50%;bottom:-12px;z-index:1;
-  width:min(60%, 440px);height:1px;
-  background:#111;transform:translateX(-50%) scaleX(0);transform-origin:left center;
-  animation:lineScale .5s .7s cubic-bezier(.2,.8,.2,1) forwards;
-}
-.name-stage.go .name-line{animation-play-state:running}
-@keyframes lineScale{to{transform:translateX(-50%) scaleX(1)}}
-
-.name-meta{
-  font-size:clamp(14px, 2vw, 17px);
-  letter-spacing:0.02em;color:var(--gray);
-  text-align:center;
-  max-width:640px;margin:0 auto;
-  line-height:1.6;
-}
-
-/* 三词卡片：Apple 三栏特性（一排，等分） */
-.three-words{
-  display:flex;justify-content:center;align-items:stretch;
-  margin:clamp(40px, 9vw, 72px) 0 clamp(40px, 8vw, 64px);
-  border-top:1px solid var(--line);
-  border-bottom:1px solid var(--line);
-}
-.w-card{
-  position:relative;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  flex:1 1 0;min-width:0;
-  padding:clamp(24px, 5vw, 40px) clamp(8px, 2vw, 20px);
-  text-decoration:none;color:inherit;
-  border-right:1px solid var(--line);
-  background:transparent;
-  transition:background .3s;
-}
-.w-card:last-child{border-right:none}
-.w-card:hover{background:var(--bg)}
-.w-card .w-num{
-  font-size:clamp(11px, 1.3vw, 13px);
-  font-weight:700;letter-spacing:0.14em;color:#b01e23;
-  margin-bottom:clamp(8px, 1.6vw, 12px);
-}
-.w-card .w-en{
-  font-size:clamp(15px, 2.6vw, 21px);
-  font-weight:700;letter-spacing:0.06em;color:#111;
-  margin-bottom:clamp(4px, 1vw, 8px);
-}
-.w-card .w-cn{
-  font-size:clamp(12px, 1.6vw, 14px);
-  color:var(--gray);letter-spacing:0.04em;
-}
-.w-underline{
-  position:absolute;left:0;bottom:-1px;
-  width:100%;height:2px;background:#111;
-  transform:scaleX(0);transform-origin:left center;
-  transition:transform .35s cubic-bezier(.2,.8,.2,1);
-}
-.w-card:hover .w-underline,
-.w-card:focus-visible .w-underline{transform:scaleX(1)}
-.w-card:active{transform:scale(.985)}
-
-/* 宣言金句 */
-.manifesto{
-  text-align:left;
-  max-width:720px;margin:0 auto;
-  padding-left:clamp(14px, 3vw, 22px);
-  border-left:4px solid #b01e23;
-}
-.manifesto p{
-  font-size:clamp(16px, 2.6vw, 21px);
-  line-height:1.6;color:#222;
-  margin:0 0 clamp(12px, 2.4vw, 18px);
-}
-.manifesto p:last-child{margin-bottom:0}
-.manifesto em{color:#b01e23;font-style:normal;font-weight:600}
-.quote-line{
-  margin:clamp(28px, 5vw, 44px) auto 0;
-  font-size:clamp(13px, 1.9vw, 15px);
-  color:var(--gray);text-align:center;
-  max-width:600px;line-height:1.6;
-}
-
-/* ====================================================================
-   卡片网格（兴趣 / 证书）
-   ==================================================================== */
-.grid{
-  display:grid;
-  gap:clamp(14px, 2.4vw, 24px);
-  margin-top:clamp(32px, 6vw, 56px);
-  text-align:left;
-}
-.grid.cols-3{grid-template-columns:repeat(auto-fit,minmax(min(100%, 260px),1fr))}
-.grid.cols-4{grid-template-columns:repeat(auto-fit,minmax(min(100%, 210px),1fr))}
-.card{
-  background:var(--card);
-  border-radius:clamp(14px, 2.4vw, 20px);
-  padding:clamp(22px, 4vw, 36px) clamp(20px, 3.4vw, 30px);
-  border:1px solid var(--line);
-  transition:transform .4s,box-shadow .4s;
-}
-.dark-card{background:var(--dark-card);color:#fff;border-color:#333}
-.card:hover{transform:translateY(-6px);box-shadow:0 20px 40px -20px rgba(0,0,0,.28)}
-.num{color:#b01e23;font-weight:700;font-size:clamp(12px,1.6vw,14px);letter-spacing:0.1em;margin-bottom:clamp(12px,2.4vw,18px)}
-.card h3{font-size:clamp(20px, 3.4vw, 28px);font-weight:700;line-height:1.3;margin-bottom:clamp(8px,1.6vw,12px);color:var(--ink);letter-spacing:-0.02em}
-.dark-card h3{color:#fff}
-.tag2{color:#b01e23;font-weight:600;margin-bottom:clamp(8px,1.6vw,12px);font-size:clamp(14px,1.9vw,15px)}
-.card p{color:var(--ink-soft);font-size:clamp(14px,1.9vw,15px);line-height:1.6}
-.dark-card p{color:#bcbcc1}
-
-/* ====================================================================
-   时间轴（成长）
-   ==================================================================== */
-.tl{max-width:640px;margin:clamp(32px,6vw,48px) auto 0;text-align:left}
-.node{
-  position:relative;
-  padding:0 0 clamp(22px,4vw,30px) clamp(22px,4vw,30px);
-  border-left:2px solid #b01e23;
-}
-.node:last-child{border-left:2px solid transparent}
-.node::before{
-  content:"";position:absolute;left:-6px;top:4px;
-  width:10px;height:10px;border-radius:50%;background:#b01e23;
-}
-.node h4{font-size:clamp(17px,2.8vw,21px);font-weight:600;margin-bottom:clamp(4px,1vw,8px);color:#fff}
-.node p{color:#bcbcc1;font-size:clamp(14px,1.9vw,15px);line-height:1.6}
-
-/* ====================================================================
-   联系区 —— 横向 + 居中
-   ==================================================================== */
-.contact-list{
-  display:inline-flex;flex-direction:column;align-items:flex-start;
-  margin:clamp(32px,6vw,48px) auto 0;
-  text-align:left;
-  max-width:100%;
-  overflow-x:auto;            /* 极窄屏兜底：可横向滚动，保证一行 */
-}
-.contact-row{
-  display:flex;align-items:baseline;justify-content:center;
-  gap:clamp(20px,5vw,48px);
-  padding:clamp(12px,2.4vw,16px) 0;
-  border-bottom:1px solid var(--line);
-  white-space:nowrap;          /* 强制 label + value 在同一行 */
-}
-.contact-row:last-child{border-bottom:none}
-.cr-key{
-  flex:0 0 clamp(56px,12vw,96px);
-  text-align:right;
-  color:var(--gray);
-  font-size:clamp(12px,1.7vw,14px);
-  letter-spacing:0.12em;
-}
-.cr-val{
-  color:#111;
-  font-size:clamp(15px,3vw,19px);
-  font-weight:600;text-align:left;
-  white-space:nowrap;          /* 邮箱地址不折行、不换行 */
-}
-.cr-val a{color:inherit;text-decoration:none;border-bottom:none;padding-bottom:0}  /* 删除邮箱下方的线 */
-
-/* ====================================================================
-   Footer（Apple 站点页脚风格）
-   ==================================================================== */
-footer{
-  background:var(--dark);color:#a1a1a6;
-  padding:clamp(32px,6vw,48px) clamp(20px,6vw,56px) calc(28px + env(safe-area-inset-bottom));
-  font-size:clamp(12px,1.6vw,13px);
-}
-.ft{
-  max-width:var(--content);margin:0 auto;
-  display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));
-  gap:clamp(20px,4vw,32px);
-  padding-bottom:clamp(20px,4vw,28px);
-  border-bottom:1px solid rgba(255,255,255,.12);
-}
-.ft .b{color:#fff;font-size:clamp(14px,1.9vw,16px);font-weight:600;margin-bottom:clamp(8px,1.6vw,12px)}
-.ft a,.ft span{display:block;color:#a1a1a6;line-height:2;transition:color .2s}
-.ft a:hover{color:#fff}
-.copy{max-width:var(--content);margin:clamp(16px,3vw,24px) auto 0;color:#6e6e73;font-size:clamp(11px,1.5vw,12px)}
-
-/* ====================================================================
-   滚动显现动画
-   ==================================================================== */
-.reveal{opacity:0;transform:translateY(28px);transition:.7s cubic-bezier(.2,.8,.2,1)}
-.reveal.in{opacity:1;transform:none}
-
-/* ====================================================================
-   响应式断点
-   --------------------------------------------------------------------
-   只有两处「结构性」差异需要断点（导航汉堡、网格列数），
-   其余所有尺寸都已用 clamp() 流式处理，桌面/手机共用一套值。
-   ==================================================================== */
-@media(max-width:760px){
-  /* 汉堡菜单 */
-  .burger{display:flex}
-  .links{
-    display:none;
-    position:fixed;top:calc(52px + env(safe-area-inset-top));left:0;width:100%;
-    flex-direction:column;background:rgba(0,0,0,.94);
-    padding:clamp(12px,3vw,20px) clamp(20px,6vw,32px);gap:0;
+  /* ========== Apple 设计令牌 ========== */
+  :root{
+    --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
+            "PingFang SC", "Helvetica Neue", "Microsoft YaHei", sans-serif;
+    --ink: #1d1d1f;
+    --ink-2: #515154;
+    --gray: #86868b;
+    --line: #d2d2d7;
+    --bg: #ffffff;
+    --soft: #f5f5f7;       /* Apple 标准浅灰 */
+    --dark: #000000;
+    --accent: #0066cc;
+    --accent-2: #2997ff;
+    --col: 980px;          /* 统一内容宽度（栅格基准） */
+    --gutter: clamp(22px, 5vw, 44px);  /* 两侧留白随屏缩放 */
   }
-  .links.open{display:flex}
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  html{ scroll-behavior:smooth; -webkit-text-size-adjust:100%; }
+  body{
+    font-family:var(--font);
+    color:var(--ink);
+    background:var(--bg);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    overflow-x:hidden;
+  }
+  a{ color:var(--accent); text-decoration:none; }
+  img,svg{ display:block; max-width:100%; }
+
+  /* ========== 统一容器：所有区块同一宽度、同一留白 ========== */
+  .wrap{
+    width:100%;
+    max-width:var(--col);
+    margin:0 auto;
+    padding: clamp(72px, 12vw, 120px) var(--gutter);
+    text-align:center;
+  }
+  .wrap.soft{ background:var(--soft); }
+
+  .eyebrow{
+    font-size:clamp(15px, 2vw, 17px);
+    font-weight:600;
+    color:var(--accent);
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    margin-bottom:14px;
+  }
+  .headline{
+    font-size:clamp(36px, 5.6vw, 56px);
+    font-weight:700;
+    letter-spacing:-0.025em;
+    line-height:1.08;
+    margin-bottom:16px;
+  }
+  .subhead{
+    font-size:clamp(19px, 2.8vw, 28px);
+    font-weight:400;
+    color:var(--ink-2);
+    letter-spacing:-0.01em;
+    line-height:1.35;
+    margin-bottom:14px;
+  }
+  .body-text{
+    font-size:clamp(14px, 1.8vw, 21px);
+    color:var(--gray);
+    line-height:1.7;
+    max-width:720px;
+    margin:0 auto;
+  }
+
+  /* ========== 导航：完全透明，文字随背景变色 ========== */
+  .nav{
+    position:fixed;
+    top:0; left:0; right:0;
+    z-index:100;
+    height:52px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:transparent;
+    color:#ffffff;          /* 默认白字（首屏深色） */
+    transition: color .4s ease;
+  }
+  .nav.light{ color:#1d1d1f; }  /* 浅色区块 → 黑字 */
+  .nav-in{
+    width:100%;
+    max-width:var(--col);    /* ← 与 .wrap 同宽，严格对齐 */
+    padding:0 var(--gutter);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .brand{
+    font-size:18px;
+    font-weight:600;
+    letter-spacing:-0.01em;
+    color:inherit;
+    white-space:nowrap;
+  }
+  .links{ display:flex; gap:clamp(18px, 3vw, 32px); }
   .links a{
-    margin:0;padding:clamp(14px,4vw,18px) 0;
-    border-bottom:1px solid rgba(255,255,255,.1);
-    font-size:clamp(16px,4.4vw,18px);
+    color:inherit;
+    font-size:14px;
+    font-weight:400;
+    opacity:.88;
+    transition:opacity .2s;
+    white-space:nowrap;
   }
-  .links a:last-child{border-bottom:none}
+  .links a:hover{ opacity:1; }
+  @media (max-width:640px){
+    .links{ display:none; }  /* 移动端仅保留 logo，避免遮挡 */
+  }
 
-  /* 网格在极窄屏退化为单列 */
-  .grid.cols-3,.grid.cols-4{grid-template-columns:1fr}
+  /* ========== Hero 首屏 ========== */
+  .hero{
+    position:relative;
+    height:100vh;
+    min-height:600px;
+    background:var(--dark);
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:0 var(--gutter);
+    overflow:hidden;
+  }
+  /* 大标题：clamp 下限 40px 保证 375px 手机单行（10字×40px≈400 < 414） */
+  .hero-title{
+    font-size:clamp(40px, 8.5vw, 80px);
+    font-weight:700;
+    letter-spacing:-0.04em;
+    line-height:1.05;
+    margin-bottom:32px;
+    white-space:nowrap;      /* ← 强制单行，绝不折行 */
+  }
+  .hero-cta{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-size:clamp(15px, 1.8vw, 17px);
+    font-weight:400;
+    color:var(--accent-2);
+  }
+  .hero-cta:hover{ text-decoration:underline; }
 
-  /* 时间轴 padding 收窄 */
-  .node{padding-left:20px}
-}
+  /* ========== 名片区 ========== */
+  .name{
+    font-size:clamp(48px, 8vw, 80px);
+    font-weight:700;
+    letter-spacing:-0.04em;
+    line-height:1.05;
+    margin-bottom:12px;
+  }
+  .name + .body-text{ font-size:clamp(15px, 2vw, 22px); }
 
-@media(prefers-reduced-motion:reduce){
-  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
-  html{scroll-behavior:auto}
-}
+  /* ========== 三栏（严格三等分，移动端单列） ========== */
+  .grid3{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:clamp(24px, 4vw, 40px);
+    margin-top:64px;
+    text-align:left;
+  }
+  .cell .num{
+    font-size:15px;
+    font-weight:600;
+    color:var(--accent);
+    margin-bottom:8px;
+  }
+  .cell h3{
+    font-size:clamp(18px, 2.4vw, 24px);
+    font-weight:600;
+    letter-spacing:-0.01em;
+    margin-bottom:6px;
+  }
+  .cell p{ font-size:15px; color:var(--gray); line-height:1.6; }
+  @media (max-width:640px){
+    .grid3{ grid-template-columns:1fr; gap:48px; text-align:center; }
+    .grid3 .num{ text-align:center; }
+  }
 
-/* 安全网 */
-html,body{max-width:var(--content)}
-body{overflow-x:clip}
-a,button,.hero-btn,.burger,.w-card{touch-action:manipulation}
+  /* ========== 引言 ========== */
+  .quote{
+    font-size:clamp(21px, 3.4vw, 32px);
+    font-weight:600;
+    letter-spacing:-0.02em;
+    line-height:1.4;
+    color:var(--ink);
+    max-width:820px;
+    margin:0 auto;
+  }
+  .quote em{ font-style:normal; color:var(--accent); }
+  .quote-source{
+    font-size:clamp(14px, 1.7vw, 17px);
+    color:var(--gray);
+    margin-top:24px;
+  }
+
+  /* ========== 卡片（2×2，统一圆角/留白） ========== */
+  .cards{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:16px;
+    margin-top:56px;
+    text-align:left;
+  }
+  .card{
+    background:var(--soft);
+    border-radius:18px;
+    padding:clamp(28px, 4vw, 40px) clamp(24px, 3vw, 32px);
+  }
+  .card .num{
+    font-size:15px;
+    font-weight:600;
+    color:var(--accent);
+    margin-bottom:12px;
+  }
+  .card h3{
+    font-size:clamp(18px, 2.4vw, 24px);
+    font-weight:600;
+    letter-spacing:-0.01em;
+    margin-bottom:8px;
+  }
+  .card p{ font-size:15px; color:var(--gray); line-height:1.6; }
+  @media (max-width:640px){
+    .cards{ grid-template-columns:1fr; }
+  }
+
+  /* ========== 时间轴 ========== */
+  .timeline{
+    max-width:640px;
+    margin:64px auto 0;
+    text-align:left;
+    border-left:2px solid var(--line);
+    padding-left:32px;
+  }
+  .tl-item{ position:relative; padding-bottom:40px; }
+  .tl-item:last-child{ padding-bottom:0; }
+  .tl-item::before{
+    content:"";
+    position:absolute;
+    left:-39px; top:6px;
+    width:12px; height:12px;
+    border-radius:50%;
+    background:var(--accent);
+  }
+  .tl-item h4{ font-size:clamp(17px, 2.2vw, 21px); font-weight:600; margin-bottom:4px; }
+  .tl-item p{ font-size:17px; color:var(--gray); line-height:1.6; }
+
+  /* ========== 联系（深色大区） ========== */
+  .contact{
+    background:var(--dark);
+    color:#fff;
+    padding: clamp(72px, 12vw, 120px) var(--gutter);
+    text-align:center;
+  }
+  .contact .headline{ color:#fff; }
+  .contact .body-text{ color:#a1a1a6; }
+  .contact-list{
+    display:inline-flex;
+    flex-direction:column;
+    align-items:flex-start;
+    gap:20px;
+    width:100%;
+    max-width:420px;
+    margin:56px auto 0;
+    text-align:left;
+  }
+  .contact-row{
+    display:flex;
+    align-items:baseline;
+    gap:24px;
+    width:100%;
+    border-bottom:1px solid rgba(255,255,255,.15);
+    padding-bottom:16px;
+    white-space:nowrap;      /* 邮箱不折行 */
+  }
+  .contact-row:last-child{ border-bottom:none; }
+  .contact-row .k{
+    flex:0 0 64px;
+    font-size:13px;
+    color:#a1a1a6;
+    letter-spacing:.1em;
+    text-align:right;
+  }
+  .contact-row .v{ font-size:clamp(15px, 2vw, 20px); font-weight:500; color:#fff; }
+
+  footer{
+    background:var(--dark);
+    color:#6e6e73;
+    font-size:12px;
+    padding:32px var(--gutter) 40px;
+    text-align:center;
+  }
 </style>
 </head>
 <body>
-<nav>
+
+<nav class="nav" id="nav">
   <div class="nav-in">
     <a href="#top" class="brand">李浩楠</a>
-    <div class="burger" id="burger" aria-label="菜单" aria-expanded="false"><span></span><span></span><span></span></div>
-    <div class="links" id="navLinks">
-      <a href="#info">主页</a>
+    <div class="links">
+      <a href="#about">简介</a>
       <a href="#interest">兴趣</a>
       <a href="#certs">证书</a>
-      <a href="#timeline">成长</a>
+      <a href="#growth">成长</a>
       <a href="#contact">联系</a>
     </div>
   </div>
 </nav>
 
-<!-- ===================== 第一屏：Hero ===================== -->
 <section class="hero" id="top">
-  <div class="glow"></div>
-  <div class="hero-content">
-    <h1 class="hero-title" aria-label="你好，我是 李浩楠！">
-      <span class="ch" style="--i:1">你</span><span class="ch" style="--i:2">好</span><span class="ch" style="--i:3">，</span><span class="ch" style="--i:4">我</span><span class="ch" style="--i:5">是</span><span class="ch" style="--i:6">&nbsp;</span><span class="ch" style="--i:7">李</span><span class="ch" style="--i:8">浩</span><span class="ch" style="--i:9">楠</span><span class="ch" style="--i:10">！</span>
-    </h1>
-    <a href="#info" class="hero-btn">
-      <span>了解我</span>
-      <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 4v12m0 0l-5-5m5 5l5-5"/>
-      </svg>
-    </a>
+  <div>
+    <h1 class="hero-title">你好，我是 李浩楠。</h1>
+    <a href="#about" class="hero-cta">了解更多 ›</a>
   </div>
 </section>
 
-<!-- ===================== 第二屏：基本盘 ===================== -->
-<section class="wrap light" id="info">
-  <div class="name-stage" aria-label="李浩楠">
-    <span class="ns-char">李</span><span class="ns-char">浩</span><span class="ns-char">楠</span>
-    <span class="name-line" aria-hidden="true"></span>
-  </div>
-  <div class="name-meta">陕西财经职业技术学院 · 消防救援技术 · 备考专升本</div>
-
-  <div class="three-words">
-    <a class="w-card" href="#interest">
-      <span class="w-num">01</span>
-      <span class="w-en">STUDY</span>
-      <span class="w-cn">求学</span>
-      <span class="w-underline" aria-hidden="true"></span>
-    </a>
-    <a class="w-card" href="#certs">
-      <span class="w-num">02</span>
-      <span class="w-en">SKILL</span>
-      <span class="w-cn">练技</span>
-      <span class="w-underline" aria-hidden="true"></span>
-    </a>
-    <a class="w-card" href="#timeline">
-      <span class="w-num">03</span>
-      <span class="w-en">GROW</span>
-      <span class="w-cn">成长</span>
-      <span class="w-underline" aria-hidden="true"></span>
-    </a>
-  </div>
-
-  <div class="manifesto">
-    <p>把眼前的每一步走扎实，也把<em>这条路</em>走得更远</p>
-    <p>手里握着电工证、救护证、驾驶证，<em>脚下还有专升本的路</em></p>
-  </div>
-
-  <p class="quote-line">—— 比起「厉害」，更愿意做一个 <em>踏实、靠谱、持续学习</em> 的人</p>
+<section class="wrap" id="about">
+  <div class="name">李浩楠</div>
+  <p class="body-text">陕西财经职业技术学院 · 消防救援技术专业 · 备考专升本</p>
 </section>
 
-<!-- ===================== 兴趣 ===================== -->
-<section class="wrap dark" id="interest">
-  <span class="tag">Interests</span>
-  <h2>把热爱，交给每天</h2>
-  <div class="grid cols-3">
-    <div class="card dark-card">
+<section class="wrap soft" id="interest">
+  <div class="eyebrow">Interests</div>
+  <h2 class="headline">把热爱，交给每天。</h2>
+  <p class="body-text">学习之外，我用三件事把生活填满。</p>
+  <div class="grid3">
+    <div class="cell">
       <div class="num">01</div>
       <h3>摄影</h3>
-      <p class="tag2">把日常留住</p>
-      <p>用手机记录生活里容易被忽略的瞬间，好照片不靠设备，靠的是「刚好在场」</p>
+      <p>用镜头留住日常里容易被忽略的瞬间。</p>
     </div>
-    <div class="card dark-card">
+    <div class="cell">
       <div class="num">02</div>
       <h3>跑步</h3>
-      <p class="tag2">把身体练扎实</p>
-      <p>几乎每天都跑步，既保持体能，也用来释放压力，长跑教会我：节奏比爆发更重要</p>
+      <p>几乎每天坚持，长跑让我学会保持节奏。</p>
     </div>
-    <div class="card dark-card">
+    <div class="cell">
       <div class="num">03</div>
       <h3>羽毛球</h3>
-      <p class="tag2">把节奏抢回来</p>
-      <p>周末的固定项目，喜欢一拍一拍把节奏夺回来的对抗感，也练反应和协调性</p>
+      <p>享受一拍一拍把节奏夺回来的对抗感。</p>
     </div>
   </div>
 </section>
 
-<!-- ===================== 证书 ===================== -->
-<section class="wrap light" id="certs">
-  <span class="tag">Certificates</span>
-  <h2>一张张到手，这很 Pro</h2>
-  <div class="grid cols-4">
+<section class="wrap">
+  <p class="quote">
+    把眼前的每一步走扎实，也把<em>这条路</em>走得更远。<br>
+    手里握着电工证、救护证、驾驶证，<em>脚下还有专升本的路</em>。
+  </p>
+  <p class="quote-source">—— 比起「厉害」，更愿意做一个踏实、靠谱、持续学习的人。</p>
+</section>
+
+<section class="wrap soft" id="certs">
+  <div class="eyebrow">Certificates</div>
+  <h2 class="headline">一张张到手，这很 Pro。</h2>
+  <p class="body-text">在校期间持续积累的专业与实践能力凭证。</p>
+  <div class="cards">
     <div class="card">
       <div class="num">01</div>
       <h3>四级 / 中级电工证</h3>
-      <p>高中毕业、尚未入学期间考取，具备电气设备安装、维护与故障排查的实操能力</p>
+      <p>高中毕业后、入学前考取，具备电气设备安装、维护与故障排查的实操能力。</p>
     </div>
     <div class="card">
       <div class="num">02</div>
       <h3>红十字救护培训证书</h3>
-      <p>大一期间考取，掌握心肺复苏、创伤包扎等现场急救技能</p>
+      <p>大一期间考取，掌握心肺复苏、创伤包扎等现场急救技能。</p>
     </div>
     <div class="card">
       <div class="num">03</div>
-      <h3>小型汽车驾驶证</h3>
-      <p>2026 年考取，能熟练驾驶小型汽车，可独立完成各类道路驾驶</p>
+      <h3>小型汽车驾驶证（C1）</h3>
+      <p>2026 年考取，可独立完成各类道路驾驶。</p>
     </div>
     <div class="card">
       <div class="num">04</div>
       <h3>荣誉证书 10 余项</h3>
-      <p>在校期间学习、训练与志愿服务中获得的各类荣誉</p>
+      <p>在校期间学习、训练与志愿服务中获得的各类荣誉。</p>
     </div>
   </div>
 </section>
 
-<!-- ===================== 成长 ===================== -->
-<section class="wrap dark" id="timeline">
-  <span class="tag">Journey</span>
-  <h2>一直往上走，升级自己</h2>
-  <div class="tl">
-    <div class="node">
-      <h4>高中毕业</h4>
-      <p>选择消防救援技术方向，随后进入陕西财经职业技术学院</p>
-    </div>
-    <div class="node">
-      <h4>考取四级 / 中级电工证</h4>
-      <p>高中毕业后、入学前考取，具备电气设备安装、维护与故障排查能力</p>
-    </div>
-    <div class="node">
-      <h4>考取红十字救护培训证书</h4>
-      <p>掌握心肺复苏、创伤包扎等现场急救技能</p>
-    </div>
-    <div class="node">
-      <h4>考取 C1 驾驶证 备考专升本</h4>
-      <p>拿下 C1 驾照，目前全力备考专升本</p>
-    </div>
+<section class="wrap" id="growth">
+  <div class="eyebrow">Journey</div>
+  <h2 class="headline">一直往上走，升级自己。</h2>
+  <div class="timeline">
+    <div class="tl-item"><h4>高中毕业</h4><p>选择消防救援技术方向，进入陕西财经职业技术学院。</p></div>
+    <div class="tl-item"><h4>考取四级 / 中级电工证</h4><p>入学前考取，具备电气设备实操能力。</p></div>
+    <div class="tl-item"><h4>考取红十字救护培训证书</h4><p>掌握心肺复苏、创伤包扎等急救技能。</p></div>
+    <div class="tl-item"><h4>考取 C1 驾驶证 · 备考专升本</h4><p>2026 年拿下驾照，目前全力备考专升本。</p></div>
   </div>
 </section>
 
-<!-- ===================== 联系 ===================== -->
-<section class="wrap light" id="contact">
-  <span class="tag">Contact</span>
-  <h2>写了号码，就有回响</h2>
-  <p class="sub">关于专业、专升本，或者只是想交个朋友，都欢迎</p>
+<section class="contact" id="contact">
+  <h2 class="headline">写了号码，就有回响。</h2>
+  <p class="body-text">关于专业、专升本，或者只是想交个朋友，都欢迎。</p>
   <div class="contact-list">
-    <div class="contact-row">
-      <span class="cr-key">邮箱</span>
-      <span class="cr-val"><a href="mailto:2878697150@qq.com">2878697150@qq.com</a></span>
-    </div>
-    <div class="contact-row">
-      <span class="cr-key">微信</span>
-      <span class="cr-val">LovHoeN-07</span>
-    </div>
+    <div class="contact-row"><span class="k">邮箱</span><span class="v">2878697150@qq.com</span></div>
+    <div class="contact-row"><span class="k">微信</span><span class="v">LovHoeN-07</span></div>
   </div>
 </section>
 
-<footer>
-  <div class="ft">
-    <div>
-      <div class="b">站点</div>
-      <a href="#info">主页</a><a href="#interest">兴趣</a><a href="#certs">证书</a><a href="#timeline">成长</a><a href="#contact">联系</a>
-    </div>
-    <div>
-      <div class="b">联系</div>
-      <span>邮箱 · 2878697150@qq.com</span>
-      <span>微信 · LovHoeN-07</span>
-    </div>
-  </div>
-  <div class="copy">© 2026 李浩楠 · 保留所有权利</div>
-</footer>
+<footer>© 2026 李浩楠 · 保留所有权利</footer>
 
 <script>
-/* ===== 汉堡菜单 ===== */
-var burger=document.getElementById('burger');
-var navLinks=document.getElementById('navLinks');
-burger.addEventListener('click',function(){
-  var open=navLinks.classList.toggle('open');
-  burger.setAttribute('aria-expanded',open?'true':'false');
-});
-navLinks.querySelectorAll('a').forEach(function(a){
-  a.addEventListener('click',function(){navLinks.classList.remove('open');burger.setAttribute('aria-expanded','false');});
-});
-
-/* ===== 导航高亮当前区块 ===== */
-var sections=document.querySelectorAll('section[id]');
-var navAs=document.querySelectorAll('.links a');
-function onScroll(){
-  var pos=window.scrollY+100;
-  var current='';
-  sections.forEach(function(s){if(s.offsetTop<=pos)current=s.id;});
-  navAs.forEach(function(a){a.classList.toggle('active',a.getAttribute('href')==='#'+current);});
-}
-window.addEventListener('scroll',onScroll,{passive:true});
-onScroll();
-
-/* ===== 滚动显现 ===== */
-var io=new IntersectionObserver(function(es){
-  es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});
-},{threshold:0.12});
-document.querySelectorAll('.wrap,.hero,.ft').forEach(function(el){el.classList.add('reveal');io.observe(el);});
-
-/* ===== Hero 标题动画：等页面真正可见才起跑 ===== */
-(function(){
-  var title=document.querySelector('.hero-title');
-  if(!title)return;
-  if(window.matchMedia('(prefers-reduced-motion:reduce)').matches){title.classList.add('is-done');return;}
-  var chars=title.querySelectorAll('.ch');
-  var total=Math.round((chars.length-1)*90 + 500) + 60;
-  function done(){title.classList.add('is-done');}
-  function afterPaint(fn){
-    if(window.requestIdleCallback){requestIdleCallback(fn,{timeout:100});}
-    else{requestAnimationFrame(function(){requestAnimationFrame(fn);});}
-  }
-  function start(){afterPaint(function(){title.classList.add('go');});title._timer=setTimeout(done,total);}
-  if(document.visibilityState==='visible'){
-    if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',start,{once:true});}
-    else{start();}
-  }
-  document.addEventListener('visibilitychange',function(){
-    if(document.visibilityState==='visible'){
-      clearTimeout(title._timer);
-      title.classList.remove('is-done','go');
-      afterPaint(function(){title.classList.add('go');});
-      title._timer=setTimeout(done,total);
-    }
-  });
-})();
-
-/* ===== 第二屏姓名动画：进入视口才起跑 ===== */
-(function(){
-  var stage=document.querySelector('.name-stage');
-  if(!stage)return;
-  stage.classList.add('go');
-  var seen=false;
-  var io2=new IntersectionObserver(function(es){
-    es.forEach(function(e){
-      if(e.isIntersecting && !seen){
-        seen=true;
-        requestAnimationFrame(function(){requestAnimationFrame(function(){stage.classList.add('is-done');});});
-        io2.unobserve(e.target);
-      }
-    });
-  },{threshold:0.35});
-  io2.observe(stage);
-})();
+  // 导航文字色随所在区块切换：浅色区黑字 / 深色区(hero/contact)白字
+  (function(){
+    var nav = document.getElementById('nav');
+    var lightSections = ['about','interest','certs','growth'];
+    var io = new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if(e.isIntersecting){
+          if(lightSections.indexOf(e.target.id) >= 0){
+            nav.classList.add('light');
+          } else {
+            nav.classList.remove('light');
+          }
+        }
+      });
+    }, { threshold:0.4 });
+    document.querySelectorAll('section[id], .contact').forEach(function(s){ io.observe(s); });
+  })();
 </script>
 </body>
 </html>
