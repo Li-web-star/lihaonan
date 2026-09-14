@@ -2,39 +2,98 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+
+<!-- ============ 视口：适配所有设备（含刘海屏 / 挖孔屏） ============ -->
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes, viewport-fit=cover">
+<meta name="HandheldFriendly" content="true">
+<meta name="MobileOptimized" content="width">
+
+<!-- ============ 主题色：浏览器地址栏 / PWA 窗口底色跟随网站 ============ -->
+<meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="李浩楠">
 <meta name="apple-touch-fullscreen" content="yes">
-<meta name="format-detection" content="telephone=no">
-<link rel="manifest" href='data:application/manifest+json,{"name":"李浩楠","start_url":"./","scope":"./","display":"standalone","background_color":"#0a0a0a"}'>
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no, email=no, address=no">
+<meta name="referrer" content="no-referrer-when-downgrade">
+
+<!-- ============ SEO / 社交分享 ============ -->
+<meta name="description" content="李浩楠的个人主页 · 电子信息工程专业 · 兴趣、成长与荣誉一览">
+<meta name="keywords" content="李浩楠,个人主页,电子信息工程">
+<meta name="author" content="李浩楠">
+<meta property="og:type" content="website">
+<meta property="og:title" content="李浩楠 · Li Haonan">
+<meta property="og:description" content="电子信息工程专业 · 兴趣、成长与荣誉">
+<meta name="twitter:card" content="summary">
+
+<!-- ============ Favicon：内联 SVG（无需外部文件，单文件即可运行） ============ -->
+<link rel="icon" type="image/svg+xml" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="%23d8232a"/><text x="32" y="42" font-size="34" font-weight="800" font-family="-apple-system,sans-serif" text-anchor="middle" fill="%23fff">李</text></svg>'>
+<link rel="alternate icon" type="image/png" sizes="32x32" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="%23d8232a"/><text x="32" y="42" font-size="34" font-weight="800" font-family="-apple-system,sans-serif" text-anchor="middle" fill="%23fff">李</text></svg>'>
+
+<!-- ============ Apple Touch Icon：全尺寸，覆盖 iPhone / iPad / 主屏幕 ============ -->
+<link rel="apple-touch-icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180"><rect width="180" height="180" rx="40" fill="%230a0a0a"/><text x="90" y="118" font-size="92" font-weight="800" font-family="-apple-system,sans-serif" text-anchor="middle" fill="%23fff">李</text></svg>'>
+<link rel="apple-touch-icon" sizes="180x180" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180"><rect width="180" height="180" rx="40" fill="%230a0a0a"/><text x="90" y="118" font-size="92" font-weight="800" font-family="-apple-system,sans-serif" text-anchor="middle" fill="%23fff">李</text></svg>'>
+<link rel="apple-touch-icon" sizes="152x152" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 152 152"><rect width="152" height="152" rx="34" fill="%230a0a0a"/><text x="76" y="100" font-size="78" font-weight="800" font-family="-apple-system,sans-serif" text-anchor="middle" fill="%23fff">李</text></svg>'>
+<link rel="apple-touch-icon" sizes="120x120" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120"><rect width="120" height="120" rx="27" fill="%230a0a0a"/><text x="60" y="80" font-size="62" font-weight="800" font-family="-apple-system,sans-serif" text-anchor="middle" fill="%23fff">李</text></svg>'>
+<link rel="apple-touch-icon" sizes="76x76"   href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 76 76"><rect width="76" height="76" rx="17" fill="%230a0a0a"/><text x="38" y="50" font-size="40" font-weight="800" font-family="-apple-system,sans-serif" text-anchor="middle" fill="%23fff">李</text></svg>'>
+
+<!-- ============ Safari 固定标签图标（macOS / iOS Safari Pinned Tab） ============ -->
+<link rel="mask-icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23d8232a" d="M12 2a10 10 0 100 20 10 10 0 000-20zm0 4a6 6 0 016 6 6 6 0 01-6 6 6 6 0 01-6-6 6 6 0 016-6z"/></svg>' color="#d8232a">
+
+<!-- ============ PWA Manifest（内联，无需外部文件） ============ -->
+<link rel="manifest" href='data:application/manifest+json;utf-8,%7B%22name%22%3A%22%E6%9D%8E%E6%B5%A9%E6%A5%A0%20%C2%B7%20Li%20Haonan%22%2C%22short_name%22%3A%22%E6%9D%8E%E6%B5%A9%E6%A5%A0%22%2C%22description%22%3A%22%E7%94%B5%E5%AD%90%E4%BF%A1%E6%81%AF%E5%B7%A5%E7%A8%8B%E4%B8%93%E4%B8%9A%20%C2%B7%20%E5%85%B4%E8%B6%A3%E3%80%81%E6%88%90%E9%95%BF%E4%B8%8E%E8%8D%A3%E8%AA%89%22%2C%22start_url%22%3A%22.%2F%22%2C%22scope%22%3A%22.%2F%22%2C%22display%22%3A%22standalone%22%2C%22orientation%22%3A%22any%22%2C%22background_color%22%3A%22%230a0a0a%22%2C%22theme_color%22%3A%22%23d8232a%22%2C%22lang%22%3A%22zh-CN%22%2C%22categories%22%3A%5B%22portfolio%22%2C%22personal%22%5D%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%2520xmlns%253D%2522http%253A%252F%252Fwww.w3.org%252F2000%252Fsvg%2522%2520viewBox%253D%25220%25200%2520192%2520192%2522%253E%253Crect%2520width%253D%2522192%2522%2520height%253D%2522192%2522%2520rx%253D%252240%2522%2520fill%253D%2522%25230a0a0a%2522%252F%253E%253Ctext%2520x%253D%252296%2522%2520y%253D%2522124%2522%2520font-size%253D%252298%2522%2520font-weight%253D%2522800%2522%2520font-family%253D%2522-apple-system%252Csans-serif%2522%2520text-anchor%253D%2522middle%2522%2520fill%253D%2522%2523fff%2522%253E%25E6%259D%258E%253C%252Ftext%253E%253C%252Fsvg%253E%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%2C%22purpose%22%3A%22any%22%7D%2C%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%2520xmlns%253D%2522http%253A%252F%252Fwww.w3.org%252F2000%252Fsvg%2522%2520viewBox%253D%25220%25200%2520512%2520512%2522%253E%253Crect%2520width%253D%2522512%2522%2520height%253D%2522512%2522%2520rx%253D%2522112%2522%2520fill%253D%2522%25230a0a0a%2522%252F%253E%253Ctext%2520x%253D%2522256%2522%2520y%253D%2522330%2522%2520font-size%253D%2522270%2522%2520font-weight%253D%2522800%2522%2520font-family%253D%2522-apple-system%252Csans-serif%2522%2520text-anchor%253D%2522middle%2522%2520fill%253D%2522%2523fff%2522%253E%25E6%259D%258E%253C%252Ftext%253E%253C%252Fsvg%253E%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%2C%22purpose%22%3A%22any%20maskable%22%7D%5D%7D'>
+<meta name="msapplication-TileColor" content="#0a0a0a">
+<meta name="msapplication-config" content="none">
+
+<!-- ============ iOS 主屏幕 / 启动图：覆盖 iPhone 全面屏各尺寸 ============ -->
+<!-- 启用「添加到主屏幕」后全屏运行，不显示 Safari 工具栏 -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-touch-fullscreen" content="yes">
+<!-- 启动图：深色底 + 「李」字，与各机型分辨率精确匹配，避免白屏拉伸 -->
+<link rel="apple-touch-startup-image" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)" href='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20640%201136%22%3E%3Crect%20width%3D%22640%22%20height%3D%221136%22%20fill%3D%22%230a0a0a%22%2F%3E%3Ctext%20x%3D%22320%22%20y%3D%22590%22%20font-size%3D%22180%22%20font-weight%3D%22800%22%20font-family%3D%22-apple-system%2Csans-serif%22%20text-anchor%3D%22middle%22%20fill%3D%22%23fff%22%3E%E6%9D%8E%3C%2Ftext%3E%3C%2Fsvg%3E'>
+<link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20750%201334%22%3E%3Crect%20width%3D%22750%22%20height%3D%221334%22%20fill%3D%22%230a0a0a%22%2F%3E%3Ctext%20x%3D%22375%22%20y%3D%22692%22%20font-size%3D%22210%22%20font-weight%3D%22800%22%20font-family%3D%22-apple-system%2Csans-serif%22%20text-anchor%3D%22middle%22%20fill%3D%22%23fff%22%3E%E6%9D%8E%3C%2Ftext%3E%3C%2Fsvg%3E'>
+<link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%201125%202436%22%3E%3Crect%20width%3D%221125%22%20height%3D%222436%22%20fill%3D%22%230a0a0a%22%2F%3E%3Ctext%20x%3D%22562%22%20y%3D%221263%22%20font-size%3D%22380%22%20font-weight%3D%22800%22%20font-family%3D%22-apple-system%2Csans-serif%22%20text-anchor%3D%22middle%22%20fill%3D%22%23fff%22%3E%E6%9D%8E%3C%2Ftext%3E%3C%2Fsvg%3E'>
+<link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%201170%202532%22%3E%3Crect%20width%3D%221170%22%20height%3D%222532%22%20fill%3D%22%230a0a0a%22%2F%3E%3Ctext%20x%3D%22585%22%20y%3D%221313%22%20font-size%3D%22400%22%20font-weight%3D%22800%22%20font-family%3D%22-apple-system%2Csans-serif%22%20text-anchor%3D%22middle%22%20fill%3D%22%23fff%22%3E%E6%9D%8E%3C%2Ftext%3E%3C%2Fsvg%3E'>
+<link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%201242%202688%22%3E%3Crect%20width%3D%221242%22%20height%3D%222688%22%20fill%3D%22%230a0a0a%22%2F%3E%3Ctext%20x%3D%22621%22%20y%3D%221394%22%20font-size%3D%22420%22%20font-weight%3D%22800%22%20font-family%3D%22-apple-system%2Csans-serif%22%20text-anchor%3D%22middle%22%20fill%3D%22%23fff%22%3E%E6%9D%8E%3C%2Ftext%3E%3C%2Fsvg%3E'>
+<link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%201290%202796%22%3E%3Crect%20width%3D%221290%22%20height%3D%222796%22%20fill%3D%22%230a0a0a%22%2F%3E%3Ctext%20x%3D%22645%22%20y%3D%221450%22%20font-size%3D%22440%22%20font-weight%3D%22800%22%20font-family%3D%22-apple-system%2Csans-serif%22%20text-anchor%3D%22middle%22%20fill%3D%22%23fff%22%3E%E6%9D%8E%3C%2Ftext%3E%3C%2Fsvg%3E'>
+
+<!-- ============ 微信 / QQ 内置浏览器专项适配 ============ -->
+<meta name="x5-orientation" content="portrait">
+<meta name="x5-fullscreen" content="true">
+<meta name="x5-page-mode" content="app">
+<meta name="screen-orientation" content="portrait">
+<meta name="full-screen" content="yes">
+<meta name="browsermode" content="application">
+<meta name="apple-itunes-app" content="app-id=, app-argument=#">
+
+<!-- 微信分享走系统原生（无需 wx.config），本页无可分享内容时不主动弹分享菜单 -->
+
 <title>李浩楠 · Li Haonan</title>
 <style>
+/* ==================== 安全区域变量（刘海 / 灵动岛 / Home Indicator） ==================== */
+:root{
+  --sat: env(safe-area-inset-top, 0px);      /* Status Bar 高度 */
+  --sar: env(safe-area-inset-right, 0px);
+  --sab: env(safe-area-inset-bottom, 0px);   /* Home Indicator 高度 */
+  --sal: env(safe-area-inset-left, 0px);
+}
+
 /* ==================== 原有样式（保留） ==================== */
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;color:#1d1d1f;background:#f5f5f7;line-height:1.6;
-  /* iOS 添加到主屏幕：防止橡皮筋滚动 & 内容溢出安全区域 */
-  overscroll-behavior:none;
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC","Helvetica Neue","Microsoft YaHei",sans-serif;color:#1d1d1f;background:#f5f5f7;line-height:1.6;
+  /* ★ 现代滚动优化：保留用户缩放能力（无障碍要求），用 touch-action 替代已废弃的 user-scalable=no */
   -webkit-overflow-scrolling:touch;
+  scroll-behavior:smooth;
+  /* ★ 安全区域内边距：避免内容被刘海 / 圆角 / Home Indicator 遮挡 */
+  padding: 0 env(safe-area-inset-right, 0px) 0 env(safe-area-inset-left, 0px);
+  /* ★ 顶部导航栏已移除，章节间保留舒适间距即可（JS 滚动定位额外留 24px） */
+  scroll-padding-top:calc(32px + env(safe-area-inset-top, 0px));
 }
+html{scroll-padding-top:calc(32px + env(safe-area-inset-top, 0px))}
 html{overscroll-behavior:none}
-img{max-width:100%}
-nav{position:fixed;top:0;left:0;width:100%;z-index:100;background:transparent;
-  padding-top:env(safe-area-inset-top);
-  transition:background-color .45s ease,opacity .45s ease;
-  background-color:rgba(0,0,0,.0);}
-nav.is-scrolling{opacity:0}
-nav.is-visible{opacity:1}
-.nav-in{width:100%;margin:0;height:calc(50px + env(safe-area-inset-top));display:flex;align-items:center;justify-content:flex-end;padding:0 20px}
-.brand{color:#fff;font-size:17px;font-weight:600}
-nav.on-light .brand,nav.on-light{background-color:rgba(255,255,255,.72)}
-nav.on-light .links a{color:#1d1d1f}
-nav .brand,nav .links a{transition:color .35s ease}
-nav.over-dark .brand,nav.over-dark .links a{text-shadow:0 1px 3px rgba(0,0,0,.6)}
-.links{overflow-x:auto;white-space:nowrap;scrollbar-width:none}
-.links::-webkit-scrollbar{display:none}
-.links a{color:#eee;font-size:13px;margin-left:18px}
+img{max-width:100%;vertical-align:middle}
 .wrap{max-width:900px;margin:0 auto;padding:80px 20px;text-align:center}
 .dark{background:#0a0a0a;color:#fff}
 .light{background:#fff;color:#1d1d1f}
@@ -43,22 +102,18 @@ h1,h2{font-size:clamp(32px,7vw,52px);font-weight:800;line-height:1.2;margin-bott
 .sub{font-size:clamp(16px,3.5vw,20px);color:#a1a1a6;margin-bottom:10px}
 .desc{font-size:17px;color:#444;max-width:680px;margin:0 auto 14px;line-height:1.8}
 strong{color:#e53935}
-.hero{height:100vh;height:100svh;min-height:520px;background:#0a0a0a;color:#fff;display:flex;align-items:center;justify-content:center;padding:0 20px;text-align:center;position:relative;overflow:hidden;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
+.hero{height:100vh;height:100svh;min-height:520px;background:#0a0a0a;color:#fff;display:flex;align-items:center;justify-content:center;padding:0 20px;text-align:center;position:relative;overflow:hidden;padding-top:calc(env(safe-area-inset-top) + 56px);padding-bottom:calc(env(safe-area-inset-bottom) + 40px)}
 .hero-center{display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;filter:none}
 .hero-center h1{text-align:center;margin:0 auto}
 .hero-cta{margin-top:36px}
 @media(max-width:760px){ .hero{height:100vh;height:100svh;min-height:520px} }
 .glow{position:fixed;top:20%;left:50%;width:min(90vw,600px);height:min(90vw,600px);transform:translateX(-50%);border-radius:50%;background:radial-gradient(circle,rgba(229,57,53,.3),transparent 65%);z-index:-1}
-.spec{max-width:680px;margin:32px auto 0;text-align:left}
-.row{display:flex;justify-content:space-between;padding:15px 4px;border-bottom:1px solid #e0e0e0;gap:12px;font-size:16px}
-.row:first-child{border-top:1px solid #e0e0e0}
-.k{color:#666;flex:0 0 auto}
-.v{font-weight:600;text-align:right}
+/* ★ 旧的 .row / 通用 .spec 基础样式已废弃，布局统一由下方 ".spec .row-line" 规则控制 */
 .red{color:#e53935}
-.grid{display:grid;gap:16px;margin-top:40px;text-align:left}
+.grid{display:grid;gap:24px;margin-top:48px;text-align:left}
 .grid.cols-3{grid-template-columns:repeat(3,1fr)}
 .grid.cols-4{grid-template-columns:repeat(4,1fr)}
-.card{background:#fafafa;border-radius:18px;padding:26px 20px}
+.card{background:#fafafa;border-radius:18px;padding:32px 26px}
 .card.dark-card{background:#1c1c1e;color:#fff;border:1px solid #333}
 .num{color:#e53935;font-weight:800;font-size:14px;letter-spacing:1px;margin-bottom:12px}
 .card h3{font-size:22px;margin-bottom:8px}
@@ -72,15 +127,18 @@ footer{background:#000;color:#aaa;padding:40px 20px 30px;font-size:13px}
 .ft{max-width:760px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:30px;padding-bottom:28px;border-bottom:1px solid #333}
 .ft .b{color:#fff;font-size:16px;font-weight:600;margin-bottom:8px}
 .ft a{display:block;color:#aaa;line-height:2}
+/* ★ 页脚联系方式：纯文本、不可点击、不响应指针，仅作信息展示 */
+.ft-text{display:block;color:#aaa;line-height:2;cursor:default;-webkit-tap-highlight-color:transparent}
+.ft-text::before{content:attr(data-label) " · ";color:#888;font-size:12px;letter-spacing:.02em}
 .copy{max-width:900px;margin:20px auto 0;color:#666;font-size:12px}
-.reveal{opacity:0;transform:translateY(30px);transition:.8s}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity 1s cubic-bezier(.22,.71,.22,1), transform 1s cubic-bezier(.22,.71,.22,1)}
 .reveal.in{opacity:1;transform:none}
 @media(max-width:760px){
-  .wrap{padding:60px 18px}
+  .wrap{padding:72px 18px}
   .links a{margin-left:0;margin-right:16px}
-  .grid.cols-3,.grid.cols-4{grid-template-columns:1fr}
+  .grid.cols-3,.grid.cols-4{grid-template-columns:1fr; gap:18px; margin-top:36px}
   .row{font-size:15px;padding:18px 2px}
-  .card{padding:22px 18px}
+  .card{padding:26px 22px}
   .ft{grid-template-columns:1fr;gap:22px}
   h1,h2{font-size:clamp(30px,10vw,44px)}
   h1,h2{white-space:normal}
@@ -130,50 +188,49 @@ a.cta.cta-text:hover{background-color:var(--accent);border-color:var(--accent);c
 a.cta.cta-text:hover .arrow{transform:translateX(5px)}
 a{color:#e53935;text-decoration:none} a:hover{color:#f05a5e}
 
-.nav-in{justify-content:flex-end}
-nav .links{
-  width:auto;
-  display:flex;flex-direction:row;
-  align-items:center;justify-content:flex-end;
-  gap:22px;
-  overflow-x:auto;white-space:nowrap;scrollbar-width:none;-webkit-overflow-scrolling:touch;
-}
-nav .links::-webkit-scrollbar{display:none}
-nav .links a{
-  flex:0 0 auto;text-align:center;
-  color:inherit;font-size:13px;font-weight:400;letter-spacing:.02em;
-  padding:4px 0;outline:none;-webkit-tap-highlight-color:transparent;
-  transition:color .35s ease,opacity .35s ease;
-}
-nav .links a:hover{opacity:.7}
-nav .links a.is-current{font-weight:600}
-nav .links a.is-current::after{content:"";display:block;width:16px;height:2px;border-radius:2px;margin:4px auto 0;background:currentColor}
-nav.on-light{background-color:rgba(255,255,255,.72)}
-nav.on-light .links a{color:#1d1d1f}
-nav.on-light .links a.is-current{color:#e53935}
-nav.over-dark{background-color:rgba(0,0,0,.80)}
-nav.over-dark .links a{color:#fff}
-nav.over-dark .links a.is-current{color:#fff}
-nav .links a:active{opacity:.55}
-.brand{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
-.wrap{padding:100px 20px}
+.nav-in{justify-content:center}
+/* ★ 原 .links / nav 相关响应式样式已随导航栏移除，无残留 */
+.wrap{padding:120px 20px}
 
-.spec{max-width:560px;margin-left:auto;margin-right:auto;width:100%}
+/* ★ 个人表：6 行两列，规整对齐（顺序不变：姓名→年龄→学校→专业→年级→目标） */
+.spec{
+  width:100%;
+  max-width:560px;
+  margin:40px auto 0;
+  background:#fafafa;          /* ★ 整张表一个浅灰底，6 行成组，边界清晰 */
+  border:1px solid var(--line);
+  border-radius:18px;
+  overflow:hidden;             /* ★ 圆角裁切，分隔线不溢出 */
+  box-shadow:0 8px 30px rgba(0,0,0,.05);
+}
 .spec .row-line{
-  display:flex;align-items:baseline;justify-content:space-between;
-  gap:32px;padding:26px 4px;
-  border-bottom:1px solid var(--line);
+  display:flex;
+  align-items:center;           /* ★ 垂直居中，避免多字值顶对齐参差 */
+  justify-content:space-between;
+  gap:24px;
+  padding:19px 22px;            /* ★ 左右留白，撑出卡片呼吸感 */
+  border-bottom:1px solid #ececef;  /* ★ 柔和分隔线，比外框更浅 */
 }
-.spec .row-line:first-child{border-top:1px solid var(--line)}
-.spec .k{flex:0 0 auto;color:var(--muted);font-size:15px;text-align:right;padding-top:1px;letter-spacing:.02em;white-space:nowrap}
-.spec .v{flex:0 0 auto;font-size:19px;font-weight:600;color:var(--text);text-align:left;white-space:nowrap}
-@media(max-width:600px){
-  .spec{max-width:100%}
-  .spec .row-line{gap:20px;padding:22px 2px}
-  .spec .k{font-size:14px}
-  .spec .v{font-size:16px}
+.spec .row-line:first-child{ border-top:1px solid var(--line); }
+.spec .k{
+  flex:0 0 92px;                /* ★ 固定标签列宽 —— 6 个值左侧竖线对齐 */
+  text-align:right;
+  color:var(--muted);
+  font-size:13px;
+  font-weight:600;
+  letter-spacing:.08em;
+  white-space:nowrap;
 }
-
+.spec .v{
+  flex:1 1 auto;
+  text-align:left;
+  font-size:18px;
+  font-weight:600;
+  color:var(--text);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
 #info     { background:#ffffff; color:#1d1d1f; min-height:100vh; min-height:100svh; display:flex; flex-direction:column; justify-content:center; align-items:center; width:100%; }
 #interest { background:#0a0a0a; color:#ffffff }
 #certs    { background:#ffffff; color:#1d1d1f }
@@ -193,8 +250,8 @@ nav .links a:active{opacity:.55}
   opacity:1;
 }
 .scroll-hint.is-off{opacity:0;pointer-events:none}
-.scroll-hint__arrow{animation:hintBob 1.8s ease-in-out infinite;transition:transform .35s ease}
-@keyframes hintBob{0%,100%{transform:translateY(0);opacity:.6}50%{transform:translateY(7px);opacity:1}}
+.scroll-hint__arrow{animation:hintBob 4.2s cubic-bezier(.4,0,.4,1) infinite;transition:transform .5s cubic-bezier(.22,.71,.22,1)}
+@keyframes hintBob{0%,100%{transform:translateY(0);opacity:.55}50%{transform:translateY(8px);opacity:1}}
 .scroll-hint:hover{color:#fff}
 
 @media(max-width:760px){
@@ -210,6 +267,119 @@ nav .links a:active{opacity:.55}
 
 @view-transition{navigation:auto}
 html{transition:opacity .45s ease} html.is-leaving{opacity:0}
+
+/* ==================== 全局动画系统（新增） ==================== */
+
+/* ---------- 1. 尊重用户的「减少动画」偏好 ---------- */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{
+    animation-duration:.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.01ms !important;
+    scroll-behavior:auto !important;
+  }
+}
+
+/* ---------- 2. 页面加载入场：分层丝滑渐入（仅首次） ---------- */
+.hero-title{
+  display:inline-flex; flex-wrap:wrap; justify-content:center; align-items:center;
+  /* ★ 起始态：微下移 + 略透，加载后缓停到原位 */
+  opacity:0; transform:translateY(12px);
+  /* ★ 放慢到 2.6s（上一版 1.8s）：整体缓停更从容，与逐字错峰衔接更自然 */
+  transition:opacity 2.6s cubic-bezier(.22,.71,.22,1), transform 2.6s cubic-bezier(.22,.71,.22,1);
+}
+.hero-loaded .hero-title{ opacity:1; transform:none; }
+/* 每个字符轻微错峰 —— 用 white-space 保证不换行，逐字用 JS 包 span */
+.hero-title .ch{
+  display:inline-block;
+  opacity:0; transform:translateY(10px);
+  /* ★ 单字过渡放慢到 1.6s（上一版 1.15s），起始位移收敛到 8px，轻柔不拖沓 */
+  transition:opacity 1.6s cubic-bezier(.22,.71,.22,1), transform 1.6s cubic-bezier(.22,.71,.22,1);
+  transition-delay:var(--d, 0ms);   /* ★ JS 内联设置，逐字错峰 */
+}
+.hero-loaded .hero-title .ch{ opacity:1; transform:none; }
+/* 降级模式：直接显示，跳过逐字过渡 */
+.hero-text--static .ch,
+.hero-text--static{ transition:none !important; opacity:1 !important; transform:none !important; }
+/* 首页整块随滚动平滑淡出（JS 仅切换 .is-out，此处负责缓动） */
+.hero{ will-change:opacity, transform; transition:opacity 1.2s var(--ease), transform 1.2s var(--ease); }
+.hero.is-out{ opacity:0; transform:translateY(-24px); pointer-events:none; }
+.hero-title{ will-change:opacity, transform; }
+.hero-text{ color:#fff; white-space:nowrap; }
+/* 光晕：更慢、更柔和地呼吸，营造氛围 */
+.glow{ opacity:0; }
+.hero-loaded .glow{ animation:glowPulse 3.4s ease .9s forwards; }
+@keyframes glowPulse{
+  0%{ opacity:0; transform:translateX(-50%) scale(.82); }
+  100%{ opacity:.9; transform:translateX(-50%) scale(1); }
+}
+
+/* ---------- 3. 滚动浮现：统一 .reveal 基类（默认可见，播放时增强） ---------- */
+/* 保持原逻辑：IO 添加 .in 后触发；此处补充动画曲线变体 */
+.reveal{ will-change:opacity,transform; }
+.reveal.in{ transition:opacity 1s cubic-bezier(.22,.71,.22,1), transform 1s cubic-bezier(.22,.71,.22,1); }
+
+/* 变体：从左侧滑入（用于卡片网格） */
+.reveal-left{ opacity:0; transform:translateX(-32px); }
+.reveal-left.in{ opacity:1; transform:none; }
+.reveal-right{ opacity:0; transform:translateX(32px); }
+.reveal-right.in{ opacity:1; transform:none; }
+
+/* ---------- 4. 缩放微交互：卡片 hover 浮起（桌面） ---------- */
+@media (min-width:761px){
+  .card{ transition:transform .55s cubic-bezier(.22,.71,.22,1), box-shadow .55s ease, border-color .55s ease; }
+  .card:hover{ transform:translateY(-6px); box-shadow:0 18px 44px rgba(0,0,0,.12); }
+  .dark .card:hover{ box-shadow:0 18px 44px rgba(0,0,0,.55); }
+  /* 表格行：hover 高亮 + 微移 */
+  .spec .row-line{ transition:background-color .4s ease, padding-left .4s cubic-bezier(.22,.71,.22,1); }
+  .spec .row-line:hover{ background-color:rgba(229,57,53,.035); }
+  .spec .row-line:hover .v{ color:var(--accent) !important; }
+}
+
+/* ---------- 5. 标签 .tag 入场：下滑显现 ---------- */
+.tag{ opacity:0; transform:translateY(12px); transition:opacity .8s ease .15s, transform .8s cubic-bezier(.22,.71,.22,1) .15s; }
+.tag.in, .wrap.is-visible .tag, .hero-loaded .tag{ opacity:1; transform:none; }
+
+/* ---------- 6. 区块标题下划线生长（装饰线） ---------- */
+.sec-title{ position:relative; display:inline-block; }
+.sec-title::after{
+  content:""; position:absolute; left:50%; bottom:-14px;
+  width:48px; height:3px; border-radius:2px; background:var(--accent);
+  transform:translateX(-50%) scaleX(0); transform-origin:center;
+  transition:transform .9s cubic-bezier(.22,.71,.22,1) .4s;
+}
+.sec-title.in::after, .wrap.is-visible .sec-title::after{ transform:translateX(-50%) scaleX(1); }
+
+/* ---------- 7. 数字卡片（证书）数值跳动准备 ---------- */
+@keyframes numPop{
+  0%{ opacity:0; transform:translateY(8px) scale(.9); }
+  100%{ opacity:1; transform:none; }
+}
+.card .num{ transition:transform .5s cubic-bezier(.2,.7,.2,1); }
+.card:hover .num{ transform:scale(1.15); color:#f05a5e; }
+
+/* ---------- 8. CTA 按钮持续引导动效（已在 CSS 中，此处补充焦点态） ---------- */
+a.cta.cta-text:focus-visible{ outline:none; box-shadow:0 0 0 4px rgba(229,57,53,.28); }
+
+/* ---------- 9. 区块切换：内容轻微视差（仅桌面，克制） ---------- */
+@media (min-width:901px){
+  .parallax{ transition:transform .6s cubic-bezier(.2,.7,.2,1); }
+}
+
+/* ---------- 11. 导航链接下划线跟随（增强现有 is-current） ---------- */
+@media (min-width:761px){
+  nav .links a{ position:relative; }
+  nav .links a::after{ content:""; position:absolute; left:0; right:0; bottom:0; height:2px;
+    background:currentColor; transform:scaleX(0); transform-origin:center; transition:transform .35s cubic-bezier(.2,.7,.2,1); }
+  nav .links a:hover::after{ transform:scaleX(.6); }
+}
+
+/* ---------- 12. footer 链接 hover 微移 ---------- */
+@media (min-width:761px){
+  .ft a{ transition:transform .3s ease, color .3s ease; }
+  .ft a:hover{ transform:translateX(4px); color:#fff !important; }
+  .ft .ft-text:hover{ color:#aaa; transform:none; }   /* 纯文本：禁止 hover 变色 / 位移 */
+}
 
 /* ==================== 视觉丰富化 ==================== */
 
@@ -231,20 +401,18 @@ html{transition:opacity .45s ease} html.is-leaving{opacity:0}
 }
 @media(max-width:900px){ .cursor{display:none} }
 
-.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1)}
-.reveal.in{opacity:1;transform:none}
-
-.stagger{opacity:1}
-.stagger > *{opacity:1;transform:none}
+/* ★ 统一为「默认可见 + 播放增强」策略：起始态透明，.in 后按节奏浮现
+   —— 解决原 .stagger{opacity:1} 与 .reveal(透明) 两套规则打架导致动画不可见的问题 */
+.stagger > *{opacity:0;transform:translateY(24px);transition:opacity var(--d-base-a, .85s) var(--ease), transform var(--d-base-a, .85s) var(--ease)}
 .stagger.in > *{opacity:1;transform:none}
-.stagger.in > *:nth-child(1){transition-delay:.00s}
-.stagger.in > *:nth-child(2){transition-delay:.08s}
-.stagger.in > *:nth-child(3){transition-delay:.16s}
-.stagger.in > *:nth-child(4){transition-delay:.24s}
-.stagger.in > *:nth-child(5){transition-delay:.32s}
-.stagger.in > *:nth-child(6){transition-delay:.40s}
-.stagger.in > *:nth-child(7){transition-delay:.48s}
-.stagger.in > *:nth-child(8){transition-delay:.56s}
+.stagger.in > *:nth-child(1){transition-delay:calc(.00s / var(--delay-div))}
+.stagger.in > *:nth-child(2){transition-delay:calc(.08s / var(--delay-div))}
+.stagger.in > *:nth-child(3){transition-delay:calc(.16s / var(--delay-div))}
+.stagger.in > *:nth-child(4){transition-delay:calc(.24s / var(--delay-div))}
+.stagger.in > *:nth-child(5){transition-delay:calc(.32s / var(--delay-div))}
+.stagger.in > *:nth-child(6){transition-delay:calc(.40s / var(--delay-div))}
+.stagger.in > *:nth-child(7){transition-delay:calc(.48s / var(--delay-div))}
+.stagger.in > *:nth-child(8){transition-delay:calc(.56s / var(--delay-div))}
 
 .count-up{font-variant-numeric:tabular-nums;opacity:0;transition:opacity .4s ease .15s}
 .count-up.is-counted{opacity:1}
@@ -256,41 +424,28 @@ html{transition:opacity .45s ease} html.is-leaving{opacity:0}
   max-width: 1120px;
 }
 
-.spec { width: 100%; max-width: 920px; margin: 0 auto; }
-.row-line{
-  display:flex; align-items:baseline; justify-content:space-between; gap:24px;
-  padding:20px 2px;
-  border-bottom:1px solid var(--line);
+/* ★ 宽屏保持与手机端一致的规整两列，仅放宽内边距 */
+@media (min-width:761px){
+  .spec{ max-width:600px; }
+  .spec .row-line{ padding:22px 22px; }
+  .spec .k{ flex:0 0 104px; font-size:14px; }
+  .spec .v{ font-size:19px; }
 }
-.row-line .k{
-  flex:0 0 auto;
-  color:var(--muted); font-size:12px; font-weight:600;
-  letter-spacing:.12em; text-transform:uppercase;
-}
-.row-line .v{
-  flex:1 1 auto; text-align:right;
-  font-size:clamp(19px,2.6vw,21px); font-weight:600; color:var(--text);
-  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-}
-.row-line:last-child .v{ color:var(--text); }
-.row-line:last-child{ border-bottom:none; }
 
+/* ★ 手机端：表格精致化 + 依次浮现动画（顺序不变：姓名→…→目标） */
 @media (max-width:760px){
-  #info .spec{ max-width:520px; }
+  #info .spec{ max-width:560px; }
   #info .row-line{
-    padding:17px 4px;
-    opacity:0; transform:translateY(18px);
-    transition:opacity .55s cubic-bezier(.2,.7,.2,1), transform .55s cubic-bezier(.2,.7,.2,1);
+    padding:16px 14px;
+    opacity:1; transform:none;          /* ★ 默认可见，专属动画覆盖 */
   }
-  #info .spec--play .row-line{ opacity:1; transform:none; }
-  #info .spec .row-line:nth-child(1){ transition-delay:.00s }
-  #info .spec .row-line:nth-child(2){ transition-delay:.07s }
-  #info .spec .row-line:nth-child(3){ transition-delay:.14s }
-  #info .spec .row-line:nth-child(4){ transition-delay:.21s }
-  #info .spec .row-line:nth-child(5){ transition-delay:.28s }
-  #info .spec .row-line:nth-child(6){ transition-delay:.35s }
-  #info .row-line .k{ font-size:11px; }
-  #info .row-line .v{ font-size:clamp(18px,5vw,20px); }
+  #info .row-line .k{ flex:0 0 64px; font-size:12px; }
+  #info .row-line .v{ font-size:16px; }
+}
+
+/* ★ 极窄屏（小屏手机）：表格满宽，两侧留安全边距，绝不溢出 */
+@media (max-width:600px){
+  #info .spec{ max-width:calc(100% - 28px); }
 }
 
 #interest .grid,
@@ -311,6 +466,13 @@ html{transition:opacity .45s ease} html.is-leaving{opacity:0}
 }
 
 /* ==================== 成长页：竖向时间轴 + 动画 ==================== */
+/* ============================================================
+   成长时间轴 —— 动画方案（v3：默认可见 + 动画增强）
+   核心原则：即使 JS 完全不执行，时间轴也完整可见。
+   动画通过 .journey-play 父级类控制，且仅在可见时触发一次。
+   ============================================================ */
+
+/* ★ 轴线：默认全高显示；播放时从顶部生长一次 */
 .journey{
   position:relative;
   width:100%;
@@ -324,12 +486,20 @@ html{transition:opacity .45s ease} html.is-leaving{opacity:0}
   left:19px;
   width:2px;
   background:linear-gradient(to bottom, rgba(229,57,53,.55), rgba(229,57,53,.12));
-  transform:scaleY(0);
+  /* ★ 默认 scaleY(1) —— 不依赖 JS 也看得到线 */
+  transform:scaleY(1);
   transform-origin:top center;
-  transition:transform 1.1s cubic-bezier(.2,.8,.2,1);
 }
-.journey.journey--play .journey__line{ transform:scaleY(1); }
+/* 播放时：先缩回顶部，再生长（通过 JS 添加 .journey-play） */
+.journey.journey-play .journey__line{
+  animation:lineGrow calc(1.6s / var(--delay-div)) cubic-bezier(.2,.8,.2,1) forwards;
+}
+@keyframes lineGrow{
+  0%  { transform:scaleY(0); }
+  100%{ transform:scaleY(1); }
+}
 
+/* ★ 节点：默认完全可见 */
 .node{
   position:relative;
   display:flex;
@@ -338,20 +508,23 @@ html{transition:opacity .45s ease} html.is-leaving{opacity:0}
   padding:18px 0 18px 60px;
   opacity:1;
   transform:none;
-  transition:opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1);
 }
-.journey--play .node{ opacity:0; transform:translateY(36px); }
-.journey--play .node.is-up{ opacity:1; transform:none; }
-.journey.journey--play .node{ opacity:0; transform:translateY(36px); }
-.journey.journey--play .node.is-up{ opacity:1; transform:none; }
-.journey--play .node[data-node="0"]{ transition-delay:.05s }
-.journey--play .node[data-node="1"]{ transition-delay:.30s }
-.journey--play .node[data-node="2"]{ transition-delay:.55s }
+/* 播放时：依次从下方浮现（时长随滚动速度自适应） */
+.journey.journey-play .node{
+  opacity:0;
+  transform:translateY(28px);
+  animation:nodeRise calc(1s / var(--delay-div)) cubic-bezier(.22,.71,.22,1) forwards;
+}
+.journey.journey-play .node[data-node="0"]{ animation-delay:calc(.4s / var(--delay-div)) }
+.journey.journey-play .node[data-node="1"]{ animation-delay:calc(1.1s / var(--delay-div)) }
+.journey.journey-play .node[data-node="2"]{ animation-delay:calc(1.8s / var(--delay-div)) }
 
-.journey.journey--play .node[data-node="0"]{ transition-delay:.05s }
-.journey.journey--play .node[data-node="1"]{ transition-delay:.30s }
-.journey.journey--play .node[data-node="2"]{ transition-delay:.55s }
+@keyframes nodeRise{
+  0%  { opacity:0; transform:translateY(28px); }
+  100%{ opacity:1; transform:none; }
+}
 
+/* ★ 圆点：默认可见，播放时弹入 */
 .node__dot{
   position:absolute;
   top:26px; left:12px;
@@ -360,16 +533,60 @@ html{transition:opacity .45s ease} html.is-leaving{opacity:0}
   background:var(--accent);
   box-shadow:0 0 0 4px rgba(229,57,53,.14);
   flex:0 0 auto;
+  transform:scale(1);
 }
+/* 播放时：圆点弹入 */
+.journey.journey-play .node__dot{
+  animation:dotPop calc(.7s / var(--delay-div)) cubic-bezier(.34,1.56,.64,1) forwards;
+}
+.journey.journey-play .node[data-node="0"] .node__dot{ animation-delay:calc(.4s / var(--delay-div)) }
+.journey.journey-play .node[data-node="1"] .node__dot{ animation-delay:calc(1.1s / var(--delay-div)) }
+.journey.journey-play .node[data-node="2"] .node__dot{ animation-delay:calc(1.8s / var(--delay-div)) }
+/* 圆点起始态：动画开始前是缩小状态 */
+.journey.journey-play .node__dot{ transform:scale(0); }
+
+@keyframes dotPop{
+  0%  { transform:scale(0); }
+  100%{ transform:scale(1); }
+}
+
+/* ★ 当下节点：持续脉冲（表示"进行中"） */
 .node--current .node__dot{
-  animation:pulseDot 2.2s ease-in-out infinite;
+  animation:pulseDot 2.8s ease-in-out infinite;
 }
 @keyframes pulseDot{
   0%,100%{ box-shadow:0 0 0 4px rgba(229,57,53,.18); }
   50%   { box-shadow:0 0 0 13px rgba(229,57,53,0);  }
 }
+/* ★ 播放时：先弹入再脉冲（用 animation 链；脉冲是无限循环，其周期与延迟不缩放，
+   仅压缩一次性弹入部分，避免快滚时脉冲节奏被扭曲） */
+.journey.journey-play .node--current .node__dot{
+  animation:
+    dotPop calc(.8s / var(--delay-div)) cubic-bezier(.34,1.56,.64,1) calc(.9s / var(--delay-div)) forwards,
+    pulseDot 2.8s ease-in-out 1.8s infinite;
+}
 
-.node__content{ flex:1; text-align:left; }
+/* ★ 节点内容：默认可见 */
+.node__content{
+  flex:1; text-align:left;
+  opacity:1;
+  transform:none;
+}
+/* 播放时：文字淡入 */
+.journey.journey-play .node__content{
+  opacity:0;
+  transform:translateY(12px);
+  animation:contentFade calc(.9s / var(--delay-div)) cubic-bezier(.22,.71,.22,1) forwards;
+}
+.journey.journey-play .node[data-node="0"] .node__content{ animation-delay:calc(.75s / var(--delay-div)) }
+.journey.journey-play .node[data-node="1"] .node__content{ animation-delay:calc(1.45s / var(--delay-div)) }
+.journey.journey-play .node[data-node="2"] .node__content{ animation-delay:calc(2.15s / var(--delay-div)) }
+
+@keyframes contentFade{
+  0%  { opacity:0; transform:translateY(12px); }
+  100%{ opacity:1; transform:none; }
+}
+
 .node__content .node-label{
   display:inline-block;
   color:#e53935;
@@ -391,6 +608,13 @@ html{transition:opacity .45s ease} html.is-leaving{opacity:0}
   line-height:1.65;
   color:#a1a1a6;
   max-width:520px;
+}
+
+/* ★ 标题 & 标签：默认可见 */
+.journey-tag,
+.journey-title{
+  opacity:1;
+  transform:none;
 }
 
 @media (min-width:761px){
@@ -441,14 +665,108 @@ html{transition:opacity .45s ease} html.is-leaving{opacity:0}
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 100px 20px 140px;
+  /* ★ 上下留白加大（100/140 → 120/160），内容不被导航栏/页脚挤压，呼吸更充分 */
+  padding: 120px 20px 160px;
   box-sizing: border-box;
 }
 
+/* ★ 联系页：与全局「两列对齐 + 卡片」语言统一，又不复制 spec —— 独立卡片组 */
+.contact-inner{
+  width:100%; max-width:760px; margin:0 auto;
+  display:flex; flex-direction:column; align-items:center;
+}
+.contact-title{ margin-bottom:14px; }
+/* ★ 联系方式卡片组：两列对齐，复用 .card 的圆角与边框，深色区块自动反色 */
+.contact-grid{
+  width:100%; margin-top:44px;
+  display:grid; grid-template-columns:repeat(2,1fr); gap:16px;
+  align-items:stretch;          /* ★ 两列等高，卡片高度一致 */
+}
+.contact-card{
+  position:relative;
+  display:flex; flex-direction:column; align-items:flex-start;
+  gap:10px;
+  background:var(--card);
+  border:1px solid var(--line); border-radius:20px;
+  box-shadow:0 8px 30px rgba(0,0,0,.06);
+  padding:26px 22px;
+  text-decoration:none; color:inherit;
+  text-align:left;
+  transition:transform .5s cubic-bezier(.2,.7,.2,1), box-shadow .5s ease, border-color .5s ease;
+}
+.contact-card:hover{
+  transform:translateY(-6px);
+  border-color:var(--accent);
+  box-shadow:0 14px 36px rgba(229,57,53,.14);
+}
+/* ★ 与信息表同款：序号 → 图标（红色点缀） */
+.contact-icon{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:40px; height:40px; border-radius:11px;
+  background:rgba(229,57,53,.1); color:var(--accent);
+  margin-bottom:2px;
+  transition:transform .5s cubic-bezier(.2,.7,.2,1), background .5s ease;
+}
+.contact-card:hover .contact-icon{ transform:scale(1.12); background:var(--accent); color:#fff; }
+.contact-meta{
+  color:var(--muted); font-size:12px; font-weight:600;
+  letter-spacing:.12em; text-transform:uppercase;
+}
+.contact-value{
+  font-size:clamp(17px,3vw,19px); font-weight:600; color:var(--text);
+  word-break:break-all;
+}
+/* ★ 卡片底部行动提示：默认描边，hover 填充主题红（与 .cta-text 一致）
+   -- 过渡统一放慢到 0.6s，配合复制反馈的整体慢节奏 */
+.contact-action{
+  margin-top:auto;              /* ★ 贴底，与卡片等高后两按钮水平对齐 */
+  align-self:flex-end;          /* ★ 右下角，独立于左侧文字内容 */
+  display:inline-flex; align-items:center; gap:8px;
+  font-size:14px; font-weight:500; color:var(--text);
+  padding:7px 16px; border:1.5px solid var(--line); border-radius:999px;
+  transition:background-color .6s cubic-bezier(.22,.71,.22,1),
+             color .6s cubic-bezier(.22,.71,.22,1),
+             border-color .6s cubic-bezier(.22,.71,.22,1),
+             gap .6s cubic-bezier(.22,.71,.22,1);
+}
+.contact-card:hover .contact-action,
+.contact-card.is-copied .contact-action{ background:var(--accent); border-color:var(--accent); color:#fff; gap:12px; }
+.contact-action .arrow{ transition:transform .6s cubic-bezier(.22,.71,.22,1), opacity .5s ease; }
+.contact-card:hover .contact-action .arrow{ transform:translateX(3px); }
+/* ★ 微信卡片点击复制：反馈态（is-copied 时箭头转向，与 hover 区分） */
+.contact-card.is-copied .contact-action .arrow{ transform:rotate(45deg); }
+/* ★ 文字容器：淡出 → 淡入，错峰切换，告别硬切 */
+.contact-action .action-label{
+  display:inline-block;
+  transition:opacity .6s cubic-bezier(.4,0,.2,1), transform .6s cubic-bezier(.4,0,.2,1);
+}
+.contact-action .action-label.is-out{ opacity:0; transform:translateY(-4px); }
+
+/* ★ 手机端：两卡堆叠为单列，内容与整站错峰动画一致 */
+@media (max-width:600px){
+  .contact-grid{ grid-template-columns:1fr; gap:14px; margin-top:34px; }
+  .contact-card{ padding:22px 20px; }
+}
 .contact-sub{
+  position:relative;
+  display:inline-block;
+  padding-top:28px;        /* ★ 红线与文字之间的间距（桌面） */
+  margin-top:6px;
   white-space:nowrap;
   overflow:hidden;
   max-width:100%;
+}
+.contact-sub::before{
+  content:"";
+  position:absolute;
+  top:0; left:50%;
+  transform:translateX(-50%);
+  width:44px; height:4px;
+  border-radius:3px;
+  background:var(--accent);
+}
+@media (max-width:760px){
+  .contact-sub{ padding-top:22px; }   /* ★ 手机端适当收敛，仍保持舒适间距 */
 }
 @media (max-width:760px){
   .contact-sub{
@@ -457,6 +775,160 @@ html{transition:opacity .45s ease} html.is-leaving{opacity:0}
     word-break:keep-all !important;
     overflow:hidden;
   }
+}
+
+/* ==================== 排版节奏变量（统一控制全局速度） ==================== */
+:root{
+  /* ★ 动画时长：整体放缓，读者有足够时间"跟上"每一帧 */
+  --d-fast:.55s;      /* 短反馈（数字弹入、标签变色） */
+  --d-base:.85s;      /* 基础移动（卡片、行滑入） */
+  --d-slow:1.1s;      /* 较慢（轴线生长、时间轴节点） */
+  --ease:cubic-bezier(.22,.71,.22,1);  /* 苹果风减速曲线：快出 → 缓停，不生硬 */
+
+  /* ★ 自适应速率系数（由 JS 根据滚动速度实时写入，默认 1）：
+       - 慢滚/静止 = 1     → 从容的完整时长
+       - 快滚        → 系数增大，时长 ÷ 系数 → 更快播完
+       - 所有动画的「持续时间」与「错峰延迟」都除以同一个系数，
+         所以快滚时节奏比例不变，只是整体压缩，不会错位。 */
+  --anim-speed:1;
+  --d-fast-a:calc(var(--d-fast) / var(--anim-speed));
+  --d-base-a:calc(var(--d-base) / var(--anim-speed));
+  --d-slow-a:calc(var(--d-slow) / var(--anim-speed));
+  --delay-div:var(--anim-speed);   /* 延迟同步缩放（见下方 stagger 规则） */
+}
+
+/* ==================== 区块专属动画（info / interest / certs） ==================== */
+
+/* ---------- ① 基本信息：行内「标签 + 值」分组滑入 + 序号描红 ---------- */
+.info-spec:not(.info-spec--play) .info-row{ opacity:0; }
+.info-spec .info-row{
+  position:relative;
+  opacity:1; transform:none;
+  transition:background-color .45s ease;
+}
+/* ★ 自适应：时长与错峰延迟都除以滚动速率系数 --anim-speed，
+   快滚时整组动画被等比压缩、节奏比例不变，只是更快播完。 */
+.info-spec.info-spec--play .info-row{ animation:infoRowIn var(--d-base-a) var(--ease) both; }
+.info-spec.info-spec--play .info-row:nth-child(odd)  { animation-name:infoRowInLeft; }
+.info-spec.info-spec--play .info-row:nth-child(even) { animation-name:infoRowInRight; }
+@keyframes infoRowInLeft {
+  0%  { opacity:0; transform:translate(-14px,14px); }
+  100%{ opacity:1; transform:none; }
+}
+@keyframes infoRowInRight {
+  0%  { opacity:0; transform:translate(14px,14px); }
+  100%{ opacity:1; transform:none; }
+}
+/* ★ 标签描红：间隔随滚动速度缩放（calc 除以系数） */
+.info-spec--play .info-row .k{ animation:infoLabelRed var(--d-fast-a) ease both; }
+.info-spec--play .info-row:nth-child(1) .k{ animation-delay:calc(.00s / var(--delay-div)) }
+.info-spec--play .info-row:nth-child(2) .k{ animation-delay:calc(.16s / var(--delay-div)) }
+.info-spec--play .info-row:nth-child(3) .k{ animation-delay:calc(.32s / var(--delay-div)) }
+.info-spec--play .info-row:nth-child(4) .k{ animation-delay:calc(.48s / var(--delay-div)) }
+.info-spec--play .info-row:nth-child(5) .k{ animation-delay:calc(.64s / var(--delay-div)) }
+.info-spec--play .info-row:nth-child(6) .k{ animation-delay:calc(.80s / var(--delay-div)) }
+@keyframes infoLabelRed {
+  0%  { color:var(--muted); }
+  100%{ color:var(--accent); }
+}
+
+/* ---------- ② 兴趣：卡片「由下而上」依次弹出 ---------- */
+.interest-grid:not(.interest-grid--play) .interest-card{ opacity:0; }
+.interest-grid .interest-card{
+  opacity:1; transform:none;
+  transition:transform .55s var(--ease), box-shadow .55s ease, border-color .55s ease;
+}
+/* ★ 自适应：快滚时卡片弹出整体压缩，延迟等比缩短，三张卡不会"还没出完就过了" */
+.interest-grid.interest-grid--play .interest-card{ animation:cardPop var(--d-base-a) var(--ease) both; }
+.interest-grid.interest-grid--play .interest-card:nth-child(1){ animation-delay:calc(.10s / var(--delay-div)) }
+.interest-grid.interest-grid--play .interest-card:nth-child(2){ animation-delay:calc(.32s / var(--delay-div)) }
+.interest-grid.interest-grid--play .interest-card:nth-child(3){ animation-delay:calc(.54s / var(--delay-div)) }
+@keyframes cardPop {
+  0%  { opacity:0; transform:translateY(34px) scale(.98); }
+  60% { opacity:1; transform:translateY(-4px) scale(1.008); }
+  100%{ opacity:1; transform:none; }
+}
+/* 数字弹跳：幅度收敛（1.25），更精致 */
+.interest-grid .interest-card .num{ transition:transform .55s var(--ease), color .55s ease; }
+.interest-grid.interest-grid--play .interest-card .num{ animation:numBounce var(--d-fast-a) var(--ease) both; }
+.interest-grid.interest-grid--play .interest-card:nth-child(1) .num{ animation-delay:calc(.10s / var(--delay-div)) }
+.interest-grid.interest-grid--play .interest-card:nth-child(2) .num{ animation-delay:calc(.32s / var(--delay-div)) }
+.interest-grid.interest-grid--play .interest-card:nth-child(3) .num{ animation-delay:calc(.54s / var(--delay-div)) }
+@keyframes numBounce {
+  0%  { opacity:0; transform:scale(.5); }
+  60% { opacity:1; transform:scale(1.25); }
+  100%{ opacity:1; transform:scale(1); }
+}
+
+/* ---------- ③ 证书：从左往右「逐张翻入」，第四张(10余项)作为亮点 ---------- */
+.certs-grid:not(.certs-grid--play) .cert-card{ opacity:0; }
+.certs-grid .cert-card{
+  opacity:1; transform:none; perspective:800px;
+}
+/* ★ 自适应：翻转入场时长 + 错峰延迟都随滚动速度缩放 */
+.certs-grid.certs-grid--play .cert-card{ animation:certFlip var(--d-base-a) var(--ease) both; }
+.certs-grid.certs-grid--play .cert-card:nth-child(1){ animation-delay:calc(.10s / var(--delay-div)) }
+.certs-grid.certs-grid--play .cert-card:nth-child(2){ animation-delay:calc(.32s / var(--delay-div)) }
+.certs-grid.certs-grid--play .cert-card:nth-child(3){ animation-delay:calc(.54s / var(--delay-div)) }
+.certs-grid.certs-grid--play .cert-card:nth-child(4){ animation-delay:calc(.76s / var(--delay-div)) }
+@keyframes certFlip {
+  0%  { opacity:0; transform:rotateY(-20deg) translateX(-20px); }
+  100%{ opacity:1; transform:none; }
+}
+/* ★ 亮点高亮：延迟 = 前序动画结束点，同样随系数压缩（certHighlight 1.8s 也缩放） */
+.certs-grid.certs-grid--play .cert-card:nth-child(4){ animation:certFlip var(--d-base-a) var(--ease) both, certHighlight calc(1.8s / var(--delay-div)) ease calc(1.2s / var(--delay-div)) both; }
+@keyframes certHighlight {
+  0%,100%{ box-shadow:0 8px 30px rgba(0,0,0,.06); transform:scale(1); }
+  50%    { box-shadow:0 12px 34px rgba(229,57,53,.18); transform:scale(1.03); border-color:rgba(229,57,53,.45); }
+}
+.dark .certs-grid.certs-grid--play .cert-card:nth-child(4){ animation:certFlip var(--d-base-a) var(--ease) both, certHighlightDark calc(1.8s / var(--delay-div)) ease calc(1.2s / var(--delay-div)) both; }
+@keyframes certHighlightDark {
+  0%,100%{ box-shadow:0 8px 30px rgba(0,0,0,.4); transform:scale(1); }
+  50%    { box-shadow:0 12px 34px rgba(229,57,53,.26); transform:scale(1.03); border-color:rgba(229,57,53,.5); }
+}
+/* 证书标题：放慢到 .7s，间隔与翻入对齐 */
+.certs-grid .cert-card h3{ opacity:1; transform:none; }
+.certs-grid.certs-grid--play .cert-card h3{ animation:certTitleIn calc(.7s / var(--delay-div)) ease both; }
+.certs-grid.certs-grid--play .cert-card:nth-child(1) h3{ animation-delay:calc(.40s / var(--delay-div)) }
+.certs-grid.certs-grid--play .cert-card:nth-child(2) h3{ animation-delay:calc(.62s / var(--delay-div)) }
+.certs-grid.certs-grid--play .cert-card:nth-child(3) h3{ animation-delay:calc(.84s / var(--delay-div)) }
+.certs-grid.certs-grid--play .cert-card:nth-child(4) h3{ animation-delay:calc(1.06s / var(--delay-div)) }
+@keyframes certTitleIn {
+  0%  { opacity:0; transform:translateY(8px); }
+  100%{ opacity:1; transform:none; }
+}
+
+/* ==================== 排版优化：舒适阅读节奏 ==================== */
+
+/* ★ 卡片内边距加大、行高与间距更透气（兴趣 / 证书） */
+.card{ padding:32px 26px; }              /* 原 26px 20px → 更充足呼吸 */
+.card .num{ margin-bottom:16px; }         /* 序号与标题间距加大 */
+.card h3{ font-size:21px; line-height:1.35; margin-bottom:10px; }
+.card .tag2{ margin-bottom:12px; }
+.card p{ font-size:14.5px; line-height:1.7; }   /* 正文行高 1.6 → 1.7，更易读 */
+
+/* ★ 网格间距：桌面留白更舒展，手机单列仍紧凑 */
+.grid{ gap:24px; margin-top:48px; }       /* 原 gap 16/20 → 24，视觉不挤 */
+
+/* ★ 区块上下留白：保证满屏时内容不贴边，垂直居中更宽松 */
+.wrap{ padding-top:120px; padding-bottom:120px; }
+
+/* ★ 标题与正文间距层级（舒适阅读节奏：标题↔副标题↔内容） */
+.tag{ margin-bottom:18px; }              /* 英文标签下间距加大 */
+h1,h2{ margin-bottom:20px; }             /* 大标题下间距 */
+.sub{ margin-bottom:14px; line-height:1.7; }
+
+/* ★ 兴趣/证书卡片网格：宽屏限制最大宽度，避免超宽拉扯变形 */
+#interest > .wrap,
+#certs    > .wrap { max-width:1040px; }    /* 内容区上限，居中更聚焦 */
+
+/* ★ 减少动画偏好：全部降级为直接显示，尊重系统设置 */
+@media (prefers-reduced-motion: reduce){
+  .info-spec.info-spec--play .info-row,
+  .interest-grid.interest-grid--play .interest-card,
+  .interest-grid.interest-grid--play .interest-card .num,
+  .certs-grid.certs-grid--play .cert-card,
+  .certs-grid.certs-grid--play .cert-card h3{ animation:none !important; opacity:1 !important; transform:none !important; }
 }
 
 @media (min-width: 901px) {
@@ -468,78 +940,195 @@ html{transition:opacity .45s ease} html.is-leaving{opacity:0}
     padding-right: 40px;
   }
 }
+
+/* ==================================================================
+   全设备响应式覆盖（移动端优先，PC 端增强）
+   断点：480(小屏手机) · 601(大屏手机) · 761(平板/小PC) · 901(PC) · 1200/1440(宽屏)
+   ================================================================== */
+
+/* ---------- ① 小屏手机 (≤480px)：iPhone SE / 5.4" mini 等 ---------- */
+@media (max-width: 480px){
+  .wrap{ padding:88px 16px; }
+  .hero-title{ font-size:clamp(32px,11vw,44px); line-height:1.22; }
+  .hero-title .ch{ transform:translateY(8px); }
+  .scroll-hint{ bottom:26px; }
+  .scroll-hint__text{ font-size:12px; }
+  .spec .row-line{ padding:15px 12px; gap:14px; }
+  .spec .k{ flex:0 0 56px; font-size:11px; letter-spacing:.04em; }
+  .spec .v{ font-size:15px; }
+  .grid.cols-3, .grid.cols-4{ grid-template-columns:1fr; gap:16px; }
+  .card{ padding:24px 20px; border-radius:18px; }
+  .card h3{ font-size:19px; }
+  .card p{ font-size:14px; }
+  .card .num{ font-size:26px; }
+  .interest-grid .interest-card .num{ font-size:30px; }
+  .journey .node__content{ padding-left:8px; }
+  .node{ padding:16px 0 16px 50px; gap:18px; }
+  .node__dot{ left:10px; width:14px; height:14px; }
+  .journey__line{ left:16px; }
+  h1,h2{ font-size:clamp(28px,9vw,40px); line-height:1.25; }
+  .tag{ font-size:11px; letter-spacing:.18em; }
+  /* 页脚：单列、行距充足 */
+  .ft{ grid-template-columns:1fr; gap:26px; padding:60px 16px 80px; }
+  .contact .grid{ grid-template-columns:1fr; }
+  .contact-card{ padding:26px 22px; }
+}
+
+/* ---------- ② 中大屏手机 / 折叠屏展开态 (481–760) ---------- */
+@media (min-width:481px) and (max-width:760px){
+  .wrap{ padding:100px 22px; }
+  .grid.cols-3{ grid-template-columns:repeat(2,1fr); }
+  .grid.cols-3 .interest-card:last-child{ grid-column:1 / -1; max-width:340px; margin:0 auto; }
+  .grid.cols-4{ grid-template-columns:repeat(2,1fr); }
+  .node{ padding-left:56px; }
+}
+
+/* ---------- ③ 平板竖屏 (761–900)：两列网格稳定成型 ---------- */
+@media (min-width:761px) and (max-width:900px){
+  .grid.cols-3{ grid-template-columns:repeat(3,1fr); }
+  .grid.cols-4{ grid-template-columns:repeat(2,1fr); }
+  .wrap{ padding:120px 32px; }
+  .spec{ max-width:620px; }
+}
+
+/* ---------- ④ PC 端 (≥901)：内容居中、悬停微交互 ---------- */
+@media (min-width:901px){
+  .wrap{ padding:140px 40px; }
+  /* hover 上浮：仅在支持悬停的设备（非触屏）生效 */
+  .card{ transition:transform .55s cubic-bezier(.22,.71,.22,1), box-shadow .55s ease, border-color .55s ease; }
+  .card:hover{ transform:translateY(-6px); box-shadow:0 18px 44px rgba(0,0,0,.12); }
+  .dark .card:hover{ box-shadow:0 18px 44px rgba(0,0,0,.55); }
+  .grid.cols-3{ grid-template-columns:repeat(3,1fr); gap:28px; }
+  .grid.cols-4{ grid-template-columns:repeat(4,1fr); gap:24px; }
+}
+
+/* ---------- ⑤ 笔记本 / 桌面 (≥1200)：更宽留白 ---------- */
+@media (min-width:1200px){
+  #info      > .wrap,
+  #interest  > .wrap,
+  #certs     > .wrap,
+  #timeline  > .wrap{ max-width:1200px; }
+  .hero-title{ font-size:clamp(44px,6vw,72px); }
+  h1,h2{ font-size:clamp(36px,5vw,60px); }
+}
+
+/* ---------- ⑥ 超宽屏 (≥1440)：防止行过宽难读 ---------- */
+@media (min-width:1440px){
+  .hero-center{ max-width:1100px; }
+  #info      > .wrap,
+  #interest  > .wrap,
+  #certs     > .wrap,
+  #timeline  > .wrap{ max-width:1280px; }
+  .card p{ font-size:15.5px; line-height:1.75; }
+}
+
+/* ---------- ⑦ 横屏优化（手机横放 / 平板横放） ---------- */
+@media (orientation: landscape) and (max-height: 500px){
+  .hero{ min-height:100vh; padding-top:calc(env(safe-area-inset-top) + 24px); padding-bottom:24px; }
+  .wrap{ min-height:auto; padding-top:80px; padding-bottom:80px; justify-content:flex-start; }
+  .hero-title{ font-size:clamp(28px,6vh,44px); }
+  .scroll-hint{ bottom:16px; }
+  .grid.cols-3{ grid-template-columns:repeat(3,1fr); }
+  /* 横屏高度有限，压缩区块纵向间距 */
+  .spec{ margin-top:24px; }
+}
+
+/* ---------- ⑧ 安全区域：刘海 / 灵动岛 / 圆角 / Home Indicator ---------- */
+@supports (padding: env(safe-area-inset-top)){
+  .hero{ padding-top:calc(env(safe-area-inset-top) + 56px); padding-bottom:calc(env(safe-area-inset-bottom) + 40px); }
+  .wrap{ padding-left:calc(20px + env(safe-area-inset-left)); padding-right:calc(20px + env(safe-area-inset-right)); }
+  .scroll-hint{ bottom:calc(36px + env(safe-area-inset-bottom)); }
+}
+@media (max-width:480px){
+  @supports (padding: env(safe-area-inset-left)){
+    .wrap{ padding-left:calc(16px + env(safe-area-inset-left)); padding-right:calc(16px + env(safe-area-inset-right)); }
+  }
+}
+
+/* ---------- ⑨ 触屏设备：关闭 hover 上浮，改用 :active，杜绝"粘滞悬停" ---------- */
+@media (hover: none) and (pointer: coarse){
+  .card:hover{ transform:none; box-shadow:none; }
+  .dark .card:hover{ box-shadow:none; }
+  .card:active{ transform:scale(.985); }
+  .cta.cta-text:hover{ background:transparent; color:inherit; gap:10px; }
+  .cta.cta-text:active{ background:var(--accent); color:#fff !important; }
+}
+
+/* ---------- ⑩ iOS 输入框 / 动态视口适配 ---------- */
+@supports (height: 100dvh){
+  .hero, #info, #interest, #certs, #timeline, #contact, .wrap{
+    min-height:100dvh;
+  }
+}
+/* iOS 键盘弹起时避免布局跳动：固定定位不依赖 bottom:0 */
+html{ -webkit-text-size-adjust:100%; text-size-adjust:100%; }
+body{ -webkit-tap-highlight-color:rgba(0,0,0,.08); -webkit-touch-callout:none; }
+
+/* ---------- ⑪ 高分辨率屏：retina 下字号不放大，靠 layout 自适应 ---------- */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi){
+  .card{ box-shadow:0 8px 30px rgba(0,0,0,.05); }
+}
 </style>
 </head>
 <body>
 <div class="cursor" aria-hidden="true"></div>
-<nav id="nav">
-  <div class="nav-in">
-    <div class="links">
-      <a href="#top" data-target="top">首页</a>
-      <a href="#info" data-target="info">基本信息</a>
-      <a href="#interest" data-target="interest">兴趣</a>
-      <a href="#certs" data-target="certs">证书</a>
-      <a href="#timeline" data-target="timeline">成长</a>
-      <a href="#contact" data-target="contact">联系</a>
-    </div>
-  </div>
-</nav>
 
-<section class="hero" id="top">
+<section class="hero" id="top" data-theme="dark">
   <div class="glow"></div>
   <div class="hero-center">
-    <h1 class="hero-title">This is 李浩楠.</h1>
+    <h1 class="hero-title" aria-label="This is 李浩楠.">
+      <span class="hero-text"></span>
+    </h1>
   </div>
-  <a href="#info" class="scroll-hint" aria-label="向下了解更多">
-    <span class="scroll-hint__text" data-down="向下了解更多" data-up="返回顶部">向下了解更多</span>
+  <a href="#info" class="scroll-hint" aria-label="了解我">
+    <span class="scroll-hint__text">了解我</span>
     <svg class="scroll-hint__arrow" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
       <line x1="12" y1="5" x2="12" y2="19"></line>
       <polyline class="arrow-down" points="6 13 12 19 18 13"></polyline>
-      <polyline class="arrow-up" points="6 11 12 5 18 11" style="display:none"></polyline>
     </svg>
   </a>
 </section>
 
-<section class="wrap light stagger" id="info" style="background:#fff">
+<section class="wrap light stagger" id="info" data-theme="light" style="background:#fff">
   <div class="tag">PROFILE</div>
-  <h2 class="stagger-item t"><span class="d">一个人，一张表。</span><span class="m">一张表，就够了</span></h2>
-  <div class="spec">
-    <div class="row-line stagger-item"><span class="k">姓名</span><span class="v">李浩楠</span></div>
-    <div class="row-line stagger-item"><span class="k">年龄</span><span class="v">19 岁</span></div>
-    <div class="row-line stagger-item"><span class="k">学校</span><span class="v">陕西财经职业技术学院</span></div>
-    <div class="row-line stagger-item"><span class="k">专业</span><span class="v">消防救援技术</span></div>
-    <div class="row-line stagger-item"><span class="k">年级</span><span class="v">大二</span></div>
-    <div class="row-line stagger-item"><span class="k">目标</span><span class="v">备考专升本</span></div>
+  <h2 class="stagger-item t sec-title"><span class="d">一个人，一张表。</span><span class="m">一张表，就够了</span></h2>
+  <div class="spec info-spec">
+    <div class="row-line info-row"><span class="k">姓名</span><span class="v">李浩楠</span></div>
+    <div class="row-line info-row"><span class="k">年龄</span><span class="v">19 岁</span></div>
+    <div class="row-line info-row"><span class="k">学校</span><span class="v">陕西财经职业技术学院</span></div>
+    <div class="row-line info-row"><span class="k">专业</span><span class="v">消防救援技术</span></div>
+    <div class="row-line info-row"><span class="k">年级</span><span class="v">大二</span></div>
+    <div class="row-line info-row"><span class="k">目标</span><span class="v">备考专升本</span></div>
   </div>
 </section>
 
-<section class="wrap dark stagger" id="interest">
+<section class="wrap dark stagger" id="interest" data-theme="dark">
   <div class="tag">INTERESTS</div>
-  <h2 class="stagger-item t"><span class="d">热爱，不必声张。</span><span class="m">喜欢，不必解释</span></h2>
-  <div class="grid cols-3">
-    <div class="card stagger-item"><div class="num">01</div><h3 class="stagger-item">摄影</h3><p class="tag2">把日常留住。</p><p>用手机记录生活里容易被忽略的瞬间。</p></div>
-    <div class="card stagger-item"><div class="num">02</div><h3 class="stagger-item">跑步</h3><p class="tag2">把身体练扎实。</p><p>几乎每天都跑步，既保持体能，也释放压力。</p></div>
-    <div class="card stagger-item"><div class="num">03</div><h3 class="stagger-item">羽毛球</h3><p class="tag2">把节奏抢回来。</p><p>周末的固定项目，练反应和协调性。</p></div>
+  <h2 class="stagger-item t sec-title"><span class="d">热爱，不必声张。</span><span class="m">喜欢，不必解释</span></h2>
+  <div class="grid cols-3 interest-grid">
+    <div class="card interest-card"><div class="num">01</div><h3>摄影</h3><p class="tag2">把日常留住。</p><p>用手机记录生活里容易被忽略的瞬间。</p></div>
+    <div class="card interest-card"><div class="num">02</div><h3>跑步</h3><p class="tag2">把身体练扎实。</p><p>几乎每天都跑步，既保持体能，也释放压力。</p></div>
+    <div class="card interest-card"><div class="num">03</div><h3>羽毛球</h3><p class="tag2">把节奏抢回来。</p><p>周末的固定项目，练反应和协调性。</p></div>
   </div>
 </section>
 
-<section class="wrap stagger" id="certs">
+<section class="wrap stagger" id="certs" data-theme="light">
   <div class="tag">CERTIFICATES</div>
-  <h2 class="stagger-item t"><span class="d">岁月，皆有回响。</span><span class="m">每一份，都有回响</span></h2>
-  <div class="grid cols-4">
-    <div class="card"><div class="num">01</div><div class="level">职业资格 · 电气实操</div><h3 class="stagger-item">四级 / 中级电工证</h3><p>电气设备安装、维护与故障排查。</p></div>
-    <div class="card"><div class="num">02</div><div class="level">小型汽车驾驶资格</div><h3 class="stagger-item">C1 驾驶证</h3><p>具备小型汽车驾驶资格。</p></div>
-    <div class="card"><div class="num">03</div><div class="level">CPR · 创伤包扎</div><h3 class="stagger-item">红十字救护培训证书</h3><p>心肺复苏、创伤包扎等急救技能。</p></div>
-    <div class="card"><div class="num">04</div><div class="level">学习 · 训练 · 志愿</div><h3 class="stagger-item">荣誉证书 10<span class="pc-space"> </span>余项</h3><p>学习、训练与志愿服务中获得的荣誉。</p></div>
+  <h2 class="stagger-item t sec-title"><span class="d">岁月，皆有回响。</span><span class="m">每一份，都有回响</span></h2>
+  <div class="grid cols-4 certs-grid">
+    <div class="card cert-card"><div class="num">01</div><div class="level">职业资格 · 电气实操</div><h3>四级 / 中级电工证</h3><p>电气设备安装、维护与故障排查。</p></div>
+    <div class="card cert-card"><div class="num">02</div><div class="level">小型汽车驾驶资格</div><h3>C1 驾驶证</h3><p>具备小型汽车驾驶资格。</p></div>
+    <div class="card cert-card"><div class="num">03</div><div class="level">CPR · 创伤包扎</div><h3>红十字救护培训证书</h3><p>心肺复苏、创伤包扎等急救技能。</p></div>
+    <div class="card cert-card"><div class="num">04</div><div class="level">学习 · 训练 · 志愿</div><h3>荣誉证书 10<span class="pc-space"> </span>余项</h3><p>学习、训练与志愿服务中获得的荣誉。</p></div>
   </div>
 </section>
 
-<section class="wrap dark stagger" id="timeline">
-  <div class="tag">JOURNEY</div>
-  <h2 class="stagger-item t"><span class="d">慢，也是一种速度。</span><span class="m">慢慢来，比较快</span></h2>
+<section class="wrap dark" id="timeline" data-theme="dark">
+  <div class="tag journey-tag">JOURNEY</div>
+  <h2 class="journey-title t sec-title"><span class="d">慢，也是一种速度。</span><span class="m">慢慢来，比较快</span></h2>
   <div class="journey">
     <div class="journey__line" aria-hidden="true"></div>
-    <div class="node stagger-item" data-node="0">
+    <div class="node" data-node="0">
       <div class="node__dot" aria-hidden="true"></div>
       <div class="node__content">
         <span class="node-label">入学</span>
@@ -547,7 +1136,7 @@ html{transition:opacity .45s ease} html.is-leaving{opacity:0}
         <p>选择消防救援技术专业，开启系统的应急救援学习。</p>
       </div>
     </div>
-    <div class="node node--current stagger-item" data-node="1">
+    <div class="node node--current" data-node="1">
       <div class="node__dot" aria-hidden="true"></div>
       <div class="node__content">
         <span class="node-label">当下</span>
@@ -555,7 +1144,7 @@ html{transition:opacity .45s ease} html.is-leaving{opacity:0}
         <p>把学历和专业都再往上推一步，一步步往前走。</p>
       </div>
     </div>
-    <div class="node stagger-item" data-node="2">
+    <div class="node" data-node="2">
       <div class="node__dot" aria-hidden="true"></div>
       <div class="node__content">
         <span class="node-label">未来</span>
@@ -566,14 +1155,29 @@ html{transition:opacity .45s ease} html.is-leaving{opacity:0}
   </div>
 </section>
 
-<section class="wrap contact" id="contact">
-  <div>
-    <div class="tag">CONTACT</div>
-    <h2 class="t"><span class="d">我在这里，等你。</span><span class="m">随时，都可以找我</span></h2>
+<section class="wrap contact" id="contact" data-theme="dark">
+  <div class="contact-inner">
+    <div class="tag contact-tag">CONTACT</div>
+    <h2 class="contact-title t sec-title"><span class="d">我在这里，等你。</span><span class="m">随时，都可以找我</span></h2>
     <p class="sub contact-sub">聊专业，交朋友，都行。</p>
-    <div style="margin-top:32px;display:flex;flex-direction:column;align-items:center;gap:16px">
-      <a href="mailto:2878697150@qq.com" class="cta cta-text">写信给我<span class="arrow">→</span></a>
-      <span style="color:#aaa;font-size:14px">微信 · LovHoeN-07</span>
+
+    <div class="contact-grid">
+      <div class="contact-card stagger-item" data-mail="2878697150@qq.com" tabindex="0" role="button" aria-label="复制邮箱">
+        <span class="contact-icon" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4.5" width="19" height="15" rx="2.5"/><polyline points="3,6 12,13 21,6"/></svg>
+        </span>
+        <span class="contact-meta">邮箱 · Email</span>
+        <span class="contact-value">2878697150@qq.com</span>
+        <span class="contact-action contact-action--mail"><span class="action-label">立即复制</span> <span class="arrow" aria-hidden="true">→</span></span>
+      </div>
+      <div class="contact-card stagger-item" data-copy="LovHoeN-07" tabindex="0" role="button" aria-label="复制微信">
+        <span class="contact-icon" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5C21 16.5 12 21 12 21S3 16.5 3 11.5a9 9 0 1 1 18 0z"/><circle cx="12" cy="11.5" r="3"/></svg>
+        </span>
+        <span class="contact-meta">微信 · WeChat</span>
+        <span class="contact-value">LovHoeN-07</span>
+        <span class="contact-action contact-action--copy" data-copy="LovHoeN-07"><span class="action-label">点击复制</span> <span class="arrow" aria-hidden="true">↗</span></span>
+      </div>
     </div>
   </div>
 </section>
@@ -581,16 +1185,93 @@ html{transition:opacity .45s ease} html.is-leaving{opacity:0}
 <footer>
   <div class="ft">
     <div><div class="b">站点</div><a href="#top">首页</a><a href="#info">基本信息</a><a href="#interest">兴趣</a><a href="#certs">证书</a><a href="#timeline">成长</a></div>
-    <div><div class="b">联系</div><a href="mailto:2878697150@qq.com">邮箱 · 2878697150@qq.com</a><a href="#">微信 · LovHoeN-07</a></div>
+    <div><div class="b">联系</div><span class="ft-text" data-label="邮箱">2878697150@qq.com</span><span class="ft-text" data-label="微信">LovHoeN-07</span></div>
   </div>
   <div class="copy">© 2026 李浩楠 · 保留所有权利。</div>
 </footer>
 
 <script>
+/* ★ 全局安全网：若环境不支持 IntersectionObserver（极旧浏览器 / 部分运行环境），
+   提供一个空操作 shim，让全文件 10+ 处 `new IntersectionObserver` 都不抛异常。
+   各动画会退化为「立即显示」，不影响核心内容与侧边进度线。 */
+(function(){
+  if(typeof IntersectionObserver === 'function') return;      /* 原生支持，无需处理 */
+  window.IntersectionObserver = function(cb){
+    return { observe(){ try{ cb([], this); }catch(e){} },      /* observe 即空操作，动画 fallback */
+             unobserve(){}, disconnect(){}, root:null, rootMargin:'', thresholds:[] };
+  };
+})();
+
+/* ============================================================
+   ★ 启动适配：PWA / iOS 主屏幕 / 微信网页 / PC 端 通用
+   ------------------------------------------------------------
+   ① 运行时把「显示模式」写到 <html>：standalone(PWA/iOS 主屏幕)、
+      wechat(微信/QQ)、webview(其他 App 内)。CSS 可据此微调。
+   ② iOS 主屏幕运行时修正顶部安全区（状态栏高度）。
+   ③ 微信里阻止「下拉露出域名/黑条」的回弹（overscroll-behavior）。
+   ④ 用 matchMedia 监听方向变化，动态补 safe-area，横竖屏切换不露白。
+   ============================================================ */
+(function(){
+  var html = document.documentElement;
+  if(!html) return;
+
+  /* ① 识别运行环境（在 <html> 打标记，供 CSS / 调试使用） */
+  var ua = navigator.userAgent || '';
+  var isWeChat = /MicroMessenger/i.test(ua) || /QQBrowser|QQ\//i.test(ua);
+  if(isWeChat) html.setAttribute('data-env', 'wechat');
+  else if(window.matchMedia && window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true){
+    html.setAttribute('data-env', 'standalone');   /* iOS 添加到主屏幕 / Android TWA */
+  }
+  try{ if(window.matchMedia && window.matchMedia('(display-mode: fullscreen)').matches) html.setAttribute('data-display', 'fullscreen'); }catch(e){}
+
+  /* ② iOS 主屏幕：运行时读取真实安全区（比 CSS env() 更早生效） */
+  function applySafeArea(){
+    var sat = parseInt(getComputedStyle(html).getPropertyValue('--sat')) || 0;
+    if(sat > 0){ html.style.setProperty('--sat-runtime', sat + 'px'); }
+    var sab = parseInt(getComputedStyle(html).getPropertyValue('--sab')) || 0;
+    if(sab > 0){ html.style.setProperty('--sab-runtime', sab + 'px'); }
+  }
+  applySafeArea();
+
+  /* ③ 微信 / 全屏模式：阻止页面级下拉回弹，让内容区自己滚 */
+  var env = html.getAttribute('data-env');
+  if(env === 'wechat' || env === 'standalone'){
+    document.body.style.overscrollBehaviorY = 'none';
+  }
+
+  /* ④ 横竖屏切换 / 安全区变化时重新计算（折叠屏、旋转） */
+  var mq = window.matchMedia && window.matchMedia('(orientation: portrait)');
+  var orientTimer = null;
+  function onOrient(){ clearTimeout(orientTimer); orientTimer = setTimeout(applySafeArea, 150); }
+  if(mq.addEventListener) mq.addEventListener('change', onOrient);
+  else if(mq.addListener) mq.addListener(onOrient);   /* iOS < 14 兼容 */
+  window.addEventListener('resize', onOrient, { passive:true });
+
+  /* ⑤ iOS 键盘弹起：视口收缩时，把 hero 最小高度改为 auto，避免留白 */
+  window.addEventListener('resize', function(){
+    if(/iPad|iPhone|iPod/.test(ua) && !window.MSStream){
+      var vh = window.innerHeight;
+      html.style.setProperty('--ios-vh', (vh * 0.01) + 'px');
+    }
+  }, { passive:true });
+})();
+
 /* A. 大标题居中补偿 */
 function centerTitles(){
   const isPunct=ch=>/[，。、；：！？,.;:!?]/.test(ch);
   document.querySelectorAll('h1,h2').forEach(h=>{
+    if(h.closest('.hero-title')){
+      /* ★ Hero 标题：仅补偿末尾标点，不动已拆好的 .ch span */
+      const last=h.textContent.trim().slice(-1);
+      if(isPunct(last)){
+        const probe=document.createElement('span');
+        probe.style.cssText='position:absolute;visibility:hidden;font:inherit;white-space:pre';
+        probe.textContent=last; document.body.appendChild(probe);
+        h.style.paddingRight=(probe.getBoundingClientRect().width/2)+'px';
+        probe.remove();
+      }
+      return;
+    }
     const last=h.textContent.trim().slice(-1); let shift=0;
     if(isPunct(last)){
       const s=document.createElement('span');
@@ -617,84 +1298,26 @@ document.querySelectorAll('a.vt-link').forEach(a=>{
   });
 });
 
-/* B2. 锚点链接 */
-document.querySelectorAll('a[href^="#"]').forEach(a=>{
-  a.addEventListener('click',function(e){
-    const id=this.getAttribute('href').slice(1);
-    if(!id) return;
-    const el=document.getElementById(id);
-    if(!el) return;
-    e.preventDefault();
-    el.scrollIntoView({behavior:'smooth',block:'start'});
-    if(id==='top') window.scrollTo({top:0,behavior:'smooth'});
-    history.pushState(null,null,'#'+id);
+/* C. 回到首页：仅「全新进入」时回到顶部，尊重浏览器前进/后退的滚动位置 */
+(function(){
+  var restored = false;
+  window.addEventListener('pageshow', function(e){ if(e.persisted){ restored = true; } });
+  window.addEventListener('load', function(){
+    if(restored) return;
+    if(location.hash && location.hash !== '#top'){ history.scrollRestoration = 'auto'; return; }
+    history.scrollRestoration = 'manual';
+    window.scrollTo(0,0);
   });
-});
+})();
 
-/* C. 打开网站强制回到首页 */
-history.scrollRestoration='manual';
-function goHome(){
-  if(location.hash && location.hash!=='#top'){ history.replaceState(null,null,'#'); }
-  window.scrollTo(0,0);
-}
-goHome();
-window.addEventListener('pageshow',function(e){ goHome(); });
-window.addEventListener('load',function(){ goHome(); setTimeout(goHome,300); });
-
-/* D. 导航栏 */
-var navEl=document.getElementById('nav');
-var navLinks=navEl ? navEl.querySelectorAll('.links a[data-target]') : [];
-(document.querySelectorAll('section[id], footer')||[]).forEach(function(el){
-  var cs=window.getComputedStyle(el).backgroundColor;
-  var m=/^rgb\((\d+),\s*(\d+),\s*(\d+)/.exec(cs);
-  var light=false;
-  if(m){ var r=+m[1],g=+m[2],b=+m[3]; light=(0.299*r+0.587*g+0.114*b)/255 > 0.5; }
-  el.dataset.light=light?'1':'0';
-});
-var currentId='top';
-function applyNavState(){
-  if(!navEl) return;
-  var light=(currentId==='top')
-    ? false
-    : ((document.getElementById(currentId)||{}).dataset||{}).light==='1';
-  navEl.classList.toggle('on-light', light);
-  navEl.classList.toggle('over-dark', !light);
-  navLinks.forEach(function(a){ a.classList.toggle('is-current', a.dataset.target===currentId); });
-}
-var navIO=new IntersectionObserver(function(es){
-  var top=null;
-  es.forEach(function(e){ if(e.isIntersecting){ if(!top||e.intersectionRatio>top.intersectionRatio) top=e; } });
-  if(top){ currentId=top.target.id || 'top'; applyNavState(); }
-},{threshold:[0.01,0.25,0.5,0.75]});
-(document.querySelectorAll('section[id], footer')||[]).forEach(function(el){ navIO.observe(el); });
-navLinks.forEach(function(a){
-  a.addEventListener('click',function(){ setTimeout(applyNavState,50); });
-});
-window.addEventListener('resize', applyNavState);
-
-/* 导航智能显隐 */
-var navScrollTimer=null;
-function navScrolling(){
-  if(!navEl) return;
-  navEl.classList.add('is-scrolling');
-  navEl.classList.remove('is-visible');
-  clearTimeout(navScrollTimer);
-  navScrollTimer=setTimeout(function(){
-    navEl.classList.remove('is-scrolling');
-    navEl.classList.add('is-visible');
-  },150);
-}
-window.addEventListener('scroll', navScrolling, {passive:true});
-applyNavState();
-
-/* F. 向下了解更多箭头 —— 仅在首页内，随滚动自然淡出 */
+/* F. 「了解我」箭头 —— 仅在首页内，随滚动自然淡出 */
 var hint=document.querySelector('.scroll-hint');
 var heroEl=document.getElementById('top');
 if(hint && heroEl){
+  var hintText=hint.querySelector('.scroll-hint__text');
   function updateHint(){
     var heroHeight=heroEl.offsetHeight;
     var scrollY=window.scrollY;
-    /* 滚动超过首页高度 → 完全隐藏；在首页内 → 按滚动比例淡出 */
     var progress=Math.min(scrollY / (heroHeight * 0.6), 1);
     hint.style.opacity=1 - progress;
     if(progress >= 1){ hint.classList.add('is-off'); }
@@ -713,36 +1336,53 @@ var staggerIO=new IntersectionObserver(function(es){
 },{threshold:0.12});
 document.querySelectorAll('.stagger').forEach(function(el){ el.classList.add('reveal'); staggerIO.observe(el); });
 
-/* 成长时间轴动画 */
+/* ============================================================
+   成长时间轴动画 —— 进入视口时触发一次
+   原理：给 .journey 添加 .journey-play 类 → CSS @keyframes 自动播放
+   ★ 即使 JS 全部失败，时间轴也完整可见（默认态 = 终态）
+   ============================================================ */
 var journeyEl=document.querySelector('.journey');
-var journeyNodes=journeyEl ? journeyEl.querySelectorAll('.node') : [];
+var journeyPlayed=false;
+
 function playJourney(){
-  if(!journeyEl || !journeyNodes.length){ return; }
-  journeyEl.classList.add('journey--play');
-  journeyNodes.forEach(function(node, i){
-    var delay = 200 + i * 260;
-    setTimeout(function(){ node.classList.add('is-up'); }, delay);
-  });
+  if(journeyPlayed || !journeyEl) return;
+  journeyPlayed=true;
+  /* ★ 一行代码触发所有动画（CSS @keyframes） */
+  journeyEl.classList.add('journey-play');
 }
+
 if(journeyEl){
-  var journeyIO=new IntersectionObserver(function(es){
-    es.forEach(function(e){
-      if(e.isIntersecting){
-        playJourney();
-        journeyIO.disconnect();
-      }
-    });
-  },{threshold:0.08, rootMargin:'0px 0px -10% 0px'});
-  journeyIO.observe(journeyEl);
-  window.addEventListener('load', function(){ setTimeout(playJourney, 500); });
-  if(document.readyState!=='loading'){ setTimeout(playJourney, 300); }
-  else { document.addEventListener('DOMContentLoaded', function(){ setTimeout(playJourney, 300); }); }
+  /* ① IntersectionObserver：标准方案（threshold 降低，更早触发，配合慢动画） */
+  if('IntersectionObserver' in window){
+    var journeyIO=new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if(e.isIntersecting){ playJourney(); journeyIO.disconnect(); }
+      });
+    },{threshold:0.05, rootMargin:'0px 0px -5% 0px'});
+    journeyIO.observe(journeyEl);
+  }
+  /* ② 立即检查（防止刷新时已停在成长页） */
+  setTimeout(function(){
+    if(journeyPlayed) return;
+    var rect=journeyEl.getBoundingClientRect();
+    var vh=window.innerHeight || 800;
+    if(rect.top < vh * 0.95){ playJourney(); }
+  }, 100);
+  /* ③ load 兜底 */
+  window.addEventListener('load', function(){
+    setTimeout(function(){
+      if(journeyPlayed) return;
+      var rect=journeyEl.getBoundingClientRect();
+      var vh=window.innerHeight || 800;
+      if(rect.top < vh * 0.95){ playJourney(); }
+    }, 300);
+  });
 }
 
 /* 基本信息表格 */
 var specEl=document.querySelector('#info .spec');
 function playSpec(){
-  if(specEl){ specEl.classList.add('spec--play'); }
+  if(specEl){ specEl.classList.add('info-spec--play'); }
 }
 if(specEl){
   var specIO=new IntersectionObserver(function(es){
@@ -779,19 +1419,326 @@ var countIO=new IntersectionObserver(function(es){
 document.querySelectorAll('.count-up').forEach(function(el){ countIO.observe(el); });
 
 document.querySelectorAll('.wrap,.hero,.ft').forEach(el=>{ el.classList.add('reveal'); io.observe(el); });
+
+/* J. 区块专属动画：各区块独立观察器，进入视口时添加播放类 */
+(function(){
+  /* 通用：元素进入视口即播放一次 */
+  function once(el, cls, threshold){
+    if(!el) return;
+    var io=new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if(e.isIntersecting){
+          el.classList.add(cls);
+          io.disconnect();
+        }
+      });
+    },{threshold:threshold||0.15, rootMargin:'0px 0px -8% 0px'});
+    io.observe(el);
+    /* 兜底：刷新时若已停在区块内，IO 可能不触发 */
+    window.addEventListener('load',function(){ setTimeout(function(){ if(isInView(el)) el.classList.add(cls); },400); });
+  }
+  function isInView(el){
+    var r=el.getBoundingClientRect();
+    return r.top < window.innerHeight*0.9 && r.bottom > 0;
+  }
+
+  once(document.querySelector('.info-spec'),  'info-spec--play', 0.2);
+  once(document.querySelector('.interest-grid'), 'interest-grid--play', 0.2);
+  once(document.querySelector('.certs-grid'),  'certs-grid--play', 0.15);
+})();
+
+/* ============================================================
+   ★ 自适应动画速率控制器（除首页外的所有页面动画受其影响）
+   ------------------------------------------------------------
+   原理：
+     ① 监听 scroll，用「当前 scrollY − 上一次 scrollY」÷ 时间差
+        算出瞬时滚动速度 px/帧，经指数滑动平均(α=0.25)平滑，
+        避免一帧抖动就把系数拉到极端；
+     ② 速度映射到速率系数 k：慢滚→1（完整时长），快滚→上限 K_MAX；
+        中间用 smoothstep 曲线，手感自然而非线性跳变；
+     ③ 把 k 写到 <html> 的 CSS 变量 --anim-speed 与 --delay-div，
+        所有动画的「持续时间」与「错峰延迟」都 ÷ 该系数，
+        所以快滚时整组动画等比压缩、节奏比例不变，只是更快播完；
+     ④ 用 requestAnimationFrame 节流，只在帧末写入一次，零额外重排；
+     ⑤ 停止滚动后系数平滑衰减回 1，下一个区块动画恢复从容节奏。
+   ============================================================ */
+(function(){
+  var SPEED_MIN = 0.6;    /* px/帧：低于此值视为静止，k=1 */
+  var SPEED_MAX = 22;     /* px/帧：达到此值即封顶（约 2.5 屏/秒，降低门槛让真实快滚更容易触发） */
+  var K_MAX     = 3.0;    /* ★ 系数上限：Animation 最快压缩到 1/3，保证仍可被感知 */
+  var ALPHA     = 0.25;   /* 低通滤波系数：越小越平滑、跟随越慢 */
+  var root      = document.documentElement;
+  if(!root) return;
+
+  var lastY   = window.scrollY;
+  var lastT   = performance.now();
+  var smoothV = 0;        /* 平滑后的瞬时速度；起始给一个非零值，避免首帧 dt 异常导致归零 */
+  var targetK = 1;        /* 目标系数 */
+  var curK    = 1;        /* 当前已应用的系数（做衰减缓动） */
+  var rafId   = null;
+  var ticking = false;
+
+  /* smoothstep：把速度归一化到 [0,1]，再曲线映射到系数，避免线性跳变 */
+  function smoothstep(edge0, edge1, x){
+    var t = (x - edge0) / (edge1 - edge0);
+    if(t < 0) t = 0; else if(t > 1) t = 1;
+    return t * t * (3 - 2 * t);
+  }
+  function speedToK(v){
+    var t = smoothstep(SPEED_MIN, SPEED_MAX, v);
+    return 1 + t * (K_MAX - 1);   /* 1 → K_MAX */
+  }
+
+  function apply(){
+    /* ★ 衰减缓动：curK 向 targetK 逼近，停止滚动后自然回到 1 */
+    curK += (targetK - curK) * 0.15;
+    if(Math.abs(curK - 1) < 0.02) curK = 1;
+    /* ★ 仅保留 2 位小数，减少无效样式重算 */
+    var k = Math.round(curK * 100) / 100;
+    root.style.setProperty('--anim-speed', k);
+    root.style.setProperty('--delay-div', k);
+    rafId = null;
+  }
+
+  function onScroll(){
+    var now = performance.now();
+    var y   = window.scrollY;
+    var dt  = now - lastT;
+    if(dt > 0){
+      /* ★ 瞬时速度（px/帧），取绝对值：上下滚动同样加速 */
+      var inst = Math.abs(y - lastY) / dt * 16.67;   /* 归一化到 ~60fps 的一帧 */
+      smoothV += (inst - smoothV) * ALPHA;             /* 指数滑动平均 */
+    }
+    lastY = y; lastT = now;
+    targetK = speedToK(smoothV);
+
+    if(!ticking){
+      ticking = true;
+      rafId = requestAnimationFrame(function(){
+        ticking = false;
+        apply();
+      });
+    }
+  }
+
+  /* ★ 静止检测：scroll 事件停止 120ms 后，把 targetK 渐收回 1 */
+  var idleTimer = null;
+  function onScrollIdle(){
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(function(){ targetK = 1; if(!ticking) rafId = requestAnimationFrame(apply); }, 120);
+  }
+
+  window.addEventListener('scroll', function(){ onScroll(); onScrollIdle(); }, { passive:true });
+  window.addEventListener('resize', function(){ lastT = performance.now(); }, { passive:true });
+
+  /* 首屏即初始化（静止态 k=1，等用户滚动才变化） */
+  apply();
+})();
+
+
+(function(){
+  function copy(text){
+    if(navigator.clipboard && window.isSecureContext){
+      return navigator.clipboard.writeText(text);
+    }
+    return new Promise(function(resolve,reject){
+      try{
+        var ta=document.createElement('textarea');
+        ta.value=text; ta.style.position='fixed'; ta.style.opacity='0';
+        document.body.appendChild(ta); ta.select();
+        document.execCommand('copy'); document.body.removeChild(ta);
+        resolve();
+      }catch(e){ reject(e); }
+    });
+  }
+  /* ★ 丝滑反馈：只改 .action-label 文字，走 opacity 过渡
+        流程：淡出(0.6s) → 换字 → 淡入(0.6s) → 停留 3.2s → 淡出 → 复原，全程约 5.6s
+        邮箱与微信两张卡片共用同一节奏，均适当放慢，看得更从容 */
+  var FB_HOLD = 3200;   /* ★ 反馈文字停留时长（ms），从容可读 */
+  function setLabel(card, labelEl, text){
+    if(!labelEl) return;
+    if(card) card.__fbActive = true;              /* ★ 加锁，防止动画期间重复点击 */
+    labelEl.classList.add('is-out');              /* ① 旧文字淡出 */
+    var timer=null;
+    function finish(){ clearTimeout(timer); labelEl.removeEventListener('transitionend', finish); }
+    labelEl.addEventListener('transitionend', function handler(){
+      labelEl.removeEventListener('transitionend', handler);
+      if(labelEl.classList.contains('is-out')){   /* 淡出结束才换字，避免中途闪现 */
+        labelEl.textContent=text;
+        labelEl.classList.remove('is-out');       /* ② 新文字淡入 */
+      }
+    });
+    /* 兜底：即使 transitionend 不触发也继续（如 reduced-motion）。与 CSS 过渡时长 0.6s 对齐 */
+    timer=setTimeout(function(){ if(labelEl.classList.contains('is-out')){ labelEl.textContent=text; labelEl.classList.remove('is-out'); } }, 800);
+  }
+  function feedback(el, ok){
+    var card=el.closest('.contact-card');
+    var label=el.querySelector('.action-label');
+    var original=label ? label.textContent : el.textContent;
+    var feedbackText=ok ? '已复制 ✓' : '复制失败';
+    setLabel(card, label, feedbackText);          /* 切换为反馈文字（淡入淡出） */
+    if(card) card.classList.add('is-copied');
+    /* ★ 停留足够久后再淡回原文 */
+    clearTimeout(el.__fbTimer);
+    el.__fbTimer=setTimeout(function(){
+      setLabel(card, label, original);            /* 淡回原文 */
+      if(card) card.classList.remove('is-copied');
+      if(card) card.__fbActive = false;           /* ★ 解锁，允许再次点击 */
+    }, FB_HOLD);
+  }
+  /* ★ 微信卡片：事件委托 + 单次防抖，避免点击穿透到卡片外层导致重复触发 */
+  var copyZone=document.getElementById('contact');
+  if(copyZone){
+    copyZone.addEventListener('click', function(e){
+      var trigger=e.target.closest('[data-copy]');
+      if(!trigger) return;
+      var text=trigger.getAttribute('data-copy');
+      if(!text || trigger.__fbActive) return;     /* ★ 动画进行中忽略重复点击 */
+      e.preventDefault();
+      copy(text).then(function(){ feedback(trigger,true); }).catch(function(){ feedback(trigger,false); });
+    });
+    /* ★ 邮箱卡片：与微信卡片统一为「立即复制」，点击后复制邮箱地址（不再跳转 mailto） */
+    copyZone.addEventListener('click', function(e){
+      var trigger=e.target.closest('[data-mail]');
+      if(!trigger) return;
+      var mail=trigger.getAttribute('data-mail');
+      if(!mail || trigger.__fbActive) return;
+      e.preventDefault();
+      copy(mail).then(function(){ feedback(trigger,true); }).catch(function(){ feedback(trigger,false); });
+    });
+  }
+})();
+
+/* ============================================================
+   J. 全局动画驱动（Hero 入场 / 进度条 / 视差 / 标题装饰线）
+   ★ 全部采用「默认可见 + 增强」策略，IO 失效也不空白
+   ============================================================ */
+(function(){
+  /* 1. Hero 丝滑入场（仅首次加载触发一次）
+       分层：光晕 → 逐字错峰浮现 → 整体缓停，节奏连贯不生硬 */
+  var HERO_FULL = 'This is 李浩楠.';
+  function bootHero(){
+    var textEl=document.querySelector('.hero-text');
+    if(textEl && !textEl.dataset.split){
+      /* ★ 按「词」拆分：空格作为独立 span 且不参与换行，避免 "This is" 中间被折断 */
+      textEl.textContent='';
+      var tokens = HERO_FULL.split(/(\s+)/);   /* 保留空格作为独立 token */
+      var charIndex = 0;
+      tokens.forEach(function(tok){
+        if(tok === '') return;
+        var s=document.createElement('span');
+        s.className='ch';
+        if(/^\s+$/.test(tok)){
+          /* 空格：用 &nbsp; 占位，保证 "This is" 的间距 + 不被换行拆开 */
+          s.innerHTML='&nbsp;';
+          s.style.whiteSpace='pre';
+        } else {
+          s.textContent=tok;
+        }
+        /* ★ 每个可见字符递增 105ms，配合更慢的单字过渡（原来 75ms） */
+        s.style.setProperty('--d', (charIndex * 105) + 'ms');
+        charIndex += tok.length;
+        textEl.appendChild(s);
+      });
+      textEl.dataset.split='1';
+    }
+    /* 下一帧再加 .hero-loaded，确保起始态先渲染（transition 生效） */
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){ document.body.classList.add('hero-loaded'); });
+    });
+  }
+  var reduceMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  if(reduceMotion){
+    /* 降级：直接显示完整文字，无动画 */
+    var textEl0=document.querySelector('.hero-text');
+    if(textEl0){ textEl0.textContent=HERO_FULL; textEl0.classList.add('hero-text--static'); }
+    document.body.classList.add('hero-loaded');
+  } else if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded', bootHero);
+  } else {
+    requestAnimationFrame(bootHero);
+  }
+
+  /* 3. 标签 .tag 与标题下划线 .sec-title：进入视口时加 .in */
+  var animIO=new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if(e.isIntersecting){
+        e.target.classList.add('in');
+        animIO.unobserve(e.target);
+      }
+    });
+  }, {threshold:0.15});
+  document.querySelectorAll('.tag, .sec-title').forEach(function(el){ animIO.observe(el); });
+  /* 兜底：立即检查已在视口内的 */
+  setTimeout(function(){
+    document.querySelectorAll('.tag, .sec-title').forEach(function(el){
+      if(!el.classList.contains('in')){
+        var r=el.getBoundingClientRect();
+        if(r.top < window.innerHeight*0.9){ el.classList.add('in'); }
+      }
+    });
+  }, 300);
+
+  /* 4. 卡片网格：左右交错滑入（仅桌面，移动端保持简洁） */
+  if(window.matchMedia && window.matchMedia('(min-width:761px)').matches){
+    document.querySelectorAll('.grid.cols-3 .card, .grid.cols-4 .card').forEach(function(card, i){
+      card.classList.add(i%2===0 ? 'reveal-left' : 'reveal-right');
+    });
+    var cardIO=new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if(e.isIntersecting){ e.target.classList.add('in'); cardIO.unobserve(e.target); }
+      });
+    }, {threshold:0.12});
+    document.querySelectorAll('.reveal-left, .reveal-right').forEach(function(el){ cardIO.observe(el); });
+  }
+
+  /* 5. 桌面视差：区块内容随滚动轻微位移 */
+  if(window.matchMedia && window.matchMedia('(min-width:901px)').matches){
+    var parallaxEls=document.querySelectorAll('.wrap > .tag, .wrap > h2, .contact > div');
+    parallaxEls.forEach(function(el){ el.classList.add('parallax'); });
+    var pyTicking=false;
+    function updateParallax(){
+      parallaxEls.forEach(function(el){
+        var r=el.getBoundingClientRect();
+        var vh=window.innerHeight;
+        if(r.top < vh && r.bottom > 0){
+          var offset=(vh/2 - (r.top+r.height/2)) * 0.04;
+          el.style.transform='translateY('+(-offset).toFixed(1)+'px)';
+        }
+      });
+      pyTicking=false;
+    }
+    window.addEventListener('scroll', function(){
+      if(!pyTicking){ requestAnimationFrame(updateParallax); pyTicking=true; }
+    }, {passive:true});
+    updateParallax();
+  }
+})();
 </script>
 <script>
 /* H. 创新层 */
 (function(){
   var themeMap={info:'info',interest:'interest',certs:'certs',timeline:'timeline',contact:'contact'};
-  function applyTheme(){
-    var id=window.currentId||'top';
-    document.body.dataset.theme=themeMap[id]||'top';
+  /* ★ 用单次 IntersectionObserver 替换原 setInterval(applyTheme,120) 轮询：
+        每 120ms 全量读 getComputedStyle + 写 dataset，滚动时持续消耗 CPU；
+        现改为「区块进入视口才更新一次」，生命周期内最多触发 5 次 */
+  function applyTheme(id){
+    document.body.dataset.theme = themeMap[id] || 'top';
   }
-  setInterval(applyTheme,120); applyTheme();
+  applyTheme('top');
+  var themeIO=new IntersectionObserver(function(es){
+    var best=null;
+    es.forEach(function(e){
+      if(e.isIntersecting && (!best || e.intersectionRatio > best.intersectionRatio)) best=e;
+    });
+    if(best){ applyTheme(best.target.id || 'top'); }
+  },{threshold:[0.01,0.25,0.5,0.75]});
+  document.querySelectorAll('section[id]').forEach(function(el){ themeIO.observe(el); });
+  /* 主题随当前区块切换（当前区块由侧边进度线的 IntersectionObserver 维护，见 B2） */
+  window.addEventListener('theme:change', function(e){ applyTheme(e.detail); });
 
   var cursor=document.querySelector('.cursor');
-  if(cursor && window.matchMedia('(min-width:901px)').matches){
+  if(cursor && window.matchMedia && window.matchMedia('(min-width:901px)').matches){
     var mx=window.innerWidth/2, my=window.innerHeight/2, cx=mx, cy=my;
     document.addEventListener('mousemove',function(e){ mx=e.clientX; my=e.clientY; });
     function loop(){
@@ -806,12 +1753,23 @@ document.querySelectorAll('.wrap,.hero,.ft').forEach(el=>{ el.classList.add('rev
     });
   }
 
-  var heroTitle=document.querySelector('.hero-title');
-  if(heroTitle){
+  /* ★ Hero 随滚动平滑淡出 + 轻微上移
+     —— 用 CSS transition + 阈值判定，避免「JS 每帧写内联 opacity」与
+        入场动画（.hero-title 1.8s transition）竞争同一元素，导致入场被锁死 */
+  var heroEl=document.getElementById('top');
+  if(heroEl){
+    var heroTicking=false;
+    function updateHero(){
+      heroTicking=false;
+      /* 滚动超过一屏的 55% → 标记淡出，CSS 负责缓动 */
+      var shouldHide = window.scrollY > window.innerHeight * 0.55;
+      heroEl.classList.toggle('is-out', shouldHide);
+    }
     window.addEventListener('scroll',function(){
-      var y=window.scrollY;
-      heroTitle.style.opacity=Math.max(0,1-y/420);
+      if(!heroTicking){ requestAnimationFrame(updateHero); heroTicking=true; }
     },{passive:true});
+    window.addEventListener('resize', updateHero);
+    updateHero();
   }
 })();
 </script>
