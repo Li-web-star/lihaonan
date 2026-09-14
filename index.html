@@ -98,6 +98,28 @@
 <!-- 微信分享走系统原生（无需 wx.config），本页无可分享内容时不主动弹分享菜单 -->
 
 <title>李浩楠 · Li Haonan</title>
+
+<!-- ===== 修复：微信 WebView 100vh 跳动问题 ===== -->
+<!-- 用 JS 精确计算视口高度写入 CSS 变量 --vh，避免 vh 单位在微信导航栏显隐时突变 -->
+<script>
+(function(){
+  function setVH(){
+    var vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty('--vh', vh + 'px');
+  }
+  setVH();
+  // resize 时更新（微信导航栏显隐会触发 resize，此时平滑过渡）
+  window.addEventListener('resize', setVH, { passive: true });
+  // 横竖屏切换时延迟更新，确保拿到正确高度
+  window.addEventListener('orientationchange', function(){
+    setTimeout(setVH, 200);
+    setTimeout(setVH, 500);
+  });
+  // pageshow 时再校正一次（微信有时从后台回来高度会变）
+  window.addEventListener('pageshow', setVH, { passive: true });
+})();
+</script>
+
 <style>
 /* ==================== 安全区域变量（刘海 / 灵动岛 / Home Indicator） ==================== */
 :root{
@@ -108,8 +130,8 @@
   /* ★ 首尾缓冲带高度：可滑动的"空白延伸区"，实现苹果官网式首尾弹性余量。
      在首页可继续上滑、尾页可继续下滑，松手后橡皮筋回弹归位。
      --headroom 作用于首屏上方，--footroom 作用于尾屏下方。 */
-  --headroom: clamp(80px, 12vh, 160px);
-  --footroom: clamp(80px, 14vh, 180px);
+  --headroom: clamp(80px, calc(var(--vh, 1vh) * 12), 160px);
+  --footroom: clamp(80px, calc(var(--vh, 1vh) * 14), 180px);
 }
 
 /* ==================== 首尾缓冲带（苹果官网式弹性余量）====================
@@ -169,11 +191,11 @@ h1,h2{font-size:clamp(32px,7vw,52px);font-weight:800;line-height:1.2;margin-bott
 .sub{font-size:clamp(16px,3.5vw,20px);color:#a1a1a6;margin-bottom:10px}
 .desc{font-size:17px;color:#444;max-width:680px;margin:0 auto 14px;line-height:1.8}
 strong{color:#e53935}
-.hero{height:85vh;min-height:520px;background:#0a0a0a;color:#fff;display:flex;align-items:center;justify-content:center;padding:0 20px;text-align:center;position:relative;overflow:hidden;padding-top:env(safe-area-inset-top, 0px);padding-bottom:env(safe-area-inset-bottom, 0px)}
+.hero{height:calc(var(--vh, 1vh) * 85);min-height:520px;background:#0a0a0a;color:#fff;display:flex;align-items:center;justify-content:center;padding:0 20px;text-align:center;position:relative;overflow:hidden;padding-top:env(safe-area-inset-top, 0px);padding-bottom:env(safe-area-inset-bottom, 0px)}
 .hero-center{display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;filter:none}
 .hero-center h1{text-align:center;margin:0 auto}
 .hero-cta{margin-top:36px}
-@media(max-width:760px){ .hero{height:85vh;min-height:520px;max-height:none;padding-top:env(safe-area-inset-top, 0px);padding-bottom:env(safe-area-inset-bottom, 0px)} }
+@media(max-width:760px){ .hero{height:calc(var(--vh, 1vh) * 85);min-height:520px;max-height:none;padding-top:env(safe-area-inset-top, 0px);padding-bottom:env(safe-area-inset-bottom, 0px)} }
 .glow{position:fixed;top:20%;left:50%;width:min(90vw,600px);height:min(90vw,600px);transform:translateX(-50%);border-radius:50%;background:radial-gradient(circle,rgba(229,57,53,.3),transparent 65%);z-index:-1}
 /* ★ 旧的 .row / 通用 .spec 基础样式已废弃，布局统一由下方 ".spec .row-line" 规则控制 */
 .red{color:#e53935}
@@ -310,7 +332,7 @@ a{color:#e53935;text-decoration:none} a:hover{color:#f05a5e}
   overflow:hidden;
   text-overflow:ellipsis;
 }
-#info     { background:#ffffff; color:#1d1d1f; min-height:100vh; min-height:100svh; display:flex; flex-direction:column; justify-content:center; align-items:center; width:100%; }
+#info     { background:#ffffff; color:#1d1d1f; min-height:calc(var(--vh, 1vh) * 100); min-height:calc(var(--vh, 1vh) * 100); display:flex; flex-direction:column; justify-content:center; align-items:center; width:100%; }
 #interest { background:#0a0a0a; color:#ffffff }
 #certs    { background:#ffffff; color:#1d1d1f }
 #timeline { background:#0a0a0a; color:#ffffff }
@@ -453,13 +475,13 @@ a.cta.cta-text:focus-visible{ outline:none; box-shadow:0 0 0 4px rgba(229,57,53,
 /* ==================== 视觉丰富化 ==================== */
 
 #interest,#certs,#timeline,#contact{
-  min-height:100vh;min-height:100svh;
+  min-height:calc(var(--vh, 1vh) * 100);min-height:calc(var(--vh, 1vh) * 100);
   display:flex;flex-direction:column;justify-content:center;align-items:center;
   width:100%;
 }
-#info{ min-height:100vh;min-height:100svh; display:flex; flex-direction:column; justify-content:center; align-items:center; }
-.wrap{min-height:85vh;min-height:85svh;display:flex;flex-direction:column;justify-content:center}
-.contact{min-height:100vh;min-height:100svh}
+#info{ min-height:calc(var(--vh, 1vh) * 100);min-height:calc(var(--vh, 1vh) * 100); display:flex; flex-direction:column; justify-content:center; align-items:center; }
+.wrap{min-height:calc(var(--vh, 1vh) * 85);min-height:calc(var(--vh, 1vh) * 85);display:flex;flex-direction:column;justify-content:center}
+.contact{min-height:calc(var(--vh, 1vh) * 100);min-height:calc(var(--vh, 1vh) * 100)}
 
 @media(min-width:901px){
 }
@@ -724,8 +746,8 @@ a.cta.cta-text:focus-visible{ outline:none; box-shadow:0 0 0 4px rgba(229,57,53,
 }
 
 #info, #interest, #certs, #timeline {
-  min-height: 100vh;
-  min-height: 100svh;
+  min-height: calc(var(--vh, 1vh) * 100);
+  min-height: calc(var(--vh, 1vh) * 100);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -1091,7 +1113,7 @@ h1,h2{ margin-bottom:20px; }             /* 大标题下间距 */
 @media (orientation: landscape) and (max-height: 500px){
   .hero{ max-height:none; min-height:520px; padding-top:env(safe-area-inset-top, 0px); padding-bottom:env(safe-area-inset-bottom, 0px); }
   .wrap{ min-height:auto; padding-top:80px; padding-bottom:80px; justify-content:flex-start; }
-  .hero-title{ font-size:clamp(28px,6vh,44px); }
+  .hero-title{ font-size:clamp(28px,calc(var(--vh, 1vh) * 6),44px); }
   .grid.cols-3{ grid-template-columns:repeat(3,1fr); }
   /* 横屏高度有限，压缩区块纵向间距 */
   .spec{ margin-top:24px; }
@@ -1121,6 +1143,9 @@ h1,h2{ margin-bottom:20px; }             /* 大标题下间距 */
 /* ---------- ⑩ iOS 输入框 / 动态视口适配 ---------- */
 @supports (height: 100dvh){
   .hero, #info, #interest, #certs, #timeline, #contact, .wrap{
+    /* ★ 现代浏览器（Safari 15.4+, Chrome 108+）优先用 100dvh（动态视口），
+       但因为我们已用 JS --vh 变量兜底，此处不再叠加 min-height，
+       避免 100dvh 与 calc(var(--vh)*100) 冲突导致双重高度 */
     min-height:100dvh;
   }
 }
@@ -1133,7 +1158,7 @@ body{ -webkit-tap-highlight-color:rgba(0,0,0,.08); -webkit-touch-callout:none; }
   .card{ box-shadow:0 8px 30px rgba(0,0,0,.05); }
 }
   /* ★ 移动端状态栏修复：状态栏背后 = 白色（fixed 占位，脱离文档流、不撑高页面）
-     · hero 高度保持原始 85vh，不改小、不限制 —— 彻底恢复原样
+     · hero 高度保持原始 calc(var(--vh, 1vh) * 85)，不改小、不限制 —— 彻底恢复原样
      · iOS 刘海区域由 spill-top 这块白色 fixed 条覆盖 → 状态栏"变白" */
   @supports (padding-top: env(safe-area-inset-top)){
     html{ background:#ffffff; }
@@ -1153,7 +1178,7 @@ body{ -webkit-tap-highlight-color:rgba(0,0,0,.08); -webkit-touch-callout:none; }
   }
   .spill-top::before { height: 0; }
 
-  /* hero 内容避开刘海，但高度仍是 85vh（原始值，未改动） */
+  /* hero 内容避开刘海，但高度仍是 calc(var(--vh, 1vh) * 85)（原始值，未改动） */
   .hero-center { padding-top: env(safe-area-inset-top, 44px); }
 
   #info { background: #ffffff; }
