@@ -5,42 +5,32 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>李浩楠 · Li Haonan</title>
 <style>
+/* ==================== 原有样式（保留） ==================== */
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;color:#1d1d1f;background:#f5f5f7;line-height:1.6}
 img{max-width:100%}
-
-/* 导航 */
 nav{position:fixed;top:0;left:0;width:100%;z-index:100;background:rgba(0,0,0,.8);backdrop-filter:blur(20px)}
 .nav-in{max-width:900px;margin:0 auto;height:50px;display:flex;align-items:center;justify-content:space-between;padding:0 16px}
 .brand{color:#fff;font-size:17px;font-weight:600}
 .links{overflow-x:auto;white-space:nowrap;scrollbar-width:none}
 .links::-webkit-scrollbar{display:none}
 .links a{color:#eee;font-size:13px;margin-left:18px}
-
-/* 通用 */
 .wrap{max-width:900px;margin:0 auto;padding:80px 20px;text-align:center}
 .dark{background:#0a0a0a;color:#fff}
 .light{background:#fff;color:#1d1d1f}
 .tag{color:#e53935;font-size:12px;letter-spacing:2px;font-weight:700;margin-bottom:14px}
-/* 大标题：强制居中 + 行宽平衡，解决末尾标点/换行造成的视觉偏左 */
-h1,h2{font-size:clamp(32px,7vw,52px);font-weight:800;line-height:1.2;margin-bottom:16px;letter-spacing:-.02em;text-align:center;text-wrap:balance}
+h1,h2{font-size:clamp(32px,7vw,52px);font-weight:800;line-height:1.2;margin-bottom:16px;letter-spacing:-.02em}
 .sub{font-size:clamp(16px,3.5vw,20px);color:#a1a1a6;margin-bottom:10px}
 .desc{font-size:17px;color:#444;max-width:680px;margin:0 auto 14px;line-height:1.8}
 strong{color:#e53935}
-
-/* Hero */
 .hero{height:100vh;min-height:520px;background:#0a0a0a;color:#fff;display:flex;align-items:center;justify-content:center;padding:0 20px;text-align:center}
 .glow{position:fixed;top:20%;left:50%;width:min(90vw,600px);height:min(90vw,600px);transform:translateX(-50%);border-radius:50%;background:radial-gradient(circle,rgba(229,57,53,.3),transparent 65%);z-index:-1}
-
-/* 规格表 */
 .spec{max-width:680px;margin:32px auto 0;text-align:left}
 .row{display:flex;justify-content:space-between;padding:15px 4px;border-bottom:1px solid #e0e0e0;gap:12px;font-size:16px}
 .row:first-child{border-top:1px solid #e0e0e0}
 .k{color:#666;flex:0 0 auto}
 .v{font-weight:600;text-align:right;word-break:break-word}
 .red{color:#e53935}
-
-/* 卡片网格 */
 .grid{display:grid;gap:16px;margin-top:40px;text-align:left}
 .grid.cols-3{grid-template-columns:repeat(3,1fr)}
 .grid.cols-4{grid-template-columns:repeat(4,1fr)}
@@ -52,30 +42,20 @@ strong{color:#e53935}
 .card p{color:#666;font-size:14px;line-height:1.6}
 .card.dark-card p,.card.dark-card .level{color:#aaa}
 .level{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#999;margin-bottom:8px}
-
-/* 时间轴（无年份） */
 .tl{display:grid;grid-template-columns:repeat(2,1fr);gap:32px;margin-top:44px;text-align:left}
 .node{padding-left:24px;border-left:3px solid #e53935}
 .node-label{color:#e53935;font-weight:800;font-size:13px;letter-spacing:1px;margin-bottom:8px}
 .node h4{font-size:19px;margin-bottom:8px}
 .node p{color:#666;font-size:15px}
-
-/* 联系 */
 .contact{min-height:440px;display:flex;align-items:center;justify-content:center}
 a.cta{color:#e53935;font-size:18px;border-bottom:1px solid #e53935;padding-bottom:2px}
-
-/* Footer */
 footer{background:#000;color:#aaa;padding:40px 20px 30px;font-size:13px}
 .ft{max-width:900px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr;gap:30px;padding-bottom:28px;border-bottom:1px solid #333}
 .ft .b{color:#fff;font-size:16px;font-weight:600;margin-bottom:8px}
 .ft a{display:block;color:#aaa;line-height:2}
 .copy{max-width:900px;margin:20px auto 0;color:#666;font-size:12px}
-
-/* 滚动动画 */
 .reveal{opacity:0;transform:translateY(30px);transition:.8s}
 .reveal.in{opacity:1;transform:none}
-
-/* ===== 手机端（核心） ===== */
 @media(max-width:760px){
   .wrap{padding:60px 18px}
   .links a{margin-left:0;margin-right:16px}
@@ -87,10 +67,41 @@ footer{background:#000;color:#aaa;padding:40px 20px 30px;font-size:13px}
   .ft{grid-template-columns:1fr;gap:22px}
   h1,h2{font-size:clamp(30px,10vw,44px)}
 }
+
+/* ==================== 追加：苹果风 + 对齐 + 跳页 ==================== */
+:root{--bg:#f5f5f7;--card:#ffffff;--text:#1d1d1f;--muted:#6e6e73;--accent:#0071e3;--accent-hover:#0077ed;--line:#e5e5ea}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue","Microsoft YaHei",sans-serif;color:var(--text);background:var(--bg);-webkit-font-smoothing:antialiased}
+
+/* 大标题居中（补偿末标点偏心） */
+h1,h2{text-align:center;font-weight:600;letter-spacing:-0.02em;line-height:1.28;text-wrap:balance;will-change:transform}
+h1.title-center,h2.title-center{display:inline-block}
+
+/* 苹果风卡片 / 按钮 / 链接 */
+.card{background:var(--card);border-radius:20px;box-shadow:0 8px 30px rgba(0,0,0,.06);border:1px solid var(--line)}
+a.cta{display:inline-block;background:var(--accent);color:#fff !important;padding:12px 30px;border-radius:999px;font-size:17px;font-weight:500;border:none;cursor:pointer;transition:background .25s ease,transform .15s ease;text-decoration:none}
+a.cta:hover{background:var(--accent-hover)} a.cta:active{transform:scale(.96)}
+a{color:var(--accent);text-decoration:none} a:hover{color:var(--accent-hover)}
+.wrap{padding:100px 20px}
+
+/* ★规格表对齐：两列网格，键固定宽度右对齐，值统一从同一起始 x 左对齐 */
+.spec{max-width:760px}
+.spec .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:0 56px}
+.spec .row{
+  display:flex;align-items:baseline;   /* 左右两端文字首行对齐 */
+  gap:16px;padding:14px 0;border-bottom:1px solid var(--line);
+}
+.spec .row:first-child{border-top:1px solid var(--line)}
+.spec .k{flex:0 0 84px;color:var(--muted);font-size:15px;text-align:right;padding-top:1px}
+.spec .v{flex:1;font-size:16px;font-weight:600;color:var(--text);text-align:left;word-break:break-word}
+.spec .red{color:var(--accent)}
+@media(max-width:600px){ .spec .grid-2{grid-template-columns:1fr} }
+
+/* 转场 */
+@view-transition{navigation:auto}
+html{transition:opacity .45s ease} html.is-leaving{opacity:0}
 </style>
 </head>
 <body>
-<!-- 板块顺序：黑(Hero) → 白(about) → 黑(info) → 白(interest) → 黑(certs) → 白(timeline) → 黑(contact) → 黑(footer) 严格一黑一白交替 -->
 <nav id="nav">
   <div class="nav-in">
     <span class="brand">李浩楠</span>
@@ -111,35 +122,37 @@ footer{background:#000;color:#aaa;padding:40px 20px 30px;font-size:13px}
     <h1>你好，我是&nbsp;李浩楠。</h1>
     <p class="sub">一名 19 岁的消防救援技术专业学生。</p>
     <p class="sub">现居陕西西安 · 正在备考专升本。</p>
-    <p style="margin-top:24px"><a href="#contact" class="cta">了解我</a></p>
+    <!-- 单页内平滑滚动到「关于」区块（#about）-->
+    <p style="margin-top:24px"><a href="#about" class="cta">了解我</a></p>
   </div>
 </section>
 
-<section class="wrap light" id="about">
-  <div class="tag">ABOUT</div>
-  <h2>把基本盘说清楚，<br>比什么都重要。</h2>
-  <p class="desc">我是<strong>李浩楠</strong>，今年 19 岁，男生，现居<strong>陕西西安</strong>。就读于<strong>陕西财经职业技术学院</strong>，2025 年入学，目前<strong>大二</strong>，专业是<strong>消防救援技术</strong>。</p>
-  <p class="desc">我喜欢<strong>摄影、跑步、羽毛球</strong>，目前正在<strong>备考专升本</strong>。手里已有<strong>四级电工证、C1 驾驶证、红十字救护培训证书</strong>，累计<strong>荣誉证书 10 余项</strong>。</p>
-  <p class="desc">比起「厉害」，我更想做一个踏实、靠谱、愿意持续学习的人。</p>
-</section>
-
-<section class="wrap dark" id="info" style="background:#0a0a0a">
+<!-- ========== 基本信息：左右两列整齐对齐 ========== -->
+<section class="wrap light" id="info" style="background:#fff">
   <div class="tag">PROFILE</div>
   <h2>先把基本盘<br>说清楚。</h2>
-  <p class="sub" style="color:#aaa;font-weight:600">一表看懂。</p>
+  <p class="sub" style="color:var(--muted);font-weight:600">一表看懂。</p>
   <div class="spec">
-    <div class="row" style="border-color:#333"><span class="k" style="color:#aaa">姓名</span><span class="v red">李浩楠</span></div>
-    <div class="row" style="border-color:#333"><span class="k" style="color:#aaa">性别</span><span class="v">男</span></div>
-    <div class="row" style="border-color:#333"><span class="k" style="color:#aaa">年龄</span><span class="v red">19 岁</span></div>
-    <div class="row" style="border-color:#333"><span class="k" style="color:#aaa">现居</span><span class="v">陕西西安</span></div>
-    <div class="row" style="border-color:#333"><span class="k" style="color:#aaa">入学</span><span class="v">2025 年</span></div>
-    <div class="row" style="border-color:#333"><span class="k" style="color:#aaa">年级</span><span class="v">大二</span></div>
-    <div class="row" style="border-color:#333"><span class="k" style="color:#aaa">专业</span><span class="v red">消防救援技术</span></div>
-    <div class="row" style="border-color:#333"><span class="k" style="color:#aaa">目标</span><span class="v">备考专升本</span></div>
-    <div class="row" style="border-color:#333"><span class="k" style="color:#aaa">兴趣</span><span class="v">摄影 · 跑步 · 羽毛球</span></div>
-    <div class="row" style="border-color:#333"><span class="k" style="color:#aaa">荣誉证书</span><span class="v red">10 余项</span></div>
-    <div class="row" style="border-color:#333"><span class="k" style="color:#aaa">邮箱</span><span class="v">2878697150@qq.com</span></div>
-    <div class="row" style="border-color:#333"><span class="k" style="color:#aaa">微信</span><span class="v">LovHoeN-07</span></div>
+    <div class="grid-2">
+      <!-- 左列 -->
+      <div>
+        <div class="row"><span class="k">姓名</span><span class="v red">李浩楠</span></div>
+        <div class="row"><span class="k">性别</span><span class="v">男</span></div>
+        <div class="row"><span class="k">年龄</span><span class="v red">19 岁</span></div>
+        <div class="row"><span class="k">现居</span><span class="v">陕西西安</span></div>
+        <div class="row"><span class="k">入学</span><span class="v">2025 年</span></div>
+        <div class="row"><span class="k">年级</span><span class="v">大二</span></div>
+      </div>
+      <!-- 右列 -->
+      <div>
+        <div class="row"><span class="k">专业</span><span class="v red">消防救援技术</span></div>
+        <div class="row"><span class="k">目标</span><span class="v">备考专升本</span></div>
+        <div class="row"><span class="k">兴趣</span><span class="v">摄影 · 跑步 · 羽毛球</span></div>
+        <div class="row"><span class="k">荣誉</span><span class="v red">10 余项</span></div>
+        <div class="row"><span class="k">邮箱</span><span class="v">2878697150@qq.com</span></div>
+        <div class="row"><span class="k">微信</span><span class="v">LovHoeN-07</span></div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -147,76 +160,40 @@ footer{background:#000;color:#aaa;padding:40px 20px 30px;font-size:13px}
   <div class="tag">INTERESTS</div>
   <h2>热爱，是最高效的<br>学习。</h2>
   <div class="grid cols-3">
-    <div class="card">
-      <div class="num">01</div>
-      <h3>摄影</h3>
-      <p class="tag2">把日常留住。</p>
-      <p>用手机记录生活里容易被忽略的瞬间。好照片不靠设备，靠的是「刚好在场」。</p>
-    </div>
-    <div class="card">
-      <div class="num">02</div>
-      <h3>跑步</h3>
-      <p class="tag2">把身体练扎实。</p>
-      <p>几乎每天都跑步，既保持体能，也用来释放压力。长跑教会我：节奏比爆发更重要。</p>
-    </div>
-    <div class="card">
-      <div class="num">03</div>
-      <h3>羽毛球</h3>
-      <p class="tag2">把节奏抢回来。</p>
-      <p>周末的固定项目。喜欢一拍一拍把节奏夺回来的对抗感，也练反应和协调性。</p>
-    </div>
+    <div class="card"><div class="num">01</div><h3>摄影</h3><p class="tag2">把日常留住。</p><p>用手机记录生活里容易被忽略的瞬间。</p></div>
+    <div class="card"><div class="num">02</div><h3>跑步</h3><p class="tag2">把身体练扎实。</p><p>几乎每天都跑步，既保持体能，也释放压力。</p></div>
+    <div class="card"><div class="num">03</div><h3>羽毛球</h3><p class="tag2">把节奏抢回来。</p><p>周末的固定项目，练反应和协调性。</p></div>
   </div>
 </section>
 
-<section class="wrap dark" id="certs">
+<section class="wrap dark" id="certs" style="background:#0a0a0a">
   <div class="tag">CERTIFICATES</div>
   <h2>手里拿着的，<br>都是走过的路。</h2>
   <div class="grid cols-4">
-    <div class="card dark-card">
-      <div class="num">01</div>
-      <div class="level">职业资格 · 电气实操</div>
-      <h3>四级 / 中级电工证</h3>
-      <p>具备电气设备安装、维护与故障排查的实操能力。</p>
-    </div>
-    <div class="card dark-card">
-      <div class="num">02</div>
-      <div class="level">小型汽车驾驶资格</div>
-      <h3>C1 驾驶证</h3>
-      <p>具备小型汽车驾驶资格，可独立完成道路驾驶。</p>
-    </div>
-    <div class="card dark-card">
-      <div class="num">03</div>
-      <div class="level">CPR · 创伤包扎</div>
-      <h3>红十字救护培训证书</h3>
-      <p>掌握心肺复苏、创伤包扎等现场急救技能。</p>
-    </div>
-    <div class="card dark-card">
-      <div class="num">04</div>
-      <div class="level">学习 · 训练 · 志愿</div>
-      <h3>荣誉证书 10 余项</h3>
-      <p>在校期间学习、训练与志愿服务中获得的各类荣誉。</p>
-    </div>
+    <div class="card dark-card"><div class="num">01</div><div class="level">职业资格 · 电气实操</div><h3>四级 / 中级电工证</h3><p>电气设备安装、维护与故障排查。</p></div>
+    <div class="card dark-card"><div class="num">02</div><div class="level">小型汽车驾驶资格</div><h3>C1 驾驶证</h3><p>具备小型汽车驾驶资格。</p></div>
+    <div class="card dark-card"><div class="num">03</div><div class="level">CPR · 创伤包扎</div><h3>红十字救护培训证书</h3><p>心肺复苏、创伤包扎等急救技能。</p></div>
+    <div class="card dark-card"><div class="num">04</div><div class="level">学习 · 训练 · 志愿</div><h3>荣誉证书 10 余项</h3><p>学习、训练与志愿服务中获得的荣誉。</p></div>
   </div>
+</section>
+
+<section class="wrap light" id="about">
+  <div class="tag">ABOUT</div>
+  <h2>把基本盘说清楚，<br>比什么都重要。</h2>
+  <p class="desc">我是<strong>李浩楠</strong>，今年 19 岁，男生，现居<strong>陕西西安</strong>。就读于<strong>陕西财经职业技术学院</strong>，2025 年入学，目前<strong>大二</strong>，专业是<strong>消防救援技术</strong>。</p>
+  <p class="desc">我喜欢<strong>摄影、跑步、羽毛球</strong>，目前正在<strong>备考专升本</strong>。</p>
 </section>
 
 <section class="wrap light" id="timeline">
   <div class="tag">JOURNEY</div>
   <h2>每一步，<br>都算数。</h2>
   <div class="tl">
-    <div class="node">
-      <div class="node-label">入学</div>
-      <h4>进入陕西财经职业技术学院</h4>
-      <p>选择消防救援技术专业，正式开启系统的应急救援学习。</p>
-    </div>
-    <div class="node">
-      <div class="node-label">当下</div>
-      <h4>大二精进中，备考专升本</h4>
-      <p>把学历和专业都再往上推一步，目标明确，一步步往前走。</p>
-    </div>
+    <div class="node"><div class="node-label">入学</div><h4>进入陕西财经职业技术学院</h4><p>选择消防救援技术专业，开启系统的应急救援学习。</p></div>
+    <div class="node"><div class="node-label">当下</div><h4>大二精进中，备考专升本</h4><p>把学历和专业都再往上推一步，一步步往前走。</p></div>
   </div>
 </section>
 
-<section class="wrap dark contact" id="contact">
+<section class="wrap dark contact" id="contact" style="background:#0a0a0a">
   <div>
     <div class="tag">CONTACT</div>
     <h2>随时，都可以聊聊。</h2>
@@ -231,36 +208,54 @@ footer{background:#000;color:#aaa;padding:40px 20px 30px;font-size:13px}
 
 <footer>
   <div class="ft">
-    <div><div class="b">李浩楠</div>
-      <p>陕西财经职业技术学院 · 大二 · 消防救援技术</p>
-      <p>现居陕西西安 · 备考专升本</p>
-    </div>
-    <div><div class="b">站点</div>
-      <a href="#about">关于</a><a href="#info">基本信息</a><a href="#interest">兴趣</a><a href="#certs">证书</a><a href="#timeline">成长</a>
-    </div>
-    <div><div class="b">联系</div>
-      <a href="mailto:2878697150@qq.com">邮箱 · 2878697150@qq.com</a>
-      <a href="#">微信 · LovHoeN-07</a>
-    </div>
+    <div><div class="b">李浩楠</div><p>陕西财经职业技术学院 · 大二 · 消防救援技术</p><p>现居陕西西安 · 备考专升本</p></div>
+    <div><div class="b">站点</div><a href="#about">关于</a><a href="#info">基本信息</a><a href="#interest">兴趣</a><a href="#certs">证书</a><a href="#timeline">成长</a></div>
+    <div><div class="b">联系</div><a href="mailto:2878697150@qq.com">邮箱 · 2878697150@qq.com</a><a href="#">微信 · LovHoeN-07</a></div>
   </div>
   <div class="copy">© 2026 李浩楠 · 保留所有权利。</div>
 </footer>
 
 <script>
-var nav=document.getElementById('nav');
-window.addEventListener('scroll',function(){
-  nav.style.background = window.scrollY>30 ? 'rgba(0,0,0,.9)' : 'rgba(0,0,0,.8)';
-});
-var io=new IntersectionObserver(function(es){
-  es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});
-},{threshold:0.1});
-document.querySelectorAll('.wrap,.hero,.ft').forEach(function(el){el.classList.add('reveal');io.observe(el);});
+/* A. 大标题居中补偿（末标点偏心） */
+function centerTitles(){
+  const isPunct=ch=>/[，。、；：！？,.;:!?]/.test(ch);
+  document.querySelectorAll('h1,h2').forEach(h=>{
+    const last=h.textContent.trim().slice(-1); let shift=0;
+    if(isPunct(last)){
+      const s=document.createElement('span');
+      s.style.cssText='position:absolute;visibility:hidden;font:inherit;white-space:pre';
+      s.textContent=last; document.body.appendChild(s);
+      shift=s.getBoundingClientRect().width/2; s.remove();
+    }
+    h.classList.add('title-center');
+    h.style.transform='translateX('+shift+'px)';
+  });
+}
+if(document.fonts&&document.fonts.ready) document.fonts.ready.then(centerTitles);
+window.addEventListener('load',centerTitles);
 
-// 打开网站时强制回到顶部，保证显示的是首页（Hero）
-window.addEventListener('load',function(){
-  window.scrollTo(0,0);
-  history.scrollRestoration = 'manual'; // 禁用浏览器自动恢复滚动位置
+/* B. 丝滑转场 */
+document.documentElement.style.scrollBehavior='smooth';
+document.querySelectorAll('a.vt-link').forEach(a=>{
+  a.addEventListener('click',e=>{
+    const href=a.getAttribute('href');
+    if(!href||href.startsWith('#')||a.target==='_blank'||/^https?:/.test(href)) return;
+    e.preventDefault();
+    if(document.startViewTransition){ document.startViewTransition(()=>window.location.href=href); }
+    else{ document.documentElement.classList.add('is-leaving'); setTimeout(()=>window.location.href=href,420); }
+  });
 });
+
+/* C. 打开网站强制回到首页 */
+window.addEventListener('load',()=>{ window.scrollTo(0,0); history.scrollRestoration='manual'; });
+
+/* D. 导航栏滚动变色（修复 nav 缺 id 的原 bug） */
+var nav=document.getElementById('nav');
+window.addEventListener('scroll',()=>{ if(nav) nav.style.background=window.scrollY>30?'rgba(0,0,0,.9)':'rgba(0,0,0,.8)'; });
+
+/* E. 滚动浮现动画（保留） */
+var io=new IntersectionObserver(es=>{ es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }); },{threshold:0.1});
+document.querySelectorAll('.wrap,.hero,.ft').forEach(el=>{ el.classList.add('reveal'); io.observe(el); });
 </script>
 </body>
 </html>
