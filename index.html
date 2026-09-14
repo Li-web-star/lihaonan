@@ -169,11 +169,11 @@ h1,h2{font-size:clamp(32px,7vw,52px);font-weight:800;line-height:1.2;margin-bott
 .sub{font-size:clamp(16px,3.5vw,20px);color:#a1a1a6;margin-bottom:10px}
 .desc{font-size:17px;color:#444;max-width:680px;margin:0 auto 14px;line-height:1.8}
 strong{color:#e53935}
-.hero{height:85vh;height:85svh;min-height:520px;background:#0a0a0a;color:#fff;display:flex;align-items:center;justify-content:center;padding:0 20px;text-align:center;position:relative;overflow:hidden;padding-top:calc(env(safe-area-inset-top) + 56px);padding-bottom:calc(env(safe-area-inset-bottom) + 40px)}
+.hero{height:85vh;height:85svh;min-height:520px;background:#0a0a0a;color:#fff;display:flex;align-items:center;justify-content:center;padding:0 20px;text-align:center;position:relative;overflow:hidden;padding-top:env(safe-area-inset-top, 0px);padding-bottom:env(safe-area-inset-bottom, 0px)}
 .hero-center{display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;filter:none}
 .hero-center h1{text-align:center;margin:0 auto}
 .hero-cta{margin-top:36px}
-@media(max-width:760px){ .hero{height:85vh;height:85svh;min-height:420px;max-height:85vh} }
+@media(max-width:760px){ .hero{height:85svh;min-height:420px;max-height:none;padding-top:env(safe-area-inset-top, 0px);padding-bottom:env(safe-area-inset-bottom, 0px)} }
 .glow{position:fixed;top:20%;left:50%;width:min(90vw,600px);height:min(90vw,600px);transform:translateX(-50%);border-radius:50%;background:radial-gradient(circle,rgba(229,57,53,.3),transparent 65%);z-index:-1}
 /* ★ 旧的 .row / 通用 .spec 基础样式已废弃，布局统一由下方 ".spec .row-line" 规则控制 */
 .red{color:#e53935}
@@ -1100,7 +1100,7 @@ h1,h2{ margin-bottom:20px; }             /* 大标题下间距 */
 
 /* ---------- ⑦ 横屏优化（手机横放 / 平板横放） ---------- */
 @media (orientation: landscape) and (max-height: 500px){
-  .hero{ max-height:85vh; min-height:420px; padding-top:calc(env(safe-area-inset-top) + 24px); padding-bottom:24px; }
+  .hero{ max-height:none; min-height:420px; padding-top:env(safe-area-inset-top, 0px); padding-bottom:env(safe-area-inset-bottom, 0px); }
   .wrap{ min-height:auto; padding-top:80px; padding-bottom:80px; justify-content:flex-start; }
   .hero-title{ font-size:clamp(28px,6vh,44px); }
   .grid.cols-3{ grid-template-columns:repeat(3,1fr); }
@@ -1110,7 +1110,8 @@ h1,h2{ margin-bottom:20px; }             /* 大标题下间距 */
 
 /* ---------- ⑧ 安全区域：刘海 / 灵动岛 / 圆角 / Home Indicator ---------- */
 @supports (padding: env(safe-area-inset-top)){
-  .hero{ padding-top:calc(env(safe-area-inset-top) + 56px); padding-bottom:calc(env(safe-area-inset-bottom) + 40px); }
+  /* 仅在有安全区的设备（iOS 全屏/刘海机）才避让，PC/普通浏览器 safe-area=0 时不留白 */
+  .hero{ padding-top:env(safe-area-inset-top, 0px); padding-bottom:env(safe-area-inset-bottom, 0px); }
   .wrap{ padding-left:calc(20px + env(safe-area-inset-left)); padding-right:calc(20px + env(safe-area-inset-right)); }
 }
 @media (max-width:480px){
@@ -1141,6 +1142,46 @@ body{ -webkit-tap-highlight-color:rgba(0,0,0,.08); -webkit-touch-callout:none; }
 /* ---------- ⑪ 高分辨率屏：retina 下字号不放大，靠 layout 自适应 ---------- */
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi){
   .card{ box-shadow:0 8px 30px rgba(0,0,0,.05); }
+}
+  /* ★ 移动端状态栏修复：顶部/底部安全区始终为深色，避免 iOS 露白或黑带 */
+  html, body{ background:#0a0a0a; }
+  .spill-top, .spill-top::before{ background:#0a0a0a; }
+  /* ★ 修正：iOS 顶部安全区填白色，状态栏视觉为白（而非原来的 #0a0a0a 黑色） */
+  @supports (padding-top: env(safe-area-inset-top)){
+    html{ background:#ffffff; }
+  }
+/* ===== 首屏移动端修正（状态栏白色 + 严格一屏 + 露出下一页） ===== */
+@media (max-width: 760px) {
+  html { background: #ffffff; }
+  body { background: #ffffff; overscroll-behavior-y: none; }
+
+  .hero {
+    height: 86dvh !important;
+    min-height: 0 !important;
+    max-height: 86dvh !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    overflow: hidden !important;
+  }
+
+  /* 顶部状态栏安全区 = 白色（让状态栏背后视觉为白） */
+  .spill-top {
+    position: fixed !important;
+    top: 0; left: 0; right: 0;
+    height: env(safe-area-inset-top, 44px) !important;
+    background: #ffffff !important;
+    z-index: 9999;
+    pointer-events: none;
+  }
+  .spill-top::before { height: 0 !important; }
+
+  .hero-center { padding-top: env(safe-area-inset-top, 44px) !important; }
+
+  #info {
+    position: relative;
+    z-index: 1;
+    background: linear-gradient(180deg, #ffffff 0%, #ffffff 72%, #f5f5f7 100%) !important;
+  }
 }
 </style>
 </head>
@@ -1411,16 +1452,11 @@ document.querySelectorAll('a.vt-link').forEach(a=>{
     }
     corrected = true;
     window.__goTopCalled = (window.__goTopCalled || 0) + 1;   /* 测试可观测标记 */
-    /* ★ 归零目标 = 缓冲带结束处（即首屏 hero 的顶部），而非文档最顶端。
-       因为 .spill-top::before 在 hero 之前插入了 --headroom 的留白，
-       若 scrollTo(0,0) 会停在缓冲带中间，露出上方空白。
-       用 hero 元素的上边界作为"首页起点"，确保首屏内容正好贴顶。 */
-    var targetY = 0;
-    var hero = document.getElementById('top');
-    if(hero && typeof hero.getBoundingClientRect === 'function'){
-      targetY = Math.round(hero.getBoundingClientRect().top + (window.scrollY || 0));
-    }
-    function zero(){ if(document.body){ window.scrollTo(0, targetY); } }
+    /* ★ 修正：首页起点 = 文档最顶端 (0)。
+       原逻辑用 hero.getBoundingClientRect().top 计算 targetY，
+       在 iOS 上会带入 safe-area-inset-top 的偏移，导致 scrollTo 后
+       页面停在偏下位置、顶部露出黑色余量。现在直接归零，彻底干净。 */
+    function zero(){ if(document.body){ window.scrollTo(0, 0); } }
     zero();
     requestAnimationFrame(zero);
     requestAnimationFrame(function(){ requestAnimationFrame(zero); });
@@ -2004,6 +2040,59 @@ if (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches
 <script>
 (function(){
   /* ★ 首页不再随滚动淡出 —— 始终保持原始颜色和可见状态 */
+
+  /* ★ 首屏移动端修正：状态栏区域白色 + 允许轻微上滑露出下一页 ~15% */
+  function isMobile(){ return window.matchMedia && window.matchMedia('(max-width:760px)').matches; }
+
+  function init(){
+    if(!isMobile()) return;
+    var body = document.body;
+    var hero = document.getElementById('top');
+    if(!hero) return;
+
+    // ① 确保滚动归零（配合 goTop，双保险）
+    window.scrollTo(0, 0);
+    requestAnimationFrame(function(){ window.scrollTo(0, 0); });
+
+    // ② 手势：允许上滑露出下一页最多 ~15%，松手回弹（仅 transform，不改 scrollTop）
+    var MAX = Math.round(window.innerHeight * 0.15);
+    var startY = 0, delta = 0, raf = null, active = false;
+
+    function apply(y){
+      hero.style.transition = 'none';
+      hero.style.transform = 'translateY(' + (-y) + 'px)';
+    }
+    function reset(){
+      hero.style.transition = 'transform .35s cubic-bezier(.22,.71,.22,1)';
+      hero.style.transform = '';
+      raf = null; active = false;
+    }
+
+    document.addEventListener('touchstart', function(e){
+      if((window.scrollY || 0) > 2) return;
+      startY = e.touches[0].clientY; delta = 0; active = true;
+    }, { passive:true });
+
+    document.addEventListener('touchmove', function(e){
+      if(!active) return;
+      var d = startY - e.touches[0].clientY;   // 上滑为正
+      if(d < 0){ delta = 0; apply(0); return; } // 下拉不处理
+      delta = Math.min(d, MAX);
+      if(raf === null) raf = requestAnimationFrame(function(){ apply(delta); });
+    }, { passive:true });
+
+    var end = function(){
+      if(active) reset();
+    };
+    document.addEventListener('touchend', end, { passive:true });
+    document.addEventListener('touchcancel', end, { passive:true });
+  }
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
 })();
 </script>
 <script>
