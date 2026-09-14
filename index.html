@@ -6,25 +6,31 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="李浩楠">
+<meta name="apple-touch-fullscreen" content="yes">
+<meta name="format-detection" content="telephone=no">
 <link rel="manifest" href='data:application/manifest+json,{"name":"李浩楠","start_url":"./","scope":"./","display":"standalone","background_color":"#0a0a0a"}'>
 <title>李浩楠 · Li Haonan</title>
 <style>
 /* ==================== 原有样式（保留） ==================== */
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;color:#1d1d1f;background:#f5f5f7;line-height:1.6}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;color:#1d1d1f;background:#f5f5f7;line-height:1.6;
+  /* iOS 添加到主屏幕：防止橡皮筋滚动 & 内容溢出安全区域 */
+  overscroll-behavior:none;
+  -webkit-overflow-scrolling:touch;
+}
+html{overscroll-behavior:none}
 img{max-width:100%}
 nav{position:fixed;top:0;left:0;width:100%;z-index:100;background:transparent;
-  /* ★ 模糊仅作用于 nav 自身背景，用 ::before 隔离，绝不渗透到子元素 */
+  padding-top:env(safe-area-inset-top);
   transition:background-color .45s ease,opacity .45s ease;
-  background-color:rgba(0,0,0,.0);}   /* 起始全透明，由 JS 根据停留区块上色 */
-nav.is-scrolling{opacity:0}            /* 滚动中：完全透明（让出视野） */
-nav.is-visible{opacity:1}              /* 停止后：恢复（深色区块 80% / 浅色区块随 on-light） */
-.nav-in{width:100%;margin:0;height:50px;display:flex;align-items:center;justify-content:flex-end;padding:0 20px}
+  background-color:rgba(0,0,0,.0);}
+nav.is-scrolling{opacity:0}
+nav.is-visible{opacity:1}
+.nav-in{width:100%;margin:0;height:calc(50px + env(safe-area-inset-top));display:flex;align-items:center;justify-content:flex-end;padding:0 20px}
 .brand{color:#fff;font-size:17px;font-weight:600}
-nav.on-light .brand,nav.on-light{background-color:rgba(255,255,255,.72)}   /* 浅色区块：白底 72%（约80%通透） */
+nav.on-light .brand,nav.on-light{background-color:rgba(255,255,255,.72)}
 nav.on-light .links a{color:#1d1d1f}
 nav .brand,nav .links a{transition:color .35s ease}
-/* 黑底区块上的兜底：极淡描边，保证全透明时也一定看得见 */
 nav.over-dark .brand,nav.over-dark .links a{text-shadow:0 1px 3px rgba(0,0,0,.6)}
 .links{overflow-x:auto;white-space:nowrap;scrollbar-width:none}
 .links::-webkit-scrollbar{display:none}
@@ -37,7 +43,7 @@ h1,h2{font-size:clamp(32px,7vw,52px);font-weight:800;line-height:1.2;margin-bott
 .sub{font-size:clamp(16px,3.5vw,20px);color:#a1a1a6;margin-bottom:10px}
 .desc{font-size:17px;color:#444;max-width:680px;margin:0 auto 14px;line-height:1.8}
 strong{color:#e53935}
-.hero{height:100vh;height:100svh;min-height:520px;background:#0a0a0a;color:#fff;display:flex;align-items:center;justify-content:center;padding:0 20px;text-align:center;position:relative;overflow:hidden}
+.hero{height:100vh;height:100svh;min-height:520px;background:#0a0a0a;color:#fff;display:flex;align-items:center;justify-content:center;padding:0 20px;text-align:center;position:relative;overflow:hidden;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
 .hero-center{display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;filter:none}
 .hero-center h1{text-align:center;margin:0 auto}
 .hero-cta{margin-top:36px}
@@ -77,18 +83,15 @@ footer{background:#000;color:#aaa;padding:40px 20px 30px;font-size:13px}
   .card{padding:22px 18px}
   .ft{grid-template-columns:1fr;gap:22px}
   h1,h2{font-size:clamp(30px,10vw,44px)}
-  /* ★ 手机端：大标题统一拆成两行，按语义 <br class="m-br"> 分行 */
   h1,h2{white-space:normal}
   .m-br{display:inline}
   .d-br{display:none}
   .pc-space{display:none}
 
-  /* ★ Hero 首页：约占手机屏幕 3/4，内容垂直居中，向上收紧不延伸 */
   .hero{padding:0 20px}
   .hero h1{margin-bottom:0}
   .hero .cta{margin-top:28px}
 }
-/* 桌面端：手机专用换行符不生效，保持单行 */
 @media(min-width:761px){
   .m-br{display:none}
   .d-br{display:inline}
@@ -99,30 +102,21 @@ footer{background:#000;color:#aaa;padding:40px 20px 30px;font-size:13px}
 :root{--bg:#f5f5f7;--card:#ffffff;--text:#1d1d1f;--muted:#6e6e73;--accent:#e53935;--accent-hover:#f05a5e;--line:#e5e5ea}
 body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue","Microsoft YaHei",sans-serif;color:var(--text);background:var(--bg);-webkit-font-smoothing:antialiased}
 
-/* ★ 明暗区块：文字色自动跟随，保证黑白交替下文字清晰 */
 .dark{background:#0a0a0a;color:#fff}
 .dark .sub,.dark .desc,.dark .copy{color:#a1a1a6}
 .dark .tag{color:#e53935}
 .dark .stagger-item{color:#fff}
 .light{background:#fff;color:#1d1d1f}
 
-/* 大标题居中（补偿末标点偏心）
-   注意：text-wrap:balance 只在多行时生效，会与手动 <br> 分行冲突，
-   因此手机端改回 normal，由 <br class="m-br"> 精确控制分行点。 */
 h1,h2{text-align:center;font-weight:600;letter-spacing:-0.02em;line-height:1.28;text-wrap:balance}
 @media(max-width:760px){ h1,h2{text-wrap:normal} }
 h1.title-center,h2.title-center{display:inline-block}
-/* ★ 居中补偿改用 padding（不参与渲染合成），彻底避免整块模糊 */
 
-/* 苹果风卡片 / 按钮 / 链接 */
-/* ★ 卡片自适应：跟随所在区块明暗（黑白交替下都和谐） */
 .card{background:var(--card);border-radius:20px;box-shadow:0 8px 30px rgba(0,0,0,.06);border:1px solid var(--line)}
 .dark .card{background:#1c1c1e;color:#fff;border-color:#333;box-shadow:0 8px 30px rgba(0,0,0,.4)}
 .dark .card p,.dark .card .level{color:#aaa}
 .card.dark-card{background:#1c1c1e;color:#fff;border:1px solid #333}
 .card.dark-card p,.card.dark-card .level{color:#aaa}
-/* ★ CTA「写信给我」：精致胶囊按钮（描边 + 圆角 + 箭头微动，hover 填充主题红）
-   —— 跟随所在区块明暗：浅色底=深色描边，深色底=浅色描边，hover 均填充主题红 */
 a.cta.cta-text{
   display:inline-flex;align-items:center;justify-content:center;gap:10px;
   background:transparent;color:inherit !important;
@@ -136,13 +130,12 @@ a.cta.cta-text:hover{background-color:var(--accent);border-color:var(--accent);c
 a.cta.cta-text:hover .arrow{transform:translateX(5px)}
 a{color:#e53935;text-decoration:none} a:hover{color:#f05a5e}
 
-/* ★ 导航链接：紧凑靠右，去掉系统默认蓝，颜色跟随区块，当前停留项高亮 */
-.nav-in{justify-content:flex-end}          /* 链接组整体贴右 */
+.nav-in{justify-content:flex-end}
 nav .links{
   width:auto;
   display:flex;flex-direction:row;
   align-items:center;justify-content:flex-end;
-  gap:22px;                                /* 项与项之间的固定间距（不再撑满整行） */
+  gap:22px;
   overflow-x:auto;white-space:nowrap;scrollbar-width:none;-webkit-overflow-scrolling:touch;
 }
 nav .links::-webkit-scrollbar{display:none}
@@ -155,27 +148,25 @@ nav .links a{
 nav .links a:hover{opacity:.7}
 nav .links a.is-current{font-weight:600}
 nav .links a.is-current::after{content:"";display:block;width:16px;height:2px;border-radius:2px;margin:4px auto 0;background:currentColor}
-nav.on-light{background-color:rgba(255,255,255,.72)}   /* 浅色区块：白底 72%（约80%通透） */
+nav.on-light{background-color:rgba(255,255,255,.72)}
 nav.on-light .links a{color:#1d1d1f}
 nav.on-light .links a.is-current{color:#e53935}
-nav.over-dark{background-color:rgba(0,0,0,.80)}       /* 深色区块：黑底 80% */
+nav.over-dark{background-color:rgba(0,0,0,.80)}
 nav.over-dark .links a{color:#fff}
 nav.over-dark .links a.is-current{color:#fff}
 nav .links a:active{opacity:.55}
-.brand{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)} /* 保留锚点语义，视觉隐藏 */
+.brand{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 .wrap{padding:100px 20px}
 
-/* ★规格表：上中下三行，每行两条（标签右对齐 / 值左对齐，一根下划线贯穿整行，纯文字，绝不换行）
-   布局：上=姓名·年龄 / 中=学校·专业 / 下=年级·目标 */
-.spec{max-width:560px;margin-left:auto;margin-right:auto;width:100%}       /* 居中收窄：单列 6 行，简洁高级 */
+.spec{max-width:560px;margin-left:auto;margin-right:auto;width:100%}
 .spec .row-line{
   display:flex;align-items:baseline;justify-content:space-between;
-  gap:32px;padding:26px 4px;                                    /* 行高统一，撑满整屏 */
+  gap:32px;padding:26px 4px;
   border-bottom:1px solid var(--line);
 }
 .spec .row-line:first-child{border-top:1px solid var(--line)}
 .spec .k{flex:0 0 auto;color:var(--muted);font-size:15px;text-align:right;padding-top:1px;letter-spacing:.02em;white-space:nowrap}
-.spec .v{flex:0 0 auto;font-size:19px;font-weight:600;color:var(--text);text-align:left;white-space:nowrap}   /* ★ nowrap：绝不换到第二行 */
+.spec .v{flex:0 0 auto;font-size:19px;font-weight:600;color:var(--text);text-align:left;white-space:nowrap}
 @media(max-width:600px){
   .spec{max-width:100%}
   .spec .row-line{gap:20px;padding:22px 2px}
@@ -183,72 +174,54 @@ nav .links a:active{opacity:.55}
   .spec .v{font-size:16px}
 }
 
-/* ★ 区块配色：严格 ABAB 一黑一白交替
-   顺序：首页(黑) → 信息(白) → 兴趣(黑) → 证书(白) → 成长(黑) → 联系(白) */
-#info     { background:#ffffff; color:#1d1d1f; min-height:100vh; min-height:100svh; display:flex; flex-direction:column; justify-content:center; align-items:center; width:100%; }   /* B：白 + 满屏 */
-#interest { background:#0a0a0a; color:#ffffff }   /* A：黑 */
-#certs    { background:#ffffff; color:#1d1d1f }   /* B：白 */
-#timeline { background:#0a0a0a; color:#ffffff }   /* A：黑 */
-#contact  { background:#ffffff; color:#1d1d1f }   /* B：白 */
+#info     { background:#ffffff; color:#1d1d1f; min-height:100vh; min-height:100svh; display:flex; flex-direction:column; justify-content:center; align-items:center; width:100%; }
+#interest { background:#0a0a0a; color:#ffffff }
+#certs    { background:#ffffff; color:#1d1d1f }
+#timeline { background:#0a0a0a; color:#ffffff }
+#contact  { background:#ffffff; color:#1d1d1f }
 
-/* ★ Hero 首页：内容垂直水平居中，箭头/标语紧跟标题下方 */
 .hero-center{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;gap:0}
 .hero-title{font-size:clamp(34px,8vw,60px);margin:0}
-.hero-title .m-br{display:none}           /* 桌面：单行 */
+.hero-title .m-br{display:none}
+/* ★ scroll-hint 现在在 .hero 内部，用 absolute 定位，随首页一起滚动消失 */
 .scroll-hint{
-  position:fixed;left:50%;bottom:26px;transform:translateX(-50%);z-index:90;
+  position:absolute;left:50%;bottom:36px;transform:translateX(-50%);z-index:90;
   display:inline-flex;flex-direction:column;align-items:center;gap:8px;
   color:rgba(255,255,255,.82);font-size:14px;letter-spacing:.06em;
   text-decoration:none;
-  /* ★ 显示/隐藏由 JS 切换：is-off（离开首页）/ is-scrolling（滚动中） */
   transition:opacity .5s ease;
   opacity:1;
 }
-/* ★ 滚动中渐隐（is-scrolling），停止 120ms 后渐显 —— 优先级低于 is-off */
-.scroll-hint.is-scrolling{opacity:.15}
-/* ★ 彻底离开首页：隐藏，最高优先级 */
 .scroll-hint.is-off{opacity:0;pointer-events:none}
-/* ★ 接近底部：整体反转为「返回顶部 ↑」 */
-.scroll-hint.is-up .scroll-hint__arrow{transform:rotate(180deg)}   /* 箭头翻转朝上 */
 .scroll-hint__arrow{animation:hintBob 1.8s ease-in-out infinite;transition:transform .35s ease}
-/* 导航显隐过渡（配合 JS 的 is-scrolling / is-visible） */
-nav{will-change:opacity,background-color}
 @keyframes hintBob{0%,100%{transform:translateY(0);opacity:.6}50%{transform:translateY(7px);opacity:1}}
 .scroll-hint:hover{color:#fff}
 
 @media(max-width:760px){
-  .hero-title .m-br{display:inline}      /* 手机：两行（你好，/ 我是 李浩楠。） */
-  .hero-title .pc-space{display:none}    /* ★ 手机：仅标题无空格 → "我是李浩楠"紧贴 */
-  .pc-space{display:inline}             /* 正文（19岁/2025年/10余项）仍保留空格 */
+  .hero-title .m-br{display:inline}
+  .hero-title .pc-space{display:none}
+  .pc-space{display:inline}
   .hero-title{font-size:clamp(40px,13vw,60px);line-height:1.18}
   .scroll-hint__text{font-size:12px}
-  nav{height:46px}
-  nav .links{gap:14px}                   /* 手机：间距收窄，六项一行放得下 */
+  nav .nav-in{height:calc(46px + env(safe-area-inset-top))}
+  nav .links{gap:14px}
   nav .links a{font-size:12px}
 }
 
-/* 转场 */
 @view-transition{navigation:auto}
 html{transition:opacity .45s ease} html.is-leaving{opacity:0}
 
-/* ==================== 视觉丰富化（满屏 / 创新层） ==================== */
+/* ==================== 视觉丰富化 ==================== */
 
-/* ★ 每个区块至少占满一屏，内容垂直居中（修复「不满屏」）
-   —— min-height 必须挂在【区块 ID】上（背景色的载体），
-   若只挂在 .wrap（max-width:900px 窄条）上，背景铺不满整屏。
-   四个中间区块 + 联系页：强制满屏 + flex 居中。 */
 #interest,#certs,#timeline,#contact{
   min-height:100vh;min-height:100svh;
   display:flex;flex-direction:column;justify-content:center;align-items:center;
   width:100%;
 }
-/* #info 单独声明（防御性，避免分组选择器解析遗漏） */
 #info{ min-height:100vh;min-height:100svh; display:flex; flex-direction:column; justify-content:center; align-items:center; }
-/* .wrap 仍是内容容器（居中 + 内边距），不再单独负责满屏 */
 .wrap{min-height:100vh;min-height:100svh;display:flex;flex-direction:column;justify-content:center}
 .contact{min-height:100vh;min-height:100svh}
 
-/* ★ 磁吸光标：自定义圆点，靠近可交互元素时吸附放大（创新点 2，仅桌面） */
 @media(min-width:901px){
   body{cursor:none}
   .cursor{position:fixed;top:0;left:0;width:12px;height:12px;border-radius:50%;
@@ -258,18 +231,12 @@ html{transition:opacity .45s ease} html.is-leaving{opacity:0}
 }
 @media(max-width:900px){ .cursor{display:none} }
 
-/* ★ 滚动驱动：标题随滚动仅做透明度变化（克制档）
-   —— 刻意不用 transform:scale / will-change，避免整块进 GPU 合成层导致模糊 */
-.hero-title{transition:opacity .15s linear}
-
-/* ★ 进入动画：基础块（淡入 + 轻微上移，克制档） */
 .reveal{opacity:0;transform:translateY(28px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1)}
 .reveal.in{opacity:1;transform:none}
 
-/* ★ 错峰容器：子项依次飞入 */
-.stagger{opacity:1}   /* 容器自身不参与淡入，由子项控制 */
-.stagger > *{opacity:1;transform:none}      /* ★ 默认可见，IO 未触发也不空白 */
-.stagger.in > *{opacity:1;transform:none}   /* （保留 .in 钩子供有 JS 时错峰）*/
+.stagger{opacity:1}
+.stagger > *{opacity:1;transform:none}
+.stagger.in > *{opacity:1;transform:none}
 .stagger.in > *:nth-child(1){transition-delay:.00s}
 .stagger.in > *:nth-child(2){transition-delay:.08s}
 .stagger.in > *:nth-child(3){transition-delay:.16s}
@@ -279,22 +246,17 @@ html{transition:opacity .45s ease} html.is-leaving{opacity:0}
 .stagger.in > *:nth-child(7){transition-delay:.48s}
 .stagger.in > *:nth-child(8){transition-delay:.56s}
 
-/* ★ 数字滚动：.count-up 元素从 0 数到 data-target */
 .count-up{font-variant-numeric:tabular-nums;opacity:0;transition:opacity .4s ease .15s}
 .count-up.is-counted{opacity:1}
 
-/* ===== 满屏修复：宽内容区块的内容区铺满 ===== */
-/* 默认 .wrap 仍是 900px 居中（hero/contact 受益）；下面针对需要宽的区块放宽 */
 #info      > .wrap,
 #interest  > .wrap,
 #certs     > .wrap,
 #timeline  > .wrap {
-  max-width: 1120px;      /* 宽内容区块的内容区上限，两侧留适度呼吸 */
+  max-width: 1120px;
 }
 
-/* 表格：占满可用宽度，下划线贯穿整宽 */
 .spec { width: 100%; max-width: 920px; margin: 0 auto; }
-/* ★ 每行：标签 + 值，一根细分隔线贯穿 */
 .row-line{
   display:flex; align-items:baseline; justify-content:space-between; gap:24px;
   padding:20px 2px;
@@ -310,11 +272,9 @@ html{transition:opacity .45s ease} html.is-leaving{opacity:0}
   font-size:clamp(19px,2.6vw,21px); font-weight:600; color:var(--text);
   white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
-/* ★ 最后一行（目标）：主题红强调 —— 驱动力点睛 */
-.row-line:last-child .v{ color:var(--accent); }
+.row-line:last-child .v{ color:var(--text); }
 .row-line:last-child{ border-bottom:none; }
 
-/* ★ 手机端：表格精致化 + 依次浮现动画（顺序不变） */
 @media (max-width:760px){
   #info .spec{ max-width:520px; }
   #info .row-line{
@@ -322,7 +282,6 @@ html{transition:opacity .45s ease} html.is-leaving{opacity:0}
     opacity:0; transform:translateY(18px);
     transition:opacity .55s cubic-bezier(.2,.7,.2,1), transform .55s cubic-bezier(.2,.7,.2,1);
   }
-  /* JS 激活 .spec--play 后，按索引依次亮起 */
   #info .spec--play .row-line{ opacity:1; transform:none; }
   #info .spec .row-line:nth-child(1){ transition-delay:.00s }
   #info .spec .row-line:nth-child(2){ transition-delay:.07s }
@@ -334,23 +293,18 @@ html{transition:opacity .45s ease} html.is-leaving{opacity:0}
   #info .row-line .v{ font-size:clamp(18px,5vw,20px); }
 }
 
-/* 兴趣 / 证书：卡片网格铺满 */
 #interest .grid,
 #certs   .grid { width: 100%; }
 
-/* ★ 移动端标题（首页除外）：独立短文案，强制单行
-   —— 桌面显示 .d、手机显示 .m，两套文案互不干扰，绝不以旧文案拆行 */
 .t{font-size:clamp(30px,6.4vw,48px)}
-/* 默认（桌面）：显示长文案，隐藏手机文案 */
 .t .m{display:none}
-/* 手机端：隐藏长文案，显示短文案，强制一行 */
 @media (max-width: 760px) {
   .t .d{display:none}
   .t .m{
     display:inline;
-    white-space:nowrap !important;      /* 锁1：禁止换行 */
-    word-break:keep-all !important;     /* 锁2：禁止断字 */
-    overflow:hidden;                    /* 锁3：极端窄屏不折行（保一行）*/
+    white-space:nowrap !important;
+    word-break:keep-all !important;
+    overflow:hidden;
     font-size:clamp(28px,9vw,42px);
     letter-spacing:-0.01em;
   }
@@ -362,13 +316,12 @@ html{transition:opacity .45s ease} html.is-leaving{opacity:0}
   width:100%;
   max-width:860px;
   margin:48px auto 0;
-  padding:8px 0 64px;            /* ★ 底部留白，让页面「往下延伸一点点」*/
+  padding:8px 0 64px;
 }
-/* ★ 中轴线（从上往下生长） */
 .journey__line{
   position:absolute;
   top:14px; bottom:14px;
-  left:19px;                         /* 与桌面圆点圆心对齐 */
+  left:19px;
   width:2px;
   background:linear-gradient(to bottom, rgba(229,57,53,.55), rgba(229,57,53,.12));
   transform:scaleY(0);
@@ -377,38 +330,37 @@ html{transition:opacity .45s ease} html.is-leaving{opacity:0}
 }
 .journey.journey--play .journey__line{ transform:scaleY(1); }
 
-/* ★ 节点：默认在轴线右侧（整齐平淡，全部同侧） */
 .node{
   position:relative;
   display:flex;
   align-items:flex-start;
   gap:28px;
-  padding:18px 0 18px 60px;           /* 圆点右侧留文字空间 */
-  opacity:1;                           /* ★ 默认可见：IO 失败也不空白 */
+  padding:18px 0 18px 60px;
+  opacity:1;
   transform:none;
   transition:opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1);
 }
-/* ★ JS 激活后：从下方浮现（.journey--play 由独立观察器添加）*/
-.journey--play .node{ opacity:0; transform:translateY(36px); }   /* 起始态：先藏 */
-.journey--play .node.is-up{ opacity:1; transform:none; }         /* 终点态：逐个亮 */
+.journey--play .node{ opacity:0; transform:translateY(36px); }
+.journey--play .node.is-up{ opacity:1; transform:none; }
 .journey.journey--play .node{ opacity:0; transform:translateY(36px); }
 .journey.journey--play .node.is-up{ opacity:1; transform:none; }
-/* ★ 依次延迟浮现（入学→当下→未来，节奏感） */
+.journey--play .node[data-node="0"]{ transition-delay:.05s }
+.journey--play .node[data-node="1"]{ transition-delay:.30s }
+.journey--play .node[data-node="2"]{ transition-delay:.55s }
+
 .journey.journey--play .node[data-node="0"]{ transition-delay:.05s }
 .journey.journey--play .node[data-node="1"]{ transition-delay:.30s }
 .journey.journey--play .node[data-node="2"]{ transition-delay:.55s }
 
-/* ★ 圆点（圆心落在中轴线上） */
 .node__dot{
   position:absolute;
-  top:26px; left:12px;                /* 圆心 = left + radius = 12 + 8 = 20 ≈ 轴线 19 */
+  top:26px; left:12px;
   width:16px; height:16px;
   border-radius:50%;
   background:var(--accent);
   box-shadow:0 0 0 4px rgba(229,57,53,.14);
   flex:0 0 auto;
 }
-/* ★ 当下节点：持续脉冲（表示"进行中"） */
 .node--current .node__dot{
   animation:pulseDot 2.2s ease-in-out infinite;
 }
@@ -417,7 +369,6 @@ html{transition:opacity .45s ease} html.is-leaving{opacity:0}
   50%   { box-shadow:0 0 0 13px rgba(229,57,53,0);  }
 }
 
-/* ★ 节点内容：标签 + 主句 + 副句，三线对齐 */
 .node__content{ flex:1; text-align:left; }
 .node__content .node-label{
   display:inline-block;
@@ -442,7 +393,6 @@ html{transition:opacity .45s ease} html.is-leaving{opacity:0}
   max-width:520px;
 }
 
-/* ★ 桌面：左右交错（入学左/当下右/未来左），仍保持中轴线整齐 */
 @media (min-width:761px){
   .journey{ max-width:920px; }
   .journey__line{ left:50%; margin-left:-1px; }
@@ -450,7 +400,6 @@ html{transition:opacity .45s ease} html.is-leaving{opacity:0}
     width:50%;
     padding:22px 0;
   }
-  /* 奇数（入学、未来）：块在左，文字右对齐靠轴线 */
   .node[data-node="0"],
   .node[data-node="2"]{
     margin-right:auto;
@@ -462,22 +411,17 @@ html{transition:opacity .45s ease} html.is-leaving{opacity:0}
   .node[data-node="2"] .node__content{ text-align:right; }
   .node[data-node="0"] .node__content p,
   .node[data-node="2"] .node__content p{ margin-left:auto; }
-  /* 偶数（当下）：块在右，文字左对齐 */
   .node[data-node="1"]{
     margin-left:auto;
     padding-left:48px;
     padding-right:0;
   }
-  /* 圆点全部回到中轴线（轴线 left:50%，圆点半径 8px）
-     左块：右缘贴轴线 → 圆点 right:-8px，圆心落在轴线上
-     右块：左缘贴轴线 → 圆点 left:-8px，圆心落在轴线上 */
   .node .node__dot{ left:auto; top:30px; }
   .node[data-node="0"] .node__dot,
   .node[data-node="2"] .node__dot{ right:-8px; }
   .node[data-node="1"] .node__dot{ left:-8px; }
 }
 
-/* ★ 手机：单列堆叠，全部靠右、左对齐，中轴线统一在左侧 —— 整齐 */
 @media (max-width:760px){
   .journey{ max-width:480px; margin-top:36px; padding-left:4px; }
   .journey__line{ left:7px; }
@@ -485,24 +429,22 @@ html{transition:opacity .45s ease} html.is-leaving{opacity:0}
     gap:18px;
     padding:14px 0 14px 38px;
   }
-  .node__dot{ left:1px; top:24px; width:14px; height:14px; }   /* 圆心 = 1+7 = 8px = 轴线中心 */
+  .node__dot{ left:1px; top:24px; width:14px; height:14px; }
   .node__content h4{ font-size:17px; }
   .node__content p{ font-size:14px; }
 }
 
-/* 区块本身确保满屏（兜底，覆盖原有规则） */
 #info, #interest, #certs, #timeline {
   min-height: 100vh;
   min-height: 100svh;
   display: flex;
   flex-direction: column;
-  justify-content: center;   /* 内容少则垂直居中，满屏且高级 */
+  justify-content: center;
   align-items: center;
-  padding: 100px 20px 140px;             /* ★ 底部多留 40px，让「未来」节点后有向下延伸的余韵 */
+  padding: 100px 20px 140px;
   box-sizing: border-box;
 }
 
-/* ★ 联系页副标题：手机端强制单行，绝不折两行 */
 .contact-sub{
   white-space:nowrap;
   overflow:hidden;
@@ -517,7 +459,6 @@ html{transition:opacity .45s ease} html.is-leaving{opacity:0}
   }
 }
 
-/* 桌面：内容真正居中且铺满可用空间（配合 .wrap max-width:1120） */
 @media (min-width: 901px) {
   #info      > .wrap,
   #interest  > .wrap,
@@ -549,23 +490,20 @@ html{transition:opacity .45s ease} html.is-leaving{opacity:0}
   <div class="hero-center">
     <h1 class="hero-title">This is 李浩楠.</h1>
   </div>
+  <a href="#info" class="scroll-hint" aria-label="向下了解更多">
+    <span class="scroll-hint__text" data-down="向下了解更多" data-up="返回顶部">向下了解更多</span>
+    <svg class="scroll-hint__arrow" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <line x1="12" y1="5" x2="12" y2="19"></line>
+      <polyline class="arrow-down" points="6 13 12 19 18 13"></polyline>
+      <polyline class="arrow-up" points="6 11 12 5 18 11" style="display:none"></polyline>
+    </svg>
+  </a>
 </section>
-<a href="#info" class="scroll-hint" aria-label="向下了解更多">
-  <span class="scroll-hint__text" data-down="向下了解更多" data-up="返回顶部">向下了解更多</span>
-  <svg class="scroll-hint__arrow" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <line x1="12" y1="5" x2="12" y2="19"></line>
-    <polyline class="arrow-down" points="6 13 12 19 18 13"></polyline>   <!-- 向下 -->
-    <polyline class="arrow-up" points="6 11 12 5 18 11" style="display:none"></polyline>  <!-- 向上（近底时切换） -->
-  </svg>
-</a>
 
-<!-- ========== 第二页：基本信息 + 自我介绍 合二为一 ========== -->
 <section class="wrap light stagger" id="info" style="background:#fff">
   <div class="tag">PROFILE</div>
   <h2 class="stagger-item t"><span class="d">一个人，一张表。</span><span class="m">一张表，就够了</span></h2>
   <div class="spec">
-    <!-- ★ 一行只写一条：每行 = 标签(右对齐) + 值(左对齐)，整行一根下划线贯穿，纯文字，绝不换行
-         顺序：姓名 → 年龄 → 学校 → 专业 → 年级 → 目标 -->
     <div class="row-line stagger-item"><span class="k">姓名</span><span class="v">李浩楠</span></div>
     <div class="row-line stagger-item"><span class="k">年龄</span><span class="v">19 岁</span></div>
     <div class="row-line stagger-item"><span class="k">学校</span><span class="v">陕西财经职业技术学院</span></div>
@@ -649,7 +587,7 @@ html{transition:opacity .45s ease} html.is-leaving{opacity:0}
 </footer>
 
 <script>
-/* A. 大标题居中补偿（末标点偏心） */
+/* A. 大标题居中补偿 */
 function centerTitles(){
   const isPunct=ch=>/[，。、；：！？,.;:!?]/.test(ch);
   document.querySelectorAll('h1,h2').forEach(h=>{
@@ -667,7 +605,7 @@ function centerTitles(){
 if(document.fonts&&document.fonts.ready) document.fonts.ready.then(centerTitles);
 window.addEventListener('load',centerTitles);
 
-/* B. 丝滑转场（仅处理跨页；锚点靠 scroll-behavior:smooth） */
+/* B. 丝滑转场 */
 document.documentElement.style.scrollBehavior='smooth';
 document.querySelectorAll('a.vt-link').forEach(a=>{
   a.addEventListener('click',e=>{
@@ -679,31 +617,21 @@ document.querySelectorAll('a.vt-link').forEach(a=>{
   });
 });
 
-/* B2. 「了解我」等锚点链接：原生 scroll-behavior 失效时兜底平滑滚动 */
+/* B2. 锚点链接 */
 document.querySelectorAll('a[href^="#"]').forEach(a=>{
   a.addEventListener('click',function(e){
-    /* ★ 箭头反转为「返回顶部」时：强制目标 = #top */
-    if(this.classList.contains('scroll-hint') && this.classList.contains('is-up')){
-      e.preventDefault();
-      window.scrollTo({top:0,behavior:'smooth'});
-      history.pushState(null,null,'#top');
-      return;
-    }
     const id=this.getAttribute('href').slice(1);
     if(!id) return;
     const el=document.getElementById(id);
     if(!el) return;
     e.preventDefault();
     el.scrollIntoView({behavior:'smooth',block:'start'});
-    if(id==='top') window.scrollTo({top:0,behavior:'smooth'});  // 首页回顶，贴齐导航下方
+    if(id==='top') window.scrollTo({top:0,behavior:'smooth'});
     history.pushState(null,null,'#'+id);
   });
 });
 
-/* C. 打开网站强制回到首页（含 iOS 添加到主屏幕的场景） */
-/* iOS 主屏打开会缓存上次滚动位置，且 bfcache 可能跳过 load，
-   还会把 URL 带成 page.html#contact 导致直接落在尾页，
-   因此采取「清哈希 + 立即归零 + pageshow/load 再归零」三保险。 */
+/* C. 打开网站强制回到首页 */
 history.scrollRestoration='manual';
 function goHome(){
   if(location.hash && location.hash!=='#top'){ history.replaceState(null,null,'#'); }
@@ -713,13 +641,9 @@ goHome();
 window.addEventListener('pageshow',function(e){ goHome(); });
 window.addEventListener('load',function(){ goHome(); setTimeout(goHome,300); });
 
-/* D. 导航栏：全设备始终全透明；根据当前顶部背景智能切换文字颜色
-   + 当前停留区块对应的导航项高亮（点别的不会残留蓝色，跟着停留位置走）
-   关键：elementFromPoint 在 fixed 导航自身遮挡下经常取到 nav 自己 → 永远判非浅色，
-   因此改用「各区块打亮度标签 + IntersectionObserver 取当前主区块」。 */
+/* D. 导航栏 */
 var navEl=document.getElementById('nav');
 var navLinks=navEl ? navEl.querySelectorAll('.links a[data-target]') : [];
-// ① 给每个大区块打「亮/暗」标签
 (document.querySelectorAll('section[id], footer')||[]).forEach(function(el){
   var cs=window.getComputedStyle(el).backgroundColor;
   var m=/^rgb\((\d+),\s*(\d+),\s*(\d+)/.exec(cs);
@@ -735,7 +659,6 @@ function applyNavState(){
     : ((document.getElementById(currentId)||{}).dataset||{}).light==='1';
   navEl.classList.toggle('on-light', light);
   navEl.classList.toggle('over-dark', !light);
-  // ★ 高亮 = 当前停留区块，而不是「上次点过哪个」
   navLinks.forEach(function(a){ a.classList.toggle('is-current', a.dataset.target===currentId); });
 }
 var navIO=new IntersectionObserver(function(es){
@@ -744,13 +667,12 @@ var navIO=new IntersectionObserver(function(es){
   if(top){ currentId=top.target.id || 'top'; applyNavState(); }
 },{threshold:[0.01,0.25,0.5,0.75]});
 (document.querySelectorAll('section[id], footer')||[]).forEach(function(el){ navIO.observe(el); });
-// 点击导航后：由 scroll 触发的 IO 会自动更新 currentId，这里只做瞬时反馈兜底
 navLinks.forEach(function(a){
   a.addEventListener('click',function(){ setTimeout(applyNavState,50); });
 });
 window.addEventListener('resize', applyNavState);
 
-/* ★ 导航智能显隐：滚动中透明，停止 150ms 后恢复 80% */
+/* 导航智能显隐 */
 var navScrollTimer=null;
 function navScrolling(){
   if(!navEl) return;
@@ -759,73 +681,46 @@ function navScrolling(){
   clearTimeout(navScrollTimer);
   navScrollTimer=setTimeout(function(){
     navEl.classList.remove('is-scrolling');
-    navEl.classList.add('is-visible');     // 停止后恢复可见（底色由 on-light/over-dark 决定）
+    navEl.classList.add('is-visible');
   },150);
 }
 window.addEventListener('scroll', navScrolling, {passive:true});
 applyNavState();
 
-/* F. 「向下了解更多」箭头 —— 三态：
-   - 在首页内：滚动中渐隐(.is-scrolling)，停止 120ms 后渐显
-   - 离开首页：彻底隐藏(.is-off)
-   - ★ 接近页面底部（距底 < 12% 视口高）：反转为「返回顶部 ↑」(.is-up) */
+/* F. 向下了解更多箭头 —— 仅在首页内，随滚动自然淡出 */
 var hint=document.querySelector('.scroll-hint');
 var heroEl=document.getElementById('top');
-function syncHintDirection(){
-  if(!hint) return;
-  var nearBottom=(document.documentElement.scrollHeight
-                  - window.scrollY - window.innerHeight) < window.innerHeight*0.12;
-  hint.classList.toggle('is-up', nearBottom);
-  // ★ 文案 + 箭头方向 + 跳转目标，三处同步
-  var label=hint.querySelector('.scroll-hint__text');
-  if(label){ label.textContent=nearBottom ? label.dataset.up : label.dataset.down; }
-  var upArrow=hint.querySelector('.arrow-up'), downArrow=hint.querySelector('.arrow-down');
-  if(upArrow&&downArrow){ upArrow.style.display=nearBottom?'inline':'none'; downArrow.style.display=nearBottom?'none':'inline'; }
-  hint.setAttribute('href', nearBottom ? '#top' : '#info');
-  hint.setAttribute('aria-label', nearBottom ? '返回顶部' : '向下了解更多');
-}
 if(hint && heroEl){
-  var scrollTimer=null;
-  var isOff=true;
-
-  if('IntersectionObserver' in window){
-    new IntersectionObserver(function(es){
-      es.forEach(function(e){
-        isOff=!e.isIntersecting;
-        hint.classList.toggle('is-off', isOff);
-        if(isOff) hint.classList.remove('is-scrolling');
-      });
-    },{threshold:0.15}).observe(heroEl);
+  function updateHint(){
+    var heroHeight=heroEl.offsetHeight;
+    var scrollY=window.scrollY;
+    /* 滚动超过首页高度 → 完全隐藏；在首页内 → 按滚动比例淡出 */
+    var progress=Math.min(scrollY / (heroHeight * 0.6), 1);
+    hint.style.opacity=1 - progress;
+    if(progress >= 1){ hint.classList.add('is-off'); }
+    else{ hint.classList.remove('is-off'); }
   }
-
-  window.addEventListener('scroll',function(){
-    syncHintDirection();
-    if(isOff) return;
-    hint.classList.add('is-scrolling');
-    clearTimeout(scrollTimer);
-    scrollTimer=setTimeout(function(){ hint.classList.remove('is-scrolling'); },120);
-  },{passive:true});
-  window.addEventListener('resize', syncHintDirection);
-  syncHintDirection();
+  window.addEventListener('scroll', updateHint, {passive:true});
+  window.addEventListener('resize', updateHint);
+  updateHint();
 }
 
-/* E. 滚动浮现动画（保留） */
+/* E. 滚动浮现动画 */
 var io=new IntersectionObserver(es=>{ es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }); },{threshold:0.1});
-/* ★ 错峰动画：.stagger 容器进入视口 → 子项依次飞入 */
+
 var staggerIO=new IntersectionObserver(function(es){
   es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); staggerIO.unobserve(e.target);} });
 },{threshold:0.12});
 document.querySelectorAll('.stagger').forEach(function(el){ el.classList.add('reveal'); staggerIO.observe(el); });
 
-/* ★ 成长时间轴动画 —— 独立观察器 + 分批 is-up，保证必然播放 */
+/* 成长时间轴动画 */
 var journeyEl=document.querySelector('.journey');
 var journeyNodes=journeyEl ? journeyEl.querySelectorAll('.node') : [];
 function playJourney(){
   if(!journeyEl || !journeyNodes.length){ return; }
-  journeyEl.classList.add('journey--play');      /* ① 连线开始生长 */
-  /* ② 三个节点按延迟依次加 .is-up（rAF 分批，避开布局时序）*/
+  journeyEl.classList.add('journey--play');
   journeyNodes.forEach(function(node, i){
-    var delay = 200 + i * 260;                   /* 200 / 460 / 720 ms */
+    var delay = 200 + i * 260;
     setTimeout(function(){ node.classList.add('is-up'); }, delay);
   });
 }
@@ -839,14 +734,12 @@ if(journeyEl){
     });
   },{threshold:0.08, rootMargin:'0px 0px -10% 0px'});
   journeyIO.observe(journeyEl);
-  /* 兜底1：加载完成后播放（覆盖「刷新时正好停在成长页」）*/
   window.addEventListener('load', function(){ setTimeout(playJourney, 500); });
-  /* 兜底2：DOM 就绪也试一次 */
   if(document.readyState!=='loading'){ setTimeout(playJourney, 300); }
   else { document.addEventListener('DOMContentLoaded', function(){ setTimeout(playJourney, 300); }); }
 }
 
-/* ★ 基本信息表格：进入视口后 6 行依次浮现（顺序：姓名→年龄→学校→专业→年级→目标，不变）*/
+/* 基本信息表格 */
 var specEl=document.querySelector('#info .spec');
 function playSpec(){
   if(specEl){ specEl.classList.add('spec--play'); }
@@ -859,27 +752,27 @@ if(specEl){
   window.addEventListener('load', function(){ setTimeout(playSpec, 400); });
 }
 
-/* ★ 数字滚动：进入视口时从 0 数到 data-target */
+/* 数字滚动 */
 function easeOutCubic(t){ return 1-Math.pow(1-t,3); }
 function runCountUp(el){
   var target=parseInt(el.dataset.target,10)||0;
-  var finalText=el.textContent;          // 保留真实值（含后缀），如 "2025 年"
+  var finalText=el.textContent;
   var suffix=el.dataset.suffix||'';
-  el.textContent='0'+suffix;             // 复位为 0，再向上滚动
+  el.textContent='0'+suffix;
   if(target<=0){ el.textContent=finalText; return; }
   var dur=1100, start=performance.now();
   function step(now){
     var p=Math.min((now-start)/dur,1); var v=Math.round(easeOutCubic(p)*target);
     el.textContent=v+suffix;
     if(p<1) requestAnimationFrame(step);
-    else{ el.textContent=finalText; el.classList.add('is-counted'); }  // 结束精确对齐 + 显示
+    else{ el.textContent=finalText; el.classList.add('is-counted'); }
   }
   requestAnimationFrame(step);
 }
 var countIO=new IntersectionObserver(function(es){
   es.forEach(function(e){
     if(e.isIntersecting && !e.target.classList.contains('is-counted')){
-      runCountUp(e.target);              // 只触发一次；刷新页面可重播
+      runCountUp(e.target);
     }
   });
 },{threshold:0.5});
@@ -888,7 +781,7 @@ document.querySelectorAll('.count-up').forEach(function(el){ countIO.observe(el)
 document.querySelectorAll('.wrap,.hero,.ft').forEach(el=>{ el.classList.add('reveal'); io.observe(el); });
 </script>
 <script>
-/* H. 创新层：主题色随区块 + 磁吸光标 + 滚动驱动标题缩放（圆点导航已移除） */
+/* H. 创新层 */
 (function(){
   var themeMap={info:'info',interest:'interest',certs:'certs',timeline:'timeline',contact:'contact'};
   function applyTheme(){
@@ -917,7 +810,6 @@ document.querySelectorAll('.wrap,.hero,.ft').forEach(el=>{ el.classList.add('rev
   if(heroTitle){
     window.addEventListener('scroll',function(){
       var y=window.scrollY;
-      /* ★ 只用 opacity，刻意不用 transform:scale（避免整块进 GPU 合成层导致模糊） */
       heroTitle.style.opacity=Math.max(0,1-y/420);
     },{passive:true});
   }
