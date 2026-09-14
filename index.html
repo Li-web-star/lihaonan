@@ -119,7 +119,7 @@
      · 尾页（contact + footer）之下仍可继续下滑 --footroom 距离，松手回弹。
    缓冲带背景取相邻区块同色，视觉上"什么都没有"但手感连续。
    用 :before/:after 伪元素实现，零 HTML 改动、不引入额外滚动容器。 */
-.spill-top{ position:relative; }
+.spill-top{ position:fixed; top:0; left:0; right:0; height:0; z-index:9999; pointer-events:none; background:#fff; }
 .spill-top::before{
   content:"";
   display:block;
@@ -169,11 +169,11 @@ h1,h2{font-size:clamp(32px,7vw,52px);font-weight:800;line-height:1.2;margin-bott
 .sub{font-size:clamp(16px,3.5vw,20px);color:#a1a1a6;margin-bottom:10px}
 .desc{font-size:17px;color:#444;max-width:680px;margin:0 auto 14px;line-height:1.8}
 strong{color:#e53935}
-.hero{height:85vh;height:85svh;min-height:520px;background:#0a0a0a;color:#fff;display:flex;align-items:center;justify-content:center;padding:0 20px;text-align:center;position:relative;overflow:hidden;padding-top:env(safe-area-inset-top, 0px);padding-bottom:env(safe-area-inset-bottom, 0px)}
+.hero{height:85vh;min-height:520px;background:#0a0a0a;color:#fff;display:flex;align-items:center;justify-content:center;padding:0 20px;text-align:center;position:relative;overflow:hidden;padding-top:env(safe-area-inset-top, 0px);padding-bottom:env(safe-area-inset-bottom, 0px)}
 .hero-center{display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;filter:none}
 .hero-center h1{text-align:center;margin:0 auto}
 .hero-cta{margin-top:36px}
-@media(max-width:760px){ .hero{height:85svh;min-height:420px;max-height:none;padding-top:env(safe-area-inset-top, 0px);padding-bottom:env(safe-area-inset-bottom, 0px)} }
+@media(max-width:760px){ .hero{height:85vh;min-height:520px;max-height:none;padding-top:env(safe-area-inset-top, 0px);padding-bottom:env(safe-area-inset-bottom, 0px)} }
 .glow{position:fixed;top:20%;left:50%;width:min(90vw,600px);height:min(90vw,600px);transform:translateX(-50%);border-radius:50%;background:radial-gradient(circle,rgba(229,57,53,.3),transparent 65%);z-index:-1}
 /* ★ 旧的 .row / 通用 .spec 基础样式已废弃，布局统一由下方 ".spec .row-line" 规则控制 */
 .red{color:#e53935}
@@ -226,18 +226,7 @@ footer .copy{ pointer-events:none !important; }
   .pc-space{display:inline}
 }
 
-/* ==================== 规范保险：仅隐藏业界通用广告容器（不猜测、不误伤正文） ====================
-   说明：本页面自身不含任何广告 / iframe / 第三方脚本。
-   顶部"灰块+五星+关闭"经确认来自【浏览器扩展】，用户用无痕模式即不出现——
-   这属于访问者本机环境，页面侧无法彻底拦截。下方仅保留对通用广告容器名的兜底隐藏，
-   不做任何基于位置/内容的激进猜测，杜绝误伤页面自身元素。 */
-ins.adsbygoogle, iframe[src*="doubleclick"],
-div[id*="google_ads"], div[class*="adsbygoogle"], div[class*="adsbox"] {
-  display: none !important;
-  height: 0 !important;
-  visibility: hidden !important;
-  pointer-events: none !important;
-}
+/* 本页无广告，无第三方脚本 */
 
 /* iOS 添加到主屏幕：standalone 全屏运行，避免浏览器 chrome 占位
    （配合 <meta name="display" content="standalone">，属规范推荐） */
@@ -1100,7 +1089,7 @@ h1,h2{ margin-bottom:20px; }             /* 大标题下间距 */
 
 /* ---------- ⑦ 横屏优化（手机横放 / 平板横放） ---------- */
 @media (orientation: landscape) and (max-height: 500px){
-  .hero{ max-height:none; min-height:420px; padding-top:env(safe-area-inset-top, 0px); padding-bottom:env(safe-area-inset-bottom, 0px); }
+  .hero{ max-height:none; min-height:520px; padding-top:env(safe-area-inset-top, 0px); padding-bottom:env(safe-area-inset-bottom, 0px); }
   .wrap{ min-height:auto; padding-top:80px; padding-bottom:80px; justify-content:flex-start; }
   .hero-title{ font-size:clamp(28px,6vh,44px); }
   .grid.cols-3{ grid-template-columns:repeat(3,1fr); }
@@ -1143,45 +1132,31 @@ body{ -webkit-tap-highlight-color:rgba(0,0,0,.08); -webkit-touch-callout:none; }
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi){
   .card{ box-shadow:0 8px 30px rgba(0,0,0,.05); }
 }
-  /* ★ 移动端状态栏修复：顶部/底部安全区始终为深色，避免 iOS 露白或黑带 */
-  html, body{ background:#0a0a0a; }
-  .spill-top, .spill-top::before{ background:#0a0a0a; }
-  /* ★ 修正：iOS 顶部安全区填白色，状态栏视觉为白（而非原来的 #0a0a0a 黑色） */
+  /* ★ 移动端状态栏修复：状态栏背后 = 白色（fixed 占位，脱离文档流、不撑高页面）
+     · hero 高度保持原始 85vh，不改小、不限制 —— 彻底恢复原样
+     · iOS 刘海区域由 spill-top 这块白色 fixed 条覆盖 → 状态栏"变白" */
   @supports (padding-top: env(safe-area-inset-top)){
     html{ background:#ffffff; }
   }
-/* ===== 首屏移动端修正（状态栏白色 + 严格一屏 + 露出下一页） ===== */
 @media (max-width: 760px) {
   html { background: #ffffff; }
-  body { background: #ffffff; overscroll-behavior-y: none; }
+  body { background: #ffffff; }
 
-  .hero {
-    height: 86dvh !important;
-    min-height: 0 !important;
-    max-height: 86dvh !important;
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
-    overflow: hidden !important;
-  }
-
-  /* 顶部状态栏安全区 = 白色（让状态栏背后视觉为白） */
+  /* 状态栏背后的白色占位（fixed，不产生滚动高度） */
   .spill-top {
-    position: fixed !important;
+    position: fixed;
     top: 0; left: 0; right: 0;
-    height: env(safe-area-inset-top, 44px) !important;
-    background: #ffffff !important;
+    height: env(safe-area-inset-top, 44px);
+    background: #ffffff;
     z-index: 9999;
     pointer-events: none;
   }
-  .spill-top::before { height: 0 !important; }
+  .spill-top::before { height: 0; }
 
-  .hero-center { padding-top: env(safe-area-inset-top, 44px) !important; }
+  /* hero 内容避开刘海，但高度仍是 85vh（原始值，未改动） */
+  .hero-center { padding-top: env(safe-area-inset-top, 44px); }
 
-  #info {
-    position: relative;
-    z-index: 1;
-    background: linear-gradient(180deg, #ffffff 0%, #ffffff 72%, #f5f5f7 100%) !important;
-  }
+  #info { background: #ffffff; }
 }
 </style>
 </head>
@@ -2037,163 +2012,7 @@ if (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches
 }
 })();
 </script>
-<script>
-(function(){
-  /* ★ 首页不再随滚动淡出 —— 始终保持原始颜色和可见状态 */
 
-  /* ★ 首屏移动端修正：状态栏区域白色 + 允许轻微上滑露出下一页 ~15% */
-  function isMobile(){ return window.matchMedia && window.matchMedia('(max-width:760px)').matches; }
 
-  function init(){
-    if(!isMobile()) return;
-    var body = document.body;
-    var hero = document.getElementById('top');
-    if(!hero) return;
-
-    // ① 确保滚动归零（配合 goTop，双保险）
-    window.scrollTo(0, 0);
-    requestAnimationFrame(function(){ window.scrollTo(0, 0); });
-
-    // ② 手势：允许上滑露出下一页最多 ~15%，松手回弹（仅 transform，不改 scrollTop）
-    var MAX = Math.round(window.innerHeight * 0.15);
-    var startY = 0, delta = 0, raf = null, active = false;
-
-    function apply(y){
-      hero.style.transition = 'none';
-      hero.style.transform = 'translateY(' + (-y) + 'px)';
-    }
-    function reset(){
-      hero.style.transition = 'transform .35s cubic-bezier(.22,.71,.22,1)';
-      hero.style.transform = '';
-      raf = null; active = false;
-    }
-
-    document.addEventListener('touchstart', function(e){
-      if((window.scrollY || 0) > 2) return;
-      startY = e.touches[0].clientY; delta = 0; active = true;
-    }, { passive:true });
-
-    document.addEventListener('touchmove', function(e){
-      if(!active) return;
-      var d = startY - e.touches[0].clientY;   // 上滑为正
-      if(d < 0){ delta = 0; apply(0); return; } // 下拉不处理
-      delta = Math.min(d, MAX);
-      if(raf === null) raf = requestAnimationFrame(function(){ apply(delta); });
-    }, { passive:true });
-
-    var end = function(){
-      if(active) reset();
-    };
-    document.addEventListener('touchend', end, { passive:true });
-    document.addEventListener('touchcancel', end, { passive:true });
-  }
-
-  if(document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
-})();
-</script>
-<script>
-(function(){
-  'use strict';
-  /* ============================================================
-   * 广告清理模块（Anti-Injection）
-   * ------------------------------------------------------------
-   * 触发前提：本页为纯单文件离线页，源码中不含任何广告/第三方脚本，
-   * 因此"顶部灰块 + 五颗星 + 关闭按钮"这类横幅只能来自——
-   *   a) 浏览器扩展（广告管家/比价/免费VPN等）向页面注入 DOM；
-   *   b) 运营商/公共WiFi 在 HTTP 明文链路劫持注入。
-   *
-   * CSP（已在 <head> 声明）会从协议层拦截绝大多数注入脚本，
-   * 本模块作为【运行时兜底】：扫描并移除已成功注入的可疑节点。
-   *
-   * 安全原则：只匹配明确的广告特征，绝不按位置/颜色猜测，
-   * 杜绝误伤页面自身元素（hero / card / nav 等）。
-   * ============================================================ */
-
-  // —— 白名单：页面自身的容器，绝不触碰 ——
-  var SAFE_IDS   = /^(top|info|interest|certs|timeline|contact|nav|footer|cursor)$/;
-  var SAFE_CLASS = /(hero|wrap|card|stagger|journey|node|contact|grid|spec|row|tag|sec-title|scroll-hint|glow|cursor|prog)/;
-
-  /**
-   * 判断一个节点是否为"广告特征"节点
-   * 特征组合（需同时满足多条，降低误判）：
-   *   - 含有"关闭/×/广告/推广/sponsored/ad-"等语义
-   *   - 或具有业界通用广告容器名（adsbygoogle / adsbox / google_ads / doubleclick）
-   *   - 或内含大量 ★/☆ 星级 + 小尺寸（典型的"五星评分横幅"）
-   */
-  function isAdNode(el){
-    if(el.nodeType !== 1) return false;            // 只检查元素节点
-    if(SAFE_IDS.test(el.id)) return false;          // 白名单 id
-    if(SAFE_CLASS.test(el.className)) return false; // 白名单 class
-
-    var cls = (' ' + (el.className || '') + ' ').toLowerCase();
-    var id  = (el.id || '').toLowerCase();
-
-    // ① 业界通用广告容器名
-    if(/adsbygoogle|adsbox|google_ads|doubleclick|ad-slot|advertisement|sponsored/.test(cls + ' ' + id)){
-      return true;
-    }
-
-    // ② 语义特征：含"关闭广告/×/广告/推广"等文字
-    var txt = (el.textContent || '').slice(0, 120).toLowerCase();
-    if(/(advertisement|sponsored|close ad|关闭广告|推广|广告|五星|rating|由 .* 提供)/.test(txt)){
-      return true;
-    }
-
-    // ③ 五星横幅特征：★/☆ 数量 ≥ 4，且节点较小（< 120px 高）
-    var stars = (txt.match(/[★☆*]/g) || []).length;
-    if(stars >= 4){
-      var h = el.getBoundingClientRect().height || 0;
-      if(h > 0 && h < 120) return true;
-    }
-    return false;
-  }
-
-  /** 扫描并移除广告节点（保留白名单） */
-  function sweep(){
-    var all = document.getElementsByTagName('*');
-    for(var i = all.length - 1; i >= 0; i--){
-      var el = all[i];
-      // 保护：祖先是白名单元素 → 跳过（不误删正文里的子元素）
-      var p = el.parentNode;
-      while(p && p !== document.body){
-        if(SAFE_IDS.test(p.id) || SAFE_CLASS.test(p.className)){ p = null; break; }
-        p = p.parentNode;
-      }
-      if(p === null) continue;
-
-      if(isAdNode(el)){
-        try{ el.parentNode.removeChild(el); }catch(e){}
-      }
-    }
-  }
-
-  // —— 初次清理：DOMContentLoaded 后立即执行 ——
-  function init(){
-    sweep();
-    // MutationObserver：动态注入的广告（部分扩展会延迟插入）持续监控
-    if(window.MutationObserver){
-      var mo = new MutationObserver(function(muts){
-        var needSweep = false;
-        for(var i = 0; i < muts.length; i++){
-          var nodes = muts[i].addedNodes;
-          if(nodes && nodes.length){ needSweep = true; break; }
-        }
-        if(needSweep) sweep();
-      });
-      mo.observe(document.body, { childList: true, subtree: true });
-    }
-  }
-
-  if(document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
-})();
-</script>
 </body>
 </html>
