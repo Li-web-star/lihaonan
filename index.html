@@ -63,7 +63,7 @@ strong{color:#e53935}
 .contact{min-height:440px;display:flex;align-items:center;justify-content:center}
 a.cta{color:#e53935;font-size:18px;border-bottom:1px solid #e53935;padding-bottom:2px}
 footer{background:#000;color:#aaa;padding:40px 20px 30px;font-size:13px}
-.ft{max-width:900px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr;gap:30px;padding-bottom:28px;border-bottom:1px solid #333}
+.ft{max-width:760px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:30px;padding-bottom:28px;border-bottom:1px solid #333}
 .ft .b{color:#fff;font-size:16px;font-weight:600;margin-bottom:8px}
 .ft a{display:block;color:#aaa;line-height:2}
 .copy{max-width:900px;margin:20px auto 0;color:#666;font-size:12px}
@@ -268,9 +268,8 @@ html{transition:opacity .45s ease} html.is-leaving{opacity:0}
 
 /* ★ 错峰容器：子项依次飞入 */
 .stagger{opacity:1}   /* 容器自身不参与淡入，由子项控制 */
-.stagger > *{opacity:0;transform:translateY(26px);
-  transition:opacity .6s cubic-bezier(.2,.7,.2,1),transform .6s cubic-bezier(.2,.7,.2,1)}
-.stagger.in > *{opacity:1;transform:none}
+.stagger > *{opacity:1;transform:none}      /* ★ 默认可见，IO 未触发也不空白 */
+.stagger.in > *{opacity:1;transform:none}   /* （保留 .in 钩子供有 JS 时错峰）*/
 .stagger.in > *:nth-child(1){transition-delay:.00s}
 .stagger.in > *:nth-child(2){transition-delay:.08s}
 .stagger.in > *:nth-child(3){transition-delay:.16s}
@@ -295,6 +294,45 @@ html{transition:opacity .45s ease} html.is-leaving{opacity:0}
 
 /* 表格：占满可用宽度，下划线贯穿整宽 */
 .spec { width: 100%; max-width: 920px; margin: 0 auto; }
+/* ★ 每行：标签 + 值，一根细分隔线贯穿 */
+.row-line{
+  display:flex; align-items:baseline; justify-content:space-between; gap:24px;
+  padding:20px 2px;
+  border-bottom:1px solid var(--line);
+}
+.row-line .k{
+  flex:0 0 auto;
+  color:var(--muted); font-size:12px; font-weight:600;
+  letter-spacing:.12em; text-transform:uppercase;
+}
+.row-line .v{
+  flex:1 1 auto; text-align:right;
+  font-size:clamp(19px,2.6vw,21px); font-weight:600; color:var(--text);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+/* ★ 最后一行（目标）：主题红强调 —— 驱动力点睛 */
+.row-line:last-child .v{ color:var(--accent); }
+.row-line:last-child{ border-bottom:none; }
+
+/* ★ 手机端：表格精致化 + 依次浮现动画（顺序不变） */
+@media (max-width:760px){
+  #info .spec{ max-width:520px; }
+  #info .row-line{
+    padding:17px 4px;
+    opacity:0; transform:translateY(18px);
+    transition:opacity .55s cubic-bezier(.2,.7,.2,1), transform .55s cubic-bezier(.2,.7,.2,1);
+  }
+  /* JS 激活 .spec--play 后，按索引依次亮起 */
+  #info .spec--play .row-line{ opacity:1; transform:none; }
+  #info .spec .row-line:nth-child(1){ transition-delay:.00s }
+  #info .spec .row-line:nth-child(2){ transition-delay:.07s }
+  #info .spec .row-line:nth-child(3){ transition-delay:.14s }
+  #info .spec .row-line:nth-child(4){ transition-delay:.21s }
+  #info .spec .row-line:nth-child(5){ transition-delay:.28s }
+  #info .spec .row-line:nth-child(6){ transition-delay:.35s }
+  #info .row-line .k{ font-size:11px; }
+  #info .row-line .v{ font-size:clamp(18px,5vw,20px); }
+}
 
 /* 兴趣 / 证书：卡片网格铺满 */
 #interest .grid,
@@ -337,7 +375,7 @@ html{transition:opacity .45s ease} html.is-leaving{opacity:0}
   transform-origin:top center;
   transition:transform 1.1s cubic-bezier(.2,.8,.2,1);
 }
-.journey.in .journey__line{ transform:scaleY(1); }
+.journey.journey--play .journey__line{ transform:scaleY(1); }
 
 /* ★ 节点：默认在轴线右侧（整齐平淡，全部同侧） */
 .node{
@@ -346,15 +384,19 @@ html{transition:opacity .45s ease} html.is-leaving{opacity:0}
   align-items:flex-start;
   gap:28px;
   padding:18px 0 18px 60px;           /* 圆点右侧留文字空间 */
-  opacity:0;
-  transform:translateY(36px);
+  opacity:1;                           /* ★ 默认可见：IO 失败也不空白 */
+  transform:none;
   transition:opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1);
 }
-.journey.in .node{ opacity:1; transform:none; }
+/* ★ JS 激活后：从下方浮现（.journey--play 由独立观察器添加）*/
+.journey--play .node{ opacity:0; transform:translateY(36px); }   /* 起始态：先藏 */
+.journey--play .node.is-up{ opacity:1; transform:none; }         /* 终点态：逐个亮 */
+.journey.journey--play .node{ opacity:0; transform:translateY(36px); }
+.journey.journey--play .node.is-up{ opacity:1; transform:none; }
 /* ★ 依次延迟浮现（入学→当下→未来，节奏感） */
-.journey.in .node[data-node="0"]{ transition-delay:.15s }
-.journey.in .node[data-node="1"]{ transition-delay:.40s }
-.journey.in .node[data-node="2"]{ transition-delay:.65s }
+.journey.journey--play .node[data-node="0"]{ transition-delay:.05s }
+.journey.journey--play .node[data-node="1"]{ transition-delay:.30s }
+.journey.journey--play .node[data-node="2"]{ transition-delay:.55s }
 
 /* ★ 圆点（圆心落在中轴线上） */
 .node__dot{
@@ -600,9 +642,8 @@ html{transition:opacity .45s ease} html.is-leaving{opacity:0}
 
 <footer>
   <div class="ft">
-    <div><div class="b">李浩楠</div><p>陕西财经职业技术学院 · 大二 · 消防救援技术</p><p>现居陕西西安 · 备考专升本</p></div>
     <div><div class="b">站点</div><a href="#top">首页</a><a href="#info">基本信息</a><a href="#interest">兴趣</a><a href="#certs">证书</a><a href="#timeline">成长</a></div>
-    <div><div class="b">联系</div><a href="mailto:2878697150@qq.com">写信给我</a><a href="#">微信 · LovHoeN-07</a></div>
+    <div><div class="b">联系</div><a href="mailto:2878697150@qq.com">邮箱 · 2878697150@qq.com</a><a href="#">微信 · LovHoeN-07</a></div>
   </div>
   <div class="copy">© 2026 李浩楠 · 保留所有权利。</div>
 </footer>
@@ -776,22 +817,46 @@ var staggerIO=new IntersectionObserver(function(es){
 },{threshold:0.12});
 document.querySelectorAll('.stagger').forEach(function(el){ el.classList.add('reveal'); staggerIO.observe(el); });
 
-/* ★ 成长时间轴：进入视口 → 加 .in，触发连线生长 + 节点依次浮现
-   —— 双重保险：IntersectionObserver + 超时兜底，确保「往下延伸」时一定播出来 */
+/* ★ 成长时间轴动画 —— 独立观察器 + 分批 is-up，保证必然播放 */
 var journeyEl=document.querySelector('.journey');
+var journeyNodes=journeyEl ? journeyEl.querySelectorAll('.node') : [];
 function playJourney(){
-  if(journeyEl && !journeyEl.classList.contains('in')){ journeyEl.classList.add('in'); }
+  if(!journeyEl || !journeyNodes.length){ return; }
+  journeyEl.classList.add('journey--play');      /* ① 连线开始生长 */
+  /* ② 三个节点按延迟依次加 .is-up（rAF 分批，避开布局时序）*/
+  journeyNodes.forEach(function(node, i){
+    var delay = 200 + i * 260;                   /* 200 / 460 / 720 ms */
+    setTimeout(function(){ node.classList.add('is-up'); }, delay);
+  });
 }
 if(journeyEl){
-  /* 方案1：滚动到视口即触发（阈值放低到 0.05，避免「差一点不触发」）*/
   var journeyIO=new IntersectionObserver(function(es){
-    es.forEach(function(e){ if(e.isIntersecting){ playJourney(); journeyIO.disconnect(); } });
-  },{threshold:0.05});
+    es.forEach(function(e){
+      if(e.isIntersecting){
+        playJourney();
+        journeyIO.disconnect();
+      }
+    });
+  },{threshold:0.08, rootMargin:'0px 0px -10% 0px'});
   journeyIO.observe(journeyEl);
-  /* 方案2：兜底 —— 即使 IO 因高度/嵌套未触发，800ms 后也强制播放 */
-  setTimeout(playJourney, 800);
-  /* 方案3：页面加载完成再确认一次 */
-  window.addEventListener('load', function(){ setTimeout(playJourney, 200); });
+  /* 兜底1：加载完成后播放（覆盖「刷新时正好停在成长页」）*/
+  window.addEventListener('load', function(){ setTimeout(playJourney, 500); });
+  /* 兜底2：DOM 就绪也试一次 */
+  if(document.readyState!=='loading'){ setTimeout(playJourney, 300); }
+  else { document.addEventListener('DOMContentLoaded', function(){ setTimeout(playJourney, 300); }); }
+}
+
+/* ★ 基本信息表格：进入视口后 6 行依次浮现（顺序：姓名→年龄→学校→专业→年级→目标，不变）*/
+var specEl=document.querySelector('#info .spec');
+function playSpec(){
+  if(specEl){ specEl.classList.add('spec--play'); }
+}
+if(specEl){
+  var specIO=new IntersectionObserver(function(es){
+    es.forEach(function(e){ if(e.isIntersecting){ playSpec(); specIO.disconnect(); } });
+  },{threshold:0.1});
+  specIO.observe(specEl);
+  window.addEventListener('load', function(){ setTimeout(playSpec, 400); });
 }
 
 /* ★ 数字滚动：进入视口时从 0 数到 data-target */
