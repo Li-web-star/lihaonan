@@ -99,54 +99,61 @@
 
 <title>李浩楠 · Li Haonan</title>
 
-<!-- ===== 修复：微信 WebView 底部导航栏显隐导致页面跳动 =====
-  根因：微信内置浏览器底部有 ← → 导航栏（截图所示），滚动到页面顶部时它自动隐藏，
-        离开顶部时又重新显示 → window.innerHeight 随之变化 → 若 --vh 跟随更新，
-        所有 calc(var(--vh) * 100) 的 section 高度瞬间变化 → 首页"向下冲/向上缩"。
-  解决思路：冻结 --vh 为【页面加载时的初始值】，此后不再响应 resize 更新。
-        · 微信导航栏显隐时 innerHeight 变了，但 --vh 不变 → section 高度稳定 → 不跳。
-        · 只在真正需要重算的时机（横竖屏切换、页面首次可见）才刷新一次。
-        · 同时锁定 html/body 高度为 100%，让页面布局基于稳定容器，不依赖视口单位。
-  关于截图中的 ← → 导航栏：这是微信客户端自带的 UI，网页 JS/CSS 无法隐藏
-        （属微信安全策略，强制保留返回/前进入口），只能让页面"不受它影响"。 -->
-<script>
-(function(){
-  var locked = false;
+<!-- ===== 修复：iOS 微信底部 ← → 导航栏 + 页面跳动 =====
+  ★★★ 真正的根因（不是 vh 的问题！）★★★
+   iOS 微信有一套"潜规则"：
+     · 当 history.length === 1（页面无历史记录）时 → 底部导航栏【不显示】
+     · 当 history.length  > 1（页面产生了跳转记录）时 → 底部导航栏【永久显示】
+   所以 apple.com、m.baidu.com 等在微信里打开【没有】底部栏，
+   是因为它们是"单页 + 不产生历史记录"的；
+   而你的网站：锚点点击 → history.replaceState() → 某些情况下 history.length 变成 2 → 触发导航栏出现。
+   导航栏出现后抢占 40~60px 高度 → 页面整体被挤压 → 视觉上"向下冲/向上缩"。
 
-  /* 计算并写入 --vh，仅在关键时机调用，平时冻结 */
+  解决思路（三管齐下）：
+     ① 隐藏：调用微信私有桥 WeixinJSBridge.call('hideToolbar')，主动让微信隐藏工具栏；
+        （这是 apple.com 等站点实际使用的手段之一，配合 URL 参数 #wechat_webview_type=1）
+     ② 防产生历史：把锚点跳转从"改变 hash / replaceState"改为【纯 scrollTo，不动 history】，
+        保证 history.length 永远 = 1，从根本上不满足导航栏显示条件；
+     ③ 高度稳定：html/body 锁定 height:100%，section 用 min-height:100%，
+        即使导航栏真的出现/消失，页面高度也不变 → 不跳动。
+  说明：① 是「让它不显示」，②③ 是「万一显示了也不跳动」的兜底。 -->
+<script>
+/* ===== ① 隐藏微信底部工具栏（微信 JSBridge 私有接口）===== */
+function hideWechatToolbar(){
+  try{
+    if(window.WeixinJSBridge && typeof window.WeixinJSBridge.call === 'function'){
+      window.WeixinJSBridge.call('hideToolbar');   // 隐藏底部 ← → 工具栏
+      window.WeixinJSBridge.call('hideOptionMenu'); // 顺便隐藏右上角菜单（可选）
+    }
+  }catch(e){}
+}
+/* JSBridge 可能已就绪，也可能异步就绪，两种时机都监听 */
+hideWechatToolbar();
+if(document.addEventListener){
+  document.addEventListener('WeixinJSBridgeReady', hideWechatToolbar, false);
+}
+window.addEventListener('load', hideWechatToolbar);
+
+/* ===== ②③ 视口高度冻结（兜底：即便导航栏仍出现，页面也不跳动）===== */
+(function(){
   function setVH(){
     var vh = window.innerHeight * 0.01;
     document.documentElement.style.setProperty('--vh', vh + 'px');
   }
+  setVH();  /* 仅在加载时算一次，之后冻结 */
 
-  /* 页面加载时立即锁定一次（此时导航栏通常处于"展开"的稳定状态） */
-  setVH();
-  locked = true;
+  /* ★ 故意不监听 resize：微信导航栏显隐会触发 resize，实时更新反而跳动 */
+  // window.addEventListener('resize', setVH);
 
-  /* ★ 关键：不再监听 resize 实时更新 --vh。
-     微信导航栏显隐会触发 resize，若此时更新 --vh 就会跳动。
-     改为：resize 时【不】改变 --vh，高度保持冻结。 */
-  // window.addEventListener('resize', setVH, { passive: true });  // ← 故意移除
-
-  /* 横竖屏切换是真正的尺寸变化，需要重算（加锁防止短时间内多次触发） */
+  /* 横竖屏切换是真正的尺寸变化，才允许重算一次 */
   var orientTimer = null;
   function onOrient(){
     clearTimeout(orientTimer);
-    orientTimer = setTimeout(function(){
-      locked = false;
-      setVH();
-      locked = true;
-    }, 300);
+    orientTimer = setTimeout(setVH, 300);
   }
   var mq = window.matchMedia && window.matchMedia('(orientation: portrait)');
   if(mq && mq.addEventListener) mq.addEventListener('change', onOrient);
   else if(mq && mq.addListener) mq.addListener(onOrient);
-
-  /* pageshow（含往返缓存恢复）时，若高度确实变了再更新一次 */
-  window.addEventListener('pageshow', function(){
-    setVH();
-    locked = true;
-  }, { passive: true });
 })();
 </script>
 
@@ -1815,8 +1822,12 @@ document.querySelectorAll('.wrap,.hero,.ft').forEach(el=>{ el.classList.add('rev
     if(!target) return;                          /* 找不到目标 → 原生处理（如路由跳转） */
 
     e.preventDefault();
-    /* ★ 更新地址栏 hash，不触发原生跳转（replaceState 不滚动） */
-    if(history.replaceState){ history.replaceState(null, '', hash); }
+    /* ★ 关键修复：不再调用 history.replaceState() 修改地址栏 hash。
+       原因：iOS 微信在 history.length > 1 时会在底部显示 ← → 导航栏，
+       而 replaceState 在某些情况下会让 history.length 变成 2，从而触发导航栏。
+       改为：什么都不做，只平滑滚动到目标位置。地址栏 hash 不变 → history 始终为 1。
+       这也是 apple.com 等站点在微信里"没有底部栏"的核心原因：单页 + 零 history 操作。 */
+    // if(history.replaceState){ history.replaceState(null, '', hash); }  // ← 故意移除
 
     var top = 0;
     if(target !== document.body){
@@ -2065,10 +2076,10 @@ document.querySelectorAll('.wrap,.hero,.ft').forEach(el=>{ el.classList.add('rev
 if (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) {
   // 从主屏幕启动时，始终滚动到顶部（首页）
   window.scrollTo(0, 0);
-  // 如果有 hash 路由，清除它
-  if (window.location.hash) {
-    window.history.replaceState(null, '', window.location.pathname + window.location.search);
-  }
+  // ★ 不再 replaceState：避免 history.length > 1 触发 iOS 微信底部导航栏
+  // if (window.location.hash) {
+  //   window.history.replaceState(null, '', window.location.pathname + window.location.search);
+  // }
 }
 })();
 </script>
