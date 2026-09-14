@@ -191,9 +191,10 @@ nav{will-change:opacity,background-color}
 .scroll-hint:hover{color:#fff}
 
 @media(max-width:760px){
-  .hero-title .m-br{display:inline}      /* 手机：两行 */
-  .pc-space{display:none}                /* ★ 手机：空格不显示（"我是李浩楠。"紧贴） */
-  .hero-title{font-size:clamp(30px,11vw,44px)}
+  .hero-title .m-br{display:inline}      /* 手机：两行（你好，/ 我是 李浩楠。） */
+  .hero-title .pc-space{display:none}    /* ★ 手机：仅标题无空格 → "我是李浩楠"紧贴 */
+  .pc-space{display:inline}             /* 正文（19岁/2025年/10余项）仍保留空格 */
+  .hero-title{font-size:clamp(40px,13vw,60px);line-height:1.18}
   .scroll-hint__text{font-size:12px}
   nav{height:46px}
   nav .links{gap:14px}                   /* 手机：间距收窄，六项一行放得下 */
@@ -203,6 +204,49 @@ nav{will-change:opacity,background-color}
 /* 转场 */
 @view-transition{navigation:auto}
 html{transition:opacity .45s ease} html.is-leaving{opacity:0}
+
+/* ==================== 视觉丰富化（进度条 / 动画 / 锚点导航） ==================== */
+
+/* （进度条已移除 —— 仅删除进度条，错峰动画 / 数字滚动 / 侧边导航均保留） */
+
+/* ★ 进入动画：基础块（淡入 + 轻微上移，克制档） */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1)}
+.reveal.in{opacity:1;transform:none}
+
+/* ★ 错峰容器：子项依次飞入 */
+.stagger{opacity:1}   /* 容器自身不参与淡入，由子项控制 */
+.stagger > *{opacity:0;transform:translateY(26px);
+  transition:opacity .6s cubic-bezier(.2,.7,.2,1),transform .6s cubic-bezier(.2,.7,.2,1)}
+.stagger.in > *{opacity:1;transform:none}
+/* 每项延迟：最多 8 项，超出归零循环 */
+.stagger.in > *:nth-child(1){transition-delay:.00s}
+.stagger.in > *:nth-child(2){transition-delay:.08s}
+.stagger.in > *:nth-child(3){transition-delay:.16s}
+.stagger.in > *:nth-child(4){transition-delay:.24s}
+.stagger.in > *:nth-child(5){transition-delay:.32s}
+.stagger.in > *:nth-child(6){transition-delay:.40s}
+.stagger.in > *:nth-child(7){transition-delay:.48s}
+.stagger.in > *:nth-child(8){transition-delay:.56s}
+
+/* ★ 数字滚动：.count-up 元素从 0 数到 data-target；未激活时透明，避免初始值闪现 */
+.count-up{font-variant-numeric:tabular-nums;opacity:0;transition:opacity .4s ease .15s}
+.count-up.is-counted{opacity:1}
+
+/* ★ 桌面侧边锚点导航：区块圆点 + 当前高亮 */
+.side-nav{position:fixed;top:50%;right:22px;transform:translateY(-50%);z-index:95;
+  display:flex;flex-direction:column;gap:14px;opacity:0;pointer-events:none;transition:opacity .4s ease}
+.side-nav.is-ready{opacity:1;pointer-events:auto}
+.side-nav a{width:9px;height:9px;border-radius:50%;background:rgba(120,120,128,.45);
+  transition:transform .25s ease,background .25s ease,box-shadow .25s ease;outline:none}
+.side-nav a:hover{transform:scale(1.4);background:rgba(120,120,128,.8)}
+.side-nav a.is-current{background:var(--accent);box-shadow:0 0 0 4px rgba(0,113,227,.18);transform:scale(1.45)}
+.side-nav a .tip{position:absolute;right:18px;top:50%;transform:translateY(-50%) translateX(6px);
+  background:#1d1d1f;color:#fff;font-size:12px;padding:4px 10px;border-radius:8px;
+  white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .25s ease,transform .25s ease}
+.side-nav a .tip::after{content:"";position:absolute;right:-5px;top:50%;transform:translateY(-50%);
+  border:5px solid transparent;border-left-color:#1d1d1f}
+.side-nav a:hover .tip,.side-nav a:focus-visible .tip{opacity:1;transform:translateY(-50%) translateX(0)}
+@media(max-width:900px){ .side-nav{display:none} }   /* 移动端隐藏，靠顶部导航 */
 </style>
 </head>
 <body>
@@ -222,7 +266,7 @@ html{transition:opacity .45s ease} html.is-leaving{opacity:0}
 <section class="hero" id="top">
   <div class="glow"></div>
   <div class="hero-center">
-    <h1 class="hero-title">你好，我是<span class="pc-space">&nbsp;</span><br class="m-br">李浩楠。</h1>
+    <h1 class="hero-title">你好，<br class="m-br">我是 李浩楠。</h1>
   </div>
 </section>
 <a href="#info" class="scroll-hint" aria-label="向下了解更多">
@@ -235,62 +279,62 @@ html{transition:opacity .45s ease} html.is-leaving{opacity:0}
 </a>
 
 <!-- ========== 第二页：基本信息 + 自我介绍 合二为一 ========== -->
-<section class="wrap light" id="info" style="background:#fff">
+<section class="wrap light stagger" id="info" style="background:#fff">
   <div class="tag">PROFILE</div>
-  <h2>先把基本盘说清楚，<br class="m-br">比什么都重要。</h2>
-  <p class="desc">我是<strong>李浩楠</strong>，今年 19<span class="pc-space"> </span>岁，男生，现居<strong>陕西西安</strong>。就读于<strong>陕西财经职业技术学院</strong>，2025 年入学，目前<strong>大二</strong>，专业是<strong>消防救援技术</strong>。</p>
-  <p class="desc">我喜欢<strong>摄影、跑步、羽毛球</strong>，目前正在<strong>备考专升本</strong>。手里已有<strong>四级电工证、C1 驾驶证、红十字救护培训证书</strong>，累计<strong>荣誉证书 10<span class="pc-space"> </span>余项</strong>。</p>
+  <h2 class="stagger-item">先把基本盘说清楚，<br class="m-br">比什么都重要。</h2>
+  <p class="desc stagger-item">我是<strong>李浩楠</strong>，今年 <span class="count-up" data-target="19">19</span><span class="pc-space"> </span>岁，男生，现居<strong>陕西西安</strong>。就读于<strong>陕西财经职业技术学院</strong>，<span class="count-up" data-target="2025" data-suffix=" 年">2025 年</span>入学，目前<strong>大二</strong>，专业是<strong>消防救援技术</strong>。</p>
+  <p class="desc stagger-item">我喜欢<strong>摄影、跑步、羽毛球</strong>，目前正在<strong>备考专升本</strong>。手里已有<strong>四级电工证、C1 驾驶证、红十字救护培训证书</strong>，累计<strong>荣誉证书 <span class="count-up" data-target="10">10</span><span class="pc-space"> </span>余项</strong>。</p>
   <p class="sub" style="color:var(--muted);font-weight:600;margin-top:8px">一表看懂。</p>
   <div class="spec">
     <div class="grid-2">
       <!-- 左列 -->
       <div>
-        <div class="row"><span class="k">姓名</span><span class="v red">李浩楠</span></div>
-        <div class="row"><span class="k">性别</span><span class="v">男</span></div>
-        <div class="row"><span class="k">年龄</span><span class="v red">19<span class="pc-space"> </span>岁</span></div>
-        <div class="row"><span class="k">现居</span><span class="v">陕西西安</span></div>
-        <div class="row"><span class="k">入学</span><span class="v">2025<span class="pc-space"> </span>年</span></div>
-        <div class="row"><span class="k">年级</span><span class="v">大二</span></div>
+        <div class="row stagger-item"><span class="k">姓名</span><span class="v red">李浩楠</span></div>
+        <div class="row stagger-item"><span class="k">性别</span><span class="v">男</span></div>
+        <div class="row stagger-item"><span class="k">年龄</span><span class="v red">19<span class="pc-space"> </span>岁</span></div>
+        <div class="row stagger-item"><span class="k">现居</span><span class="v">陕西西安</span></div>
+        <div class="row stagger-item"><span class="k">入学</span><span class="v">2025<span class="pc-space"> </span>年</span></div>
+        <div class="row stagger-item"><span class="k">年级</span><span class="v">大二</span></div>
       </div>
       <!-- 右列 -->
       <div>
-        <div class="row"><span class="k">专业</span><span class="v red">消防救援技术</span></div>
-        <div class="row"><span class="k">目标</span><span class="v">备考专升本</span></div>
-        <div class="row"><span class="k">兴趣</span><span class="v">摄影 · 跑步 · 羽毛球</span></div>
-        <div class="row"><span class="k">荣誉</span><span class="v red">10<span class="pc-space"> </span>余项</span></div>
-        <div class="row"><span class="k">微信</span><span class="v">LovHoeN-07</span></div>
+        <div class="row stagger-item"><span class="k">专业</span><span class="v red">消防救援技术</span></div>
+        <div class="row stagger-item"><span class="k">目标</span><span class="v">备考专升本</span></div>
+        <div class="row stagger-item"><span class="k">兴趣</span><span class="v">摄影 · 跑步 · 羽毛球</span></div>
+        <div class="row stagger-item"><span class="k">荣誉</span><span class="v red"><span class="count-up" data-target="10">10</span><span class="pc-space"> </span>余项</span></div>
+        <div class="row stagger-item"><span class="k">微信</span><span class="v">LovHoeN-07</span></div>
       </div>
     </div>
   </div>
 </section>
 
-<section class="wrap light" id="interest">
+<section class="wrap light stagger" id="interest">
   <div class="tag">INTERESTS</div>
-  <h2>热爱，是最高效的<br class="m-br">学习。</h2>
+  <h2 class="stagger-item">热爱，是最高效的<br class="m-br">学习。</h2>
   <div class="grid cols-3">
-    <div class="card"><div class="num">01</div><h3>摄影</h3><p class="tag2">把日常留住。</p><p>用手机记录生活里容易被忽略的瞬间。</p></div>
-    <div class="card"><div class="num">02</div><h3>跑步</h3><p class="tag2">把身体练扎实。</p><p>几乎每天都跑步，既保持体能，也释放压力。</p></div>
-    <div class="card"><div class="num">03</div><h3>羽毛球</h3><p class="tag2">把节奏抢回来。</p><p>周末的固定项目，练反应和协调性。</p></div>
+    <div class="card stagger-item"><div class="num">01</div><h3 class="stagger-item">摄影</h3><p class="tag2">把日常留住。</p><p>用手机记录生活里容易被忽略的瞬间。</p></div>
+    <div class="card stagger-item"><div class="num">02</div><h3 class="stagger-item">跑步</h3><p class="tag2">把身体练扎实。</p><p>几乎每天都跑步，既保持体能，也释放压力。</p></div>
+    <div class="card stagger-item"><div class="num">03</div><h3 class="stagger-item">羽毛球</h3><p class="tag2">把节奏抢回来。</p><p>周末的固定项目，练反应和协调性。</p></div>
   </div>
 </section>
 
-<section class="wrap dark" id="certs" style="background:#0a0a0a">
+<section class="wrap dark stagger" id="certs" style="background:#0a0a0a">
   <div class="tag">CERTIFICATES</div>
-  <h2>手里拿着的，<br class="m-br">都是走过的路。</h2>
+  <h2 class="stagger-item">手里拿着的，<br class="m-br">都是走过的路。</h2>
   <div class="grid cols-4">
-    <div class="card dark-card"><div class="num">01</div><div class="level">职业资格 · 电气实操</div><h3>四级 / 中级电工证</h3><p>电气设备安装、维护与故障排查。</p></div>
-    <div class="card dark-card"><div class="num">02</div><div class="level">小型汽车驾驶资格</div><h3>C1 驾驶证</h3><p>具备小型汽车驾驶资格。</p></div>
-    <div class="card dark-card"><div class="num">03</div><div class="level">CPR · 创伤包扎</div><h3>红十字救护培训证书</h3><p>心肺复苏、创伤包扎等急救技能。</p></div>
-    <div class="card dark-card"><div class="num">04</div><div class="level">学习 · 训练 · 志愿</div><h3>荣誉证书 10<span class="pc-space"> </span>余项</h3><p>学习、训练与志愿服务中获得的荣誉。</p></div>
+    <div class="card dark-card"><div class="num">01</div><div class="level">职业资格 · 电气实操</div><h3 class="stagger-item">四级 / 中级电工证</h3><p>电气设备安装、维护与故障排查。</p></div>
+    <div class="card dark-card"><div class="num">02</div><div class="level">小型汽车驾驶资格</div><h3 class="stagger-item">C1 驾驶证</h3><p>具备小型汽车驾驶资格。</p></div>
+    <div class="card dark-card"><div class="num">03</div><div class="level">CPR · 创伤包扎</div><h3 class="stagger-item">红十字救护培训证书</h3><p>心肺复苏、创伤包扎等急救技能。</p></div>
+    <div class="card dark-card"><div class="num">04</div><div class="level">学习 · 训练 · 志愿</div><h3 class="stagger-item">荣誉证书 10<span class="pc-space"> </span>余项</h3><p>学习、训练与志愿服务中获得的荣誉。</p></div>
   </div>
 </section>
 
-<section class="wrap light" id="timeline">
+<section class="wrap light stagger" id="timeline">
   <div class="tag">JOURNEY</div>
-  <h2>每一步，<br class="m-br">都算数。</h2>
+  <h2 class="stagger-item">每一步，<br class="m-br">都算数。</h2>
   <div class="tl">
-    <div class="node"><div class="node-label">入学</div><h4>进入陕西财经职业技术学院</h4><p>选择消防救援技术专业，开启系统的应急救援学习。</p></div>
-    <div class="node"><div class="node-label">当下</div><h4>大二精进中，备考专升本</h4><p>把学历和专业都再往上推一步，一步步往前走。</p></div>
+    <div class="node stagger-item"><div class="node-label">入学</div><h4>进入陕西财经职业技术学院</h4><p>选择消防救援技术专业，开启系统的应急救援学习。</p></div>
+    <div class="node stagger-item"><div class="node-label">当下</div><h4>大二精进中，备考专升本</h4><p>把学历和专业都再往上推一步，一步步往前走。</p></div>
   </div>
 </section>
 
@@ -478,7 +522,72 @@ if(hint && heroEl){
 
 /* E. 滚动浮现动画（保留） */
 var io=new IntersectionObserver(es=>{ es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }); },{threshold:0.1});
+/* ★ 错峰动画：.stagger 容器进入视口 → 子项依次飞入 */
+var staggerIO=new IntersectionObserver(function(es){
+  es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); staggerIO.unobserve(e.target);} });
+},{threshold:0.12});
+document.querySelectorAll('.stagger').forEach(function(el){ el.classList.add('reveal'); staggerIO.observe(el); });
+
+/* ★ 数字滚动：进入视口时从 0 数到 data-target */
+function easeOutCubic(t){ return 1-Math.pow(1-t,3); }
+function runCountUp(el){
+  var target=parseInt(el.dataset.target,10)||0;
+  var finalText=el.textContent;          // 保留真实值（含后缀），如 "2025 年"
+  var suffix=el.dataset.suffix||'';
+  el.textContent='0'+suffix;             // 复位为 0，再向上滚动
+  if(target<=0){ el.textContent=finalText; return; }
+  var dur=1100, start=performance.now();
+  function step(now){
+    var p=Math.min((now-start)/dur,1); var v=Math.round(easeOutCubic(p)*target);
+    el.textContent=v+suffix;
+    if(p<1) requestAnimationFrame(step);
+    else{ el.textContent=finalText; el.classList.add('is-counted'); }  // 结束精确对齐 + 显示
+  }
+  requestAnimationFrame(step);
+}
+var countIO=new IntersectionObserver(function(es){
+  es.forEach(function(e){
+    if(e.isIntersecting && !e.target.classList.contains('is-counted')){
+      runCountUp(e.target);              // 只触发一次；刷新页面可重播
+    }
+  });
+},{threshold:0.5});
+document.querySelectorAll('.count-up').forEach(function(el){ countIO.observe(el); });
+
 document.querySelectorAll('.wrap,.hero,.ft').forEach(el=>{ el.classList.add('reveal'); io.observe(el); });
+</script>
+<script>
+/* （进度条已移除 —— 保留：侧边锚点导航 / 数字滚动 / 错峰动画 / 导航智能显隐） */
+</script>
+<nav class="side-nav" id="sideNav" aria-label="区块导航"></nav>
+<script>
+/* H. 桌面侧边锚点导航：按 section[id] 自动生成圆点，复用 currentId */
+var sideNav=document.getElementById('sideNav');
+var sideMap={
+  top:'首页', info:'基本信息', interest:'兴趣',
+  certs:'证书', timeline:'成长', contact:'联系'
+};
+if(sideNav && window.innerWidth>900){
+  var ordered=['top','info','interest','certs','timeline','contact'];
+  ordered.forEach(function(id){
+    var a=document.createElement('a');
+    a.href='#'+id; a.dataset.target=id;
+    var tip=document.createElement('span');tip.className='tip';tip.textContent=sideMap[id]||id;
+    a.title=sideMap[id]||id;              // 原生 tooltip 兜底，不依赖 CSS 气泡
+    a.appendChild(tip);
+    sideNav.appendChild(a);
+  });
+  // 复用 D 段维护的 currentId：每帧同步高亮
+  function syncSideNav(){ var cur=window.currentId||'top';
+    sideNav.querySelectorAll('a').forEach(function(a){
+      a.classList.toggle('is-current', a.dataset.target===cur);
+    });
+  }
+  setInterval(syncSideNav,120);   // currentId 由 IO 驱动，轮询成本低
+  window.addEventListener('resize', function(){ syncSideNav(); });
+  /* 显示：停留 > 600ms 后浮现，避免刚加载就满屏元素 */
+  setTimeout(function(){ sideNav.classList.add('is-ready'); },600);
+}
 </script>
 </body>
 </html>
