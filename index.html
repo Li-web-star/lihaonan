@@ -99,24 +99,54 @@
 
 <title>李浩楠 · Li Haonan</title>
 
-<!-- ===== 修复：微信 WebView 100vh 跳动问题 ===== -->
-<!-- 用 JS 精确计算视口高度写入 CSS 变量 --vh，避免 vh 单位在微信导航栏显隐时突变 -->
+<!-- ===== 修复：微信 WebView 底部导航栏显隐导致页面跳动 =====
+  根因：微信内置浏览器底部有 ← → 导航栏（截图所示），滚动到页面顶部时它自动隐藏，
+        离开顶部时又重新显示 → window.innerHeight 随之变化 → 若 --vh 跟随更新，
+        所有 calc(var(--vh) * 100) 的 section 高度瞬间变化 → 首页"向下冲/向上缩"。
+  解决思路：冻结 --vh 为【页面加载时的初始值】，此后不再响应 resize 更新。
+        · 微信导航栏显隐时 innerHeight 变了，但 --vh 不变 → section 高度稳定 → 不跳。
+        · 只在真正需要重算的时机（横竖屏切换、页面首次可见）才刷新一次。
+        · 同时锁定 html/body 高度为 100%，让页面布局基于稳定容器，不依赖视口单位。
+  关于截图中的 ← → 导航栏：这是微信客户端自带的 UI，网页 JS/CSS 无法隐藏
+        （属微信安全策略，强制保留返回/前进入口），只能让页面"不受它影响"。 -->
 <script>
 (function(){
+  var locked = false;
+
+  /* 计算并写入 --vh，仅在关键时机调用，平时冻结 */
   function setVH(){
     var vh = window.innerHeight * 0.01;
     document.documentElement.style.setProperty('--vh', vh + 'px');
   }
+
+  /* 页面加载时立即锁定一次（此时导航栏通常处于"展开"的稳定状态） */
   setVH();
-  // resize 时更新（微信导航栏显隐会触发 resize，此时平滑过渡）
-  window.addEventListener('resize', setVH, { passive: true });
-  // 横竖屏切换时延迟更新，确保拿到正确高度
-  window.addEventListener('orientationchange', function(){
-    setTimeout(setVH, 200);
-    setTimeout(setVH, 500);
-  });
-  // pageshow 时再校正一次（微信有时从后台回来高度会变）
-  window.addEventListener('pageshow', setVH, { passive: true });
+  locked = true;
+
+  /* ★ 关键：不再监听 resize 实时更新 --vh。
+     微信导航栏显隐会触发 resize，若此时更新 --vh 就会跳动。
+     改为：resize 时【不】改变 --vh，高度保持冻结。 */
+  // window.addEventListener('resize', setVH, { passive: true });  // ← 故意移除
+
+  /* 横竖屏切换是真正的尺寸变化，需要重算（加锁防止短时间内多次触发） */
+  var orientTimer = null;
+  function onOrient(){
+    clearTimeout(orientTimer);
+    orientTimer = setTimeout(function(){
+      locked = false;
+      setVH();
+      locked = true;
+    }, 300);
+  }
+  var mq = window.matchMedia && window.matchMedia('(orientation: portrait)');
+  if(mq && mq.addEventListener) mq.addEventListener('change', onOrient);
+  else if(mq && mq.addListener) mq.addListener(onOrient);
+
+  /* pageshow（含往返缓存恢复）时，若高度确实变了再更新一次 */
+  window.addEventListener('pageshow', function(){
+    setVH();
+    locked = true;
+  }, { passive: true });
 })();
 </script>
 
@@ -166,6 +196,11 @@
 
 /* ==================== 原有样式（保留） ==================== */
 *{margin:0;padding:0;box-sizing:border-box}
+/* ★ 关键修复：锁定 html/body 高度为 100%。
+   微信导航栏显隐时 window.innerHeight 会变，但只要 html/body 高度固定，
+   内部 section 的 % 高度就不变，页面就不会跳动。 */
+html, body{ width:100%; height:100%; }
+html{ overflow-x:hidden; }
 body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC","Helvetica Neue","Microsoft YaHei",sans-serif;color:#1d1d1f;background:#f5f5f7;line-height:1.6;
   /* ★ 现代滚动优化：保留用户缩放能力（无障碍要求），用 touch-action 替代已废弃的 user-scalable=no */
   -webkit-overflow-scrolling:touch;
@@ -191,11 +226,14 @@ h1,h2{font-size:clamp(32px,7vw,52px);font-weight:800;line-height:1.2;margin-bott
 .sub{font-size:clamp(16px,3.5vw,20px);color:#a1a1a6;margin-bottom:10px}
 .desc{font-size:17px;color:#444;max-width:680px;margin:0 auto 14px;line-height:1.8}
 strong{color:#e53935}
-.hero{height:calc(var(--vh, 1vh) * 85);min-height:520px;background:#0a0a0a;color:#fff;display:flex;align-items:center;justify-content:center;padding:0 20px;text-align:center;position:relative;overflow:hidden;padding-top:env(safe-area-inset-top, 0px);padding-bottom:env(safe-area-inset-bottom, 0px)}
+/* ★ hero 高度：用 100% 替代 calc(var(--vh) * 85)。
+   html/body 已锁定 height:100%，故 100% = 稳定的视口高度，不随微信导航栏显隐跳动。
+   同时保留 min-height:520px 兜底，确保小屏内容不被压缩。 */
+.hero{height:100%;min-height:520px;background:#0a0a0a;color:#fff;display:flex;align-items:center;justify-content:center;padding:0 20px;text-align:center;position:relative;overflow:hidden;padding-top:env(safe-area-inset-top, 0px);padding-bottom:env(safe-area-inset-bottom, 0px)}
 .hero-center{display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;filter:none}
 .hero-center h1{text-align:center;margin:0 auto}
 .hero-cta{margin-top:36px}
-@media(max-width:760px){ .hero{height:calc(var(--vh, 1vh) * 85);min-height:520px;max-height:none;padding-top:env(safe-area-inset-top, 0px);padding-bottom:env(safe-area-inset-bottom, 0px)} }
+@media(max-width:760px){ .hero{height:100%;min-height:520px;max-height:none;padding-top:env(safe-area-inset-top, 0px);padding-bottom:env(safe-area-inset-bottom, 0px)} }
 .glow{position:fixed;top:20%;left:50%;width:min(90vw,600px);height:min(90vw,600px);transform:translateX(-50%);border-radius:50%;background:radial-gradient(circle,rgba(229,57,53,.3),transparent 65%);z-index:-1}
 /* ★ 旧的 .row / 通用 .spec 基础样式已废弃，布局统一由下方 ".spec .row-line" 规则控制 */
 .red{color:#e53935}
@@ -332,7 +370,7 @@ a{color:#e53935;text-decoration:none} a:hover{color:#f05a5e}
   overflow:hidden;
   text-overflow:ellipsis;
 }
-#info     { background:#ffffff; color:#1d1d1f; min-height:calc(var(--vh, 1vh) * 100); min-height:calc(var(--vh, 1vh) * 100); display:flex; flex-direction:column; justify-content:center; align-items:center; width:100%; }
+#info     { background:#ffffff; color:#1d1d1f; min-height:100%; display:flex; flex-direction:column; justify-content:center; align-items:center; width:100%; }
 #interest { background:#0a0a0a; color:#ffffff }
 #certs    { background:#ffffff; color:#1d1d1f }
 #timeline { background:#0a0a0a; color:#ffffff }
@@ -475,13 +513,13 @@ a.cta.cta-text:focus-visible{ outline:none; box-shadow:0 0 0 4px rgba(229,57,53,
 /* ==================== 视觉丰富化 ==================== */
 
 #interest,#certs,#timeline,#contact{
-  min-height:calc(var(--vh, 1vh) * 100);min-height:calc(var(--vh, 1vh) * 100);
+  min-height:100%;
   display:flex;flex-direction:column;justify-content:center;align-items:center;
   width:100%;
 }
-#info{ min-height:calc(var(--vh, 1vh) * 100);min-height:calc(var(--vh, 1vh) * 100); display:flex; flex-direction:column; justify-content:center; align-items:center; }
-.wrap{min-height:calc(var(--vh, 1vh) * 85);min-height:calc(var(--vh, 1vh) * 85);display:flex;flex-direction:column;justify-content:center}
-.contact{min-height:calc(var(--vh, 1vh) * 100);min-height:calc(var(--vh, 1vh) * 100)}
+#info{ min-height:100%; display:flex; flex-direction:column; justify-content:center; align-items:center; }
+.wrap{min-height:100%;display:flex;flex-direction:column;justify-content:center}
+.contact{min-height:100%}
 
 @media(min-width:901px){
 }
@@ -746,8 +784,7 @@ a.cta.cta-text:focus-visible{ outline:none; box-shadow:0 0 0 4px rgba(229,57,53,
 }
 
 #info, #interest, #certs, #timeline {
-  min-height: calc(var(--vh, 1vh) * 100);
-  min-height: calc(var(--vh, 1vh) * 100);
+  min-height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -1141,13 +1178,11 @@ h1,h2{ margin-bottom:20px; }             /* 大标题下间距 */
 }
 
 /* ---------- ⑩ iOS 输入框 / 动态视口适配 ---------- */
+/* ★ 故意不用 100dvh / 100svh：微信导航栏显隐时 dvh 会实时变化 → 跳动。
+   改用上面定义的 min-height:100%（基于锁定了 height:100% 的 html/body），
+   高度恒定不跳动。此 @supports 块保留为空，仅作为历史标记。 */
 @supports (height: 100dvh){
-  .hero, #info, #interest, #certs, #timeline, #contact, .wrap{
-    /* ★ 现代浏览器（Safari 15.4+, Chrome 108+）优先用 100dvh（动态视口），
-       但因为我们已用 JS --vh 变量兜底，此处不再叠加 min-height，
-       避免 100dvh 与 calc(var(--vh)*100) 冲突导致双重高度 */
-    min-height:100dvh;
-  }
+  /* 不再覆盖 min-height，沿用 100% 稳定高度 */
 }
 /* iOS 键盘弹起时避免布局跳动：固定定位不依赖 bottom:0 */
 html{ -webkit-text-size-adjust:100%; text-size-adjust:100%; }
