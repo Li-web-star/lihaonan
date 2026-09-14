@@ -70,7 +70,7 @@
 <link rel="mask-icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23d8232a" d="M12 2a10 10 0 100 20 10 10 0 000-20zm0 4a6 6 0 016 6 6 6 0 01-6 6 6 6 0 01-6-6 6 6 0 016-6z"/></svg>' color="#d8232a">
 
 <!-- ============ PWA Manifest（内联，无需外部文件） ============ -->
-<link rel="manifest" href="manifest.json">
+<link rel="manifest" href="data:application/manifest+json;base64,ewogICJuYW1lIjogIuadjua1qealoCDCtyBMaSBIYW9uYW4iLAogICJzaG9ydF9uYW1lIjogIuadjua1qealoCIsCiAgInN0YXJ0X3VybCI6ICIuLyIsCiAgInNjb3BlIjogIi4vIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAib3JpZW50YXRpb24iOiAicG9ydHJhaXQiLAogICJiYWNrZ3JvdW5kX2NvbG9yIjogIiMwYTBhMGEiLAogICJ0aGVtZV9jb2xvciI6ICIjMGEwYTBhIiwKICAiaWNvbnMiOiBbXQp9">
 <meta name="msapplication-TileColor" content="#0a0a0a">
 <meta name="msapplication-config" content="none">
 
@@ -171,11 +171,11 @@ h1,h2{font-size:clamp(32px,7vw,52px);font-weight:800;line-height:1.2;margin-bott
 .sub{font-size:clamp(16px,3.5vw,20px);color:#a1a1a6;margin-bottom:10px}
 .desc{font-size:17px;color:#444;max-width:680px;margin:0 auto 14px;line-height:1.8}
 strong{color:#e53935}
-.hero{height:100vh;height:100svh;min-height:520px;background:#0a0a0a;color:#fff;display:flex;align-items:center;justify-content:center;padding:0 20px;text-align:center;position:relative;overflow:hidden;padding-top:calc(env(safe-area-inset-top) + 56px);padding-bottom:calc(env(safe-area-inset-bottom) + 40px)}
+.hero{height:85vh;height:85svh;min-height:520px;background:#0a0a0a;color:#fff;display:flex;align-items:center;justify-content:center;padding:0 20px;text-align:center;position:relative;overflow:hidden;padding-top:calc(env(safe-area-inset-top) + 56px);padding-bottom:calc(env(safe-area-inset-bottom) + 40px)}
 .hero-center{display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;filter:none}
 .hero-center h1{text-align:center;margin:0 auto}
 .hero-cta{margin-top:36px}
-@media(max-width:760px){ .hero{height:100vh;height:100svh;min-height:520px} }
+@media(max-width:760px){ .hero{height:85vh;height:85svh;min-height:420px;max-height:85vh} }
 .glow{position:fixed;top:20%;left:50%;width:min(90vw,600px);height:min(90vw,600px);transform:translateX(-50%);border-radius:50%;background:radial-gradient(circle,rgba(229,57,53,.3),transparent 65%);z-index:-1}
 /* ★ 旧的 .row / 通用 .spec 基础样式已废弃，布局统一由下方 ".spec .row-line" 规则控制 */
 .red{color:#e53935}
@@ -328,29 +328,14 @@ a{color:#e53935;text-decoration:none} a:hover{color:#f05a5e}
 .hero-center{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;gap:0}
 .hero-title{font-size:clamp(34px,8vw,60px);margin:0}
 .hero-title .m-br{display:none}
-/* ★ scroll-hint 现在在 .hero 内部，用 absolute 定位，随首页一起滚动消失 */
-.scroll-hint{
-  position:absolute;left:50%;bottom:36px;transform:translateX(-50%);z-index:90;
-  display:inline-flex;flex-direction:column;align-items:center;gap:8px;
-  color:rgba(255,255,255,.82);font-size:14px;letter-spacing:.06em;
-  text-decoration:none;
-  /* ★ 放慢到 1.4s，按下"了解我"时柔和过渡，不再瞬间跳变 */
-  transition:opacity 1.4s ease,transform 1.4s ease,color 1.4s ease;
-  opacity:1;
-}
-.scroll-hint.is-off{opacity:0;pointer-events:none}
-.scroll-hint__arrow{animation:hintBob 4.2s cubic-bezier(.4,0,.4,1) infinite;transition:transform 1.4s cubic-bezier(.22,.71,.22,1)}
 @keyframes hintBob{0%,100%{transform:translateY(0);opacity:.55}50%{transform:translateY(8px);opacity:1}}
-.scroll-hint:hover{color:#fff}
 /* ★ :active 按压态：只柔和一点（缩小幅度轻 + 透明度略降），过渡放慢到 1.4s */
-.scroll-hint:active{ transform:translateX(-50%) scale(.98); opacity:.75; }
 
 @media(max-width:760px){
   .hero-title .m-br{display:inline}
   .hero-title .pc-space{display:none}
   .pc-space{display:inline}
   .hero-title{font-size:clamp(40px,13vw,60px);line-height:1.18}
-  .scroll-hint__text{font-size:12px}
   nav .nav-in{height:calc(46px + env(safe-area-inset-top))}
   nav .links{gap:14px}
   nav .links a{font-size:12px}
@@ -482,17 +467,11 @@ a.cta.cta-text:focus-visible{ outline:none; box-shadow:0 0 0 4px rgba(229,57,53,
   width:100%;
 }
 #info{ min-height:100vh;min-height:100svh; display:flex; flex-direction:column; justify-content:center; align-items:center; }
-.wrap{min-height:100vh;min-height:100svh;display:flex;flex-direction:column;justify-content:center}
+.wrap{min-height:85vh;min-height:85svh;display:flex;flex-direction:column;justify-content:center}
 .contact{min-height:100vh;min-height:100svh}
 
 @media(min-width:901px){
-  body{cursor:none}
-  .cursor{position:fixed;top:0;left:0;width:12px;height:12px;border-radius:50%;
-    background:rgba(229,57,53,.9);pointer-events:none;z-index:9999;
-    transform:translate(-50%,-50%);transition:width .25s ease,height .25s ease,background .25s ease,mix-blend-mode 0s;mix-blend-mode:difference}
-  .cursor.is-hover{width:40px;height:40px;background:rgba(255,255,255,.9)}
 }
-@media(max-width:900px){ .cursor{display:none} }
 
 /* ★ 统一为「默认可见 + 播放增强」策略：起始态透明，.in 后按节奏浮现
    —— 解决原 .stagger{opacity:1} 与 .reveal(透明) 两套规则打架导致动画不可见的问题 */
@@ -1045,8 +1024,6 @@ h1,h2{ margin-bottom:20px; }             /* 大标题下间距 */
   .wrap{ padding:88px 16px; }
   .hero-title{ font-size:clamp(32px,11vw,44px); line-height:1.22; }
   .hero-title .ch{ transform:translateY(8px); }
-  .scroll-hint{ bottom:26px; }
-  .scroll-hint__text{ font-size:12px; }
   .spec .row-line{ padding:15px 12px; gap:14px; }
   .spec .k{ flex:0 0 56px; font-size:11px; letter-spacing:.04em; }
   .spec .v{ font-size:15px; }
@@ -1118,10 +1095,9 @@ h1,h2{ margin-bottom:20px; }             /* 大标题下间距 */
 
 /* ---------- ⑦ 横屏优化（手机横放 / 平板横放） ---------- */
 @media (orientation: landscape) and (max-height: 500px){
-  .hero{ min-height:100vh; padding-top:calc(env(safe-area-inset-top) + 24px); padding-bottom:24px; }
+  .hero{ max-height:85vh; min-height:420px; padding-top:calc(env(safe-area-inset-top) + 24px); padding-bottom:24px; }
   .wrap{ min-height:auto; padding-top:80px; padding-bottom:80px; justify-content:flex-start; }
   .hero-title{ font-size:clamp(28px,6vh,44px); }
-  .scroll-hint{ bottom:16px; }
   .grid.cols-3{ grid-template-columns:repeat(3,1fr); }
   /* 横屏高度有限，压缩区块纵向间距 */
   .spec{ margin-top:24px; }
@@ -1131,7 +1107,6 @@ h1,h2{ margin-bottom:20px; }             /* 大标题下间距 */
 @supports (padding: env(safe-area-inset-top)){
   .hero{ padding-top:calc(env(safe-area-inset-top) + 56px); padding-bottom:calc(env(safe-area-inset-bottom) + 40px); }
   .wrap{ padding-left:calc(20px + env(safe-area-inset-left)); padding-right:calc(20px + env(safe-area-inset-right)); }
-  .scroll-hint{ bottom:calc(36px + env(safe-area-inset-bottom)); }
 }
 @media (max-width:480px){
   @supports (padding: env(safe-area-inset-left)){
@@ -1165,8 +1140,6 @@ body{ -webkit-tap-highlight-color:rgba(0,0,0,.08); -webkit-touch-callout:none; }
 </style>
 </head>
 <body>
-<div class="cursor" aria-hidden="true"></div>
-
 <div class="spill-top" aria-hidden="true"></div>
 
 <section class="hero" id="top" data-theme="dark">
@@ -1176,13 +1149,7 @@ body{ -webkit-tap-highlight-color:rgba(0,0,0,.08); -webkit-touch-callout:none; }
       <span class="hero-text"></span>
     </h1>
   </div>
-  <a href="#info" class="scroll-hint" aria-label="了解我">
-    <span class="scroll-hint__text">了解我</span>
-    <svg class="scroll-hint__arrow" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <line x1="12" y1="5" x2="12" y2="19"></line>
-      <polyline class="arrow-down" points="6 13 12 19 18 13"></polyline>
-    </svg>
-  </a>
+
 </section>
 
 <section class="wrap light stagger" id="info" data-theme="light" style="background:#fff">
@@ -1482,23 +1449,6 @@ document.querySelectorAll('a.vt-link').forEach(a=>{
   });
 })();
 
-/* F. 「了解我」箭头 —— 仅在首页内，随滚动自然淡出 */
-var hint=document.querySelector('.scroll-hint');
-var heroEl=document.getElementById('top');
-if(hint && heroEl && window.addEventListener){
-  var hintText=hint.querySelector('.scroll-hint__text');
-  function updateHint(){
-    var heroHeight=heroEl.offsetHeight;
-    var scrollY=window.scrollY;
-    var progress=Math.min(scrollY / (heroHeight * 0.6), 1);
-    hint.style.opacity=1 - progress;
-    if(progress >= 1){ hint.classList.add('is-off'); }
-    else{ hint.classList.remove('is-off'); }
-  }
-  window.addEventListener('scroll', updateHint, {passive:true});
-  window.addEventListener('resize', updateHint);
-  updateHint();
-}
 
 /* E. 滚动浮现动画 */
 var io=new IntersectionObserver(es=>{ es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }); },{threshold:0.1});
@@ -2044,14 +1994,7 @@ document.querySelectorAll('.wrap,.hero,.ft').forEach(el=>{ el.classList.add('rev
   /* 主题随当前区块切换（当前区块由侧边进度线的 IntersectionObserver 维护，见 B2） */
   window.addEventListener('theme:change', function(e){ applyTheme(e.detail); });
 
-  /* ★ 已移除自定义光标（原 rAF 循环每帧读写 transform，是持续掉帧主因之一）。
-     改用系统原生光标 + CSS :hover 态，视觉一致、零运行时开销。
-     保留 .cursor 元素样式定义无妨（移动端已 display:none），桌面端不再实例化。 */
-  var cursor=document.querySelector('.cursor');
-  if(cursor && window.matchMedia && window.matchMedia('(min-width:901px)').matches){
-    /* 仅做「悬停态」切换，用事件驱动，不再每帧循环 */
-    cursor.style.display='none';
-  }
+
 
   /* ★ Hero 随滚动平滑淡出 + 轻微上移
      —— 用 CSS transition + 阈值判定，避免「JS 每帧写内联 opacity」与
@@ -2065,6 +2008,15 @@ document.querySelectorAll('.wrap,.hero,.ft').forEach(el=>{ el.classList.add('rev
   if(window.matchMedia && window.matchMedia('(display-mode: standalone)').matches){
     document.documentElement.classList.add('standalone');
   }
+/* ★ iOS 添加到主屏幕后确保从首页开始 */
+if (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) {
+  // 从主屏幕启动时，始终滚动到顶部（首页）
+  window.scrollTo(0, 0);
+  // 如果有 hash 路由，清除它
+  if (window.location.hash) {
+    window.history.replaceState(null, '', window.location.pathname + window.location.search);
+  }
+}
 })();
 </script>
 <script>
