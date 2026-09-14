@@ -60,11 +60,6 @@ strong{color:#e53935}
 .card p{color:#666;font-size:14px;line-height:1.6}
 .card.dark-card p,.card.dark-card .level{color:#aaa}
 .level{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#999;margin-bottom:8px}
-.tl{display:grid;grid-template-columns:repeat(2,1fr);gap:32px;margin-top:44px;text-align:left}
-.node{padding-left:24px;border-left:3px solid #e53935}
-.node-label{color:#e53935;font-weight:800;font-size:13px;letter-spacing:1px;margin-bottom:8px}
-.node h4{font-size:19px;margin-bottom:8px}
-.node p{color:#666;font-size:15px}
 .contact{min-height:440px;display:flex;align-items:center;justify-content:center}
 a.cta{color:#e53935;font-size:18px;border-bottom:1px solid #e53935;padding-bottom:2px}
 footer{background:#000;color:#aaa;padding:40px 20px 30px;font-size:13px}
@@ -78,8 +73,6 @@ footer{background:#000;color:#aaa;padding:40px 20px 30px;font-size:13px}
   .wrap{padding:60px 18px}
   .links a{margin-left:0;margin-right:16px}
   .grid.cols-3,.grid.cols-4{grid-template-columns:1fr}
-  .tl{grid-template-columns:1fr}
-  .node{padding-left:18px}
   .row{font-size:15px;padding:18px 2px}
   .card{padding:22px 18px}
   .ft{grid-template-columns:1fr;gap:22px}
@@ -128,14 +121,19 @@ h1.title-center,h2.title-center{display:inline-block}
 .dark .card p,.dark .card .level{color:#aaa}
 .card.dark-card{background:#1c1c1e;color:#fff;border:1px solid #333}
 .card.dark-card p,.card.dark-card .level{color:#aaa}
-/* ★ CTA「写信给我」：纯文字 + 一根下划线 + 箭头，跟随区块明暗，hover 仅位移与透明 */
-a.cta.cta-text{display:inline-flex;align-items:center;gap:8px;background:transparent;color:inherit !important;
-  padding:6px 0;border:none;border-bottom:1px solid currentColor;border-radius:0;
-  font-size:19px;font-weight:500;letter-spacing:.01em;cursor:pointer;
-  transition:opacity .35s ease,gap .35s ease;text-decoration:none}
-a.cta.cta-text .arrow{display:inline-block;transition:transform .35s ease}
-a.cta.cta-text:hover{opacity:.62}
-a.cta.cta-text:hover .arrow{transform:translateX(6px)}
+/* ★ CTA「写信给我」：精致胶囊按钮（描边 + 圆角 + 箭头微动，hover 填充主题红）
+   —— 跟随所在区块明暗：浅色底=深色描边，深色底=浅色描边，hover 均填充主题红 */
+a.cta.cta-text{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  background:transparent;color:inherit !important;
+  padding:15px 34px;border:1.5px solid currentColor;border-radius:999px;
+  font-size:17px;font-weight:500;letter-spacing:.02em;cursor:pointer;
+  transition:background-color .4s ease,color .4s ease,border-color .4s ease,transform .4s ease,gap .4s ease;
+  text-decoration:none;
+}
+a.cta.cta-text .arrow{display:inline-flex;align-items:center;justify-content:center;transition:transform .4s ease}
+a.cta.cta-text:hover{background-color:var(--accent);border-color:var(--accent);color:#fff !important;gap:14px}
+a.cta.cta-text:hover .arrow{transform:translateX(5px)}
 a{color:#e53935;text-decoration:none} a:hover{color:#f05a5e}
 
 /* ★ 导航链接：紧凑靠右，去掉系统默认蓝，颜色跟随区块，当前停留项高亮 */
@@ -169,22 +167,19 @@ nav .links a:active{opacity:.55}
 
 /* ★规格表：上中下三行，每行两条（标签右对齐 / 值左对齐，一根下划线贯穿整行，纯文字，绝不换行）
    布局：上=姓名·年龄 / 中=学校·专业 / 下=年级·目标 */
-.spec{max-width:760px;margin-left:auto;margin-right:auto;width:100%}       /* 居中收窄，行长大=更易读 */
+.spec{max-width:560px;margin-left:auto;margin-right:auto;width:100%}       /* 居中收窄：单列 6 行，简洁高级 */
 .spec .row-line{
-  display:flex;align-items:baseline;
-  gap:48px;padding:30px 8px;                                    /* 行高统一，表格页放大 */
+  display:flex;align-items:baseline;justify-content:space-between;
+  gap:32px;padding:26px 4px;                                    /* 行高统一，撑满整屏 */
   border-bottom:1px solid var(--line);
 }
 .spec .row-line:first-child{border-top:1px solid var(--line)}
-.spec .cell{flex:1;display:flex;align-items:baseline;gap:20px;min-width:0}   /* ★ 每行左右两格，等宽 */
-.spec .k{flex:0 0 auto;width:96px;color:var(--muted);font-size:15px;text-align:right;padding-top:1px;letter-spacing:.02em;white-space:nowrap}
-.spec .v{flex:1;font-size:19px;font-weight:600;color:var(--text);text-align:left;white-space:nowrap}   /* ★ nowrap：绝不换到第二行 */
-.spec .red{color:var(--text)}
+.spec .k{flex:0 0 auto;color:var(--muted);font-size:15px;text-align:right;padding-top:1px;letter-spacing:.02em;white-space:nowrap}
+.spec .v{flex:0 0 auto;font-size:19px;font-weight:600;color:var(--text);text-align:left;white-space:nowrap}   /* ★ nowrap：绝不换到第二行 */
 @media(max-width:600px){
   .spec{max-width:100%}
-  .spec .row-line{gap:24px;padding:24px 4px}
-  .spec .cell{gap:14px}
-  .spec .k{width:72px;font-size:14px}
+  .spec .row-line{gap:20px;padding:22px 2px}
+  .spec .k{font-size:14px}
   .spec .v{font-size:16px}
 }
 
@@ -305,35 +300,152 @@ html{transition:opacity .45s ease} html.is-leaving{opacity:0}
 #interest .grid,
 #certs   .grid { width: 100%; }
 
-/* ★ 移动端标题强制单行（首页除外）：所有 h2 永不换行、字号自适应收缩 */
+/* ★ 移动端标题（首页除外）：独立短文案，强制单行
+   —— 桌面显示 .d、手机显示 .m，两套文案互不干扰，绝不以旧文案拆行 */
+.t{font-size:clamp(30px,6.4vw,48px)}
+/* 默认（桌面）：显示长文案，隐藏手机文案 */
+.t .m{display:none}
+/* 手机端：隐藏长文案，显示短文案，强制一行 */
 @media (max-width: 760px) {
-  .single-line {
-    white-space: nowrap !important;
-    overflow: visible;
-    font-size: clamp(26px, 8.4vw, 40px);
-    letter-spacing: -0.01em;
+  .t .d{display:none}
+  .t .m{
+    display:inline;
+    white-space:nowrap !important;      /* 锁1：禁止换行 */
+    word-break:keep-all !important;     /* 锁2：禁止断字 */
+    overflow:hidden;                    /* 锁3：极端窄屏不折行（保一行）*/
+    font-size:clamp(28px,9vw,42px);
+    letter-spacing:-0.01em;
   }
 }
 
-/* 成长时间线：三栏并排，居中可用空间 */
-#timeline .tl { width: 100%; max-width: 1040px; margin: 0 auto; grid-template-columns: repeat(3, 1fr); gap: 28px; }
-#timeline .node { padding-left: 20px; }
-#timeline .node-label { white-space: nowrap; }
-#timeline .node h4 { font-size: 17px; line-height: 1.35; }
-#timeline .node p { font-size: 14px; line-height: 1.55; }
+/* ==================== 成长页：竖向时间轴 + 动画 ==================== */
+.journey{
+  position:relative;
+  width:100%;
+  max-width:860px;
+  margin:48px auto 0;
+  padding:8px 0 64px;            /* ★ 底部留白，让页面「往下延伸一点点」*/
+}
+/* ★ 中轴线（从上往下生长） */
+.journey__line{
+  position:absolute;
+  top:14px; bottom:14px;
+  left:19px;                         /* 与桌面圆点圆心对齐 */
+  width:2px;
+  background:linear-gradient(to bottom, rgba(229,57,53,.55), rgba(229,57,53,.12));
+  transform:scaleY(0);
+  transform-origin:top center;
+  transition:transform 1.1s cubic-bezier(.2,.8,.2,1);
+}
+.journey.in .journey__line{ transform:scaleY(1); }
 
-/* ★ 手机堆叠：三栏变单列，每栏独立成块，左对齐、竖线统一、等高卡片保证整齐 */
-@media (max-width: 760px) {
-  #timeline .tl {
-    grid-template-columns: 1fr;
-    gap: 18px;
-    max-width: 480px;
+/* ★ 节点：默认在轴线右侧（整齐平淡，全部同侧） */
+.node{
+  position:relative;
+  display:flex;
+  align-items:flex-start;
+  gap:28px;
+  padding:18px 0 18px 60px;           /* 圆点右侧留文字空间 */
+  opacity:0;
+  transform:translateY(36px);
+  transition:opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1);
+}
+.journey.in .node{ opacity:1; transform:none; }
+/* ★ 依次延迟浮现（入学→当下→未来，节奏感） */
+.journey.in .node[data-node="0"]{ transition-delay:.15s }
+.journey.in .node[data-node="1"]{ transition-delay:.40s }
+.journey.in .node[data-node="2"]{ transition-delay:.65s }
+
+/* ★ 圆点（圆心落在中轴线上） */
+.node__dot{
+  position:absolute;
+  top:26px; left:12px;                /* 圆心 = left + radius = 12 + 8 = 20 ≈ 轴线 19 */
+  width:16px; height:16px;
+  border-radius:50%;
+  background:var(--accent);
+  box-shadow:0 0 0 4px rgba(229,57,53,.14);
+  flex:0 0 auto;
+}
+/* ★ 当下节点：持续脉冲（表示"进行中"） */
+.node--current .node__dot{
+  animation:pulseDot 2.2s ease-in-out infinite;
+}
+@keyframes pulseDot{
+  0%,100%{ box-shadow:0 0 0 4px rgba(229,57,53,.18); }
+  50%   { box-shadow:0 0 0 13px rgba(229,57,53,0);  }
+}
+
+/* ★ 节点内容：标签 + 主句 + 副句，三线对齐 */
+.node__content{ flex:1; text-align:left; }
+.node__content .node-label{
+  display:inline-block;
+  color:#e53935;
+  font-weight:800;
+  font-size:13px;
+  letter-spacing:2px;
+  margin-bottom:6px;
+  text-transform:uppercase;
+}
+.node__content h4{
+  font-size:clamp(18px,2.6vw,21px);
+  font-weight:700;
+  line-height:1.4;
+  margin-bottom:6px;
+  color:#fff;
+}
+.node__content p{
+  font-size:15px;
+  line-height:1.65;
+  color:#a1a1a6;
+  max-width:520px;
+}
+
+/* ★ 桌面：左右交错（入学左/当下右/未来左），仍保持中轴线整齐 */
+@media (min-width:761px){
+  .journey{ max-width:920px; }
+  .journey__line{ left:50%; margin-left:-1px; }
+  .node{
+    width:50%;
+    padding:22px 0;
   }
-  #timeline .node {
-    padding: 4px 0 4px 20px;
-    border-left: 3px solid #e53935;
-    text-align: left;
+  /* 奇数（入学、未来）：块在左，文字右对齐靠轴线 */
+  .node[data-node="0"],
+  .node[data-node="2"]{
+    margin-right:auto;
+    padding-right:48px;
+    padding-left:0;
+    justify-content:flex-end;
   }
+  .node[data-node="0"] .node__content,
+  .node[data-node="2"] .node__content{ text-align:right; }
+  .node[data-node="0"] .node__content p,
+  .node[data-node="2"] .node__content p{ margin-left:auto; }
+  /* 偶数（当下）：块在右，文字左对齐 */
+  .node[data-node="1"]{
+    margin-left:auto;
+    padding-left:48px;
+    padding-right:0;
+  }
+  /* 圆点全部回到中轴线（轴线 left:50%，圆点半径 8px）
+     左块：右缘贴轴线 → 圆点 right:-8px，圆心落在轴线上
+     右块：左缘贴轴线 → 圆点 left:-8px，圆心落在轴线上 */
+  .node .node__dot{ left:auto; top:30px; }
+  .node[data-node="0"] .node__dot,
+  .node[data-node="2"] .node__dot{ right:-8px; }
+  .node[data-node="1"] .node__dot{ left:-8px; }
+}
+
+/* ★ 手机：单列堆叠，全部靠右、左对齐，中轴线统一在左侧 —— 整齐 */
+@media (max-width:760px){
+  .journey{ max-width:480px; margin-top:36px; padding-left:4px; }
+  .journey__line{ left:7px; }
+  .node{
+    gap:18px;
+    padding:14px 0 14px 38px;
+  }
+  .node__dot{ left:1px; top:24px; width:14px; height:14px; }   /* 圆心 = 1+7 = 8px = 轴线中心 */
+  .node__content h4{ font-size:17px; }
+  .node__content p{ font-size:14px; }
 }
 
 /* 区块本身确保满屏（兜底，覆盖原有规则） */
@@ -344,8 +456,23 @@ html{transition:opacity .45s ease} html.is-leaving{opacity:0}
   flex-direction: column;
   justify-content: center;   /* 内容少则垂直居中，满屏且高级 */
   align-items: center;
-  padding: 100px 20px;
+  padding: 100px 20px 140px;             /* ★ 底部多留 40px，让「未来」节点后有向下延伸的余韵 */
   box-sizing: border-box;
+}
+
+/* ★ 联系页副标题：手机端强制单行，绝不折两行 */
+.contact-sub{
+  white-space:nowrap;
+  overflow:hidden;
+  max-width:100%;
+}
+@media (max-width:760px){
+  .contact-sub{
+    font-size:clamp(14px,4.6vw,17px);
+    white-space:nowrap !important;
+    word-break:keep-all !important;
+    overflow:hidden;
+  }
 }
 
 /* 桌面：内容真正居中且铺满可用空间（配合 .wrap max-width:1120） */
@@ -393,28 +520,22 @@ html{transition:opacity .45s ease} html.is-leaving{opacity:0}
 <!-- ========== 第二页：基本信息 + 自我介绍 合二为一 ========== -->
 <section class="wrap light stagger" id="info" style="background:#fff">
   <div class="tag">PROFILE</div>
-  <h2 class="stagger-item single-line">一个人一张表</h2>
+  <h2 class="stagger-item t"><span class="d">一个人，一张表。</span><span class="m">一张表，就够了</span></h2>
   <div class="spec">
-    <!-- ★ 上中下三行，每行两条：左=标签(右对齐) 右=值(左对齐)，一行一根下划线，纯文字，绝不换行
-         布局：上=姓名·年龄 / 中=学校·专业 / 下=年级·目标 -->
-    <div class="row-line stagger-item">
-      <div class="cell"><span class="k">姓名</span><span class="v">李浩楠</span></div>
-      <div class="cell"><span class="k">年龄</span><span class="v">19 岁</span></div>
-    </div>
-    <div class="row-line stagger-item">
-      <div class="cell"><span class="k">学校</span><span class="v">陕西财经职业技术学院</span></div>
-      <div class="cell"><span class="k">专业</span><span class="v">消防救援技术</span></div>
-    </div>
-    <div class="row-line stagger-item">
-      <div class="cell"><span class="k">年级</span><span class="v">大二</span></div>
-      <div class="cell"><span class="k">目标</span><span class="v">备考专升本</span></div>
-    </div>
+    <!-- ★ 一行只写一条：每行 = 标签(右对齐) + 值(左对齐)，整行一根下划线贯穿，纯文字，绝不换行
+         顺序：姓名 → 年龄 → 学校 → 专业 → 年级 → 目标 -->
+    <div class="row-line stagger-item"><span class="k">姓名</span><span class="v">李浩楠</span></div>
+    <div class="row-line stagger-item"><span class="k">年龄</span><span class="v">19 岁</span></div>
+    <div class="row-line stagger-item"><span class="k">学校</span><span class="v">陕西财经职业技术学院</span></div>
+    <div class="row-line stagger-item"><span class="k">专业</span><span class="v">消防救援技术</span></div>
+    <div class="row-line stagger-item"><span class="k">年级</span><span class="v">大二</span></div>
+    <div class="row-line stagger-item"><span class="k">目标</span><span class="v">备考专升本</span></div>
   </div>
 </section>
 
 <section class="wrap dark stagger" id="interest">
   <div class="tag">INTERESTS</div>
-  <h2 class="stagger-item single-line">热爱不必声张</h2>
+  <h2 class="stagger-item t"><span class="d">热爱，不必声张。</span><span class="m">喜欢，不必解释</span></h2>
   <div class="grid cols-3">
     <div class="card stagger-item"><div class="num">01</div><h3 class="stagger-item">摄影</h3><p class="tag2">把日常留住。</p><p>用手机记录生活里容易被忽略的瞬间。</p></div>
     <div class="card stagger-item"><div class="num">02</div><h3 class="stagger-item">跑步</h3><p class="tag2">把身体练扎实。</p><p>几乎每天都跑步，既保持体能，也释放压力。</p></div>
@@ -424,7 +545,7 @@ html{transition:opacity .45s ease} html.is-leaving{opacity:0}
 
 <section class="wrap stagger" id="certs">
   <div class="tag">CERTIFICATES</div>
-  <h2 class="stagger-item single-line">岁月皆有回响</h2>
+  <h2 class="stagger-item t"><span class="d">岁月，皆有回响。</span><span class="m">每一份，都有回响</span></h2>
   <div class="grid cols-4">
     <div class="card"><div class="num">01</div><div class="level">职业资格 · 电气实操</div><h3 class="stagger-item">四级 / 中级电工证</h3><p>电气设备安装、维护与故障排查。</p></div>
     <div class="card"><div class="num">02</div><div class="level">小型汽车驾驶资格</div><h3 class="stagger-item">C1 驾驶证</h3><p>具备小型汽车驾驶资格。</p></div>
@@ -435,19 +556,41 @@ html{transition:opacity .45s ease} html.is-leaving{opacity:0}
 
 <section class="wrap dark stagger" id="timeline">
   <div class="tag">JOURNEY</div>
-  <h2 class="stagger-item single-line">慢也是速度</h2>
-  <div class="tl">
-    <div class="node stagger-item"><div class="node-label">入学</div><h4>进入陕西财经职业技术学院</h4><p>选择消防救援技术专业，开启系统的应急救援学习。</p></div>
-    <div class="node stagger-item"><div class="node-label">当下</div><h4>大二精进中，备考专升本</h4><p>把学历和专业都再往上推一步，一步步往前走。</p></div>
-    <div class="node stagger-item"><div class="node-label">未来</div><h4>往上走，去更高的地方</h4><p>深耕消防救援领域，进入更高层院校继续深造。</p></div>
+  <h2 class="stagger-item t"><span class="d">慢，也是一种速度。</span><span class="m">慢慢来，比较快</span></h2>
+  <div class="journey">
+    <div class="journey__line" aria-hidden="true"></div>
+    <div class="node stagger-item" data-node="0">
+      <div class="node__dot" aria-hidden="true"></div>
+      <div class="node__content">
+        <span class="node-label">入学</span>
+        <h4>进入陕西财经职业技术学院</h4>
+        <p>选择消防救援技术专业，开启系统的应急救援学习。</p>
+      </div>
+    </div>
+    <div class="node node--current stagger-item" data-node="1">
+      <div class="node__dot" aria-hidden="true"></div>
+      <div class="node__content">
+        <span class="node-label">当下</span>
+        <h4>大二精进中，备考专升本</h4>
+        <p>把学历和专业都再往上推一步，一步步往前走。</p>
+      </div>
+    </div>
+    <div class="node stagger-item" data-node="2">
+      <div class="node__dot" aria-hidden="true"></div>
+      <div class="node__content">
+        <span class="node-label">未来</span>
+        <h4>往上走，去更高的地方</h4>
+        <p>深耕消防救援领域，进入更高层院校继续深造。</p>
+      </div>
+    </div>
   </div>
 </section>
 
 <section class="wrap contact" id="contact">
   <div>
     <div class="tag">CONTACT</div>
-    <h2 class="single-line">我在这里等你</h2>
-    <p class="sub">关于专业、专升本，或者只是想交个朋友——都欢迎。</p>
+    <h2 class="t"><span class="d">我在这里，等你。</span><span class="m">随时，都可以找我</span></h2>
+    <p class="sub contact-sub">聊专业，交朋友，都行。</p>
     <div style="margin-top:32px;display:flex;flex-direction:column;align-items:center;gap:16px">
       <a href="mailto:2878697150@qq.com" class="cta cta-text">写信给我<span class="arrow">→</span></a>
       <span style="color:#aaa;font-size:14px">微信 · LovHoeN-07</span>
@@ -632,6 +775,24 @@ var staggerIO=new IntersectionObserver(function(es){
   es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); staggerIO.unobserve(e.target);} });
 },{threshold:0.12});
 document.querySelectorAll('.stagger').forEach(function(el){ el.classList.add('reveal'); staggerIO.observe(el); });
+
+/* ★ 成长时间轴：进入视口 → 加 .in，触发连线生长 + 节点依次浮现
+   —— 双重保险：IntersectionObserver + 超时兜底，确保「往下延伸」时一定播出来 */
+var journeyEl=document.querySelector('.journey');
+function playJourney(){
+  if(journeyEl && !journeyEl.classList.contains('in')){ journeyEl.classList.add('in'); }
+}
+if(journeyEl){
+  /* 方案1：滚动到视口即触发（阈值放低到 0.05，避免「差一点不触发」）*/
+  var journeyIO=new IntersectionObserver(function(es){
+    es.forEach(function(e){ if(e.isIntersecting){ playJourney(); journeyIO.disconnect(); } });
+  },{threshold:0.05});
+  journeyIO.observe(journeyEl);
+  /* 方案2：兜底 —— 即使 IO 因高度/嵌套未触发，800ms 后也强制播放 */
+  setTimeout(playJourney, 800);
+  /* 方案3：页面加载完成再确认一次 */
+  window.addEventListener('load', function(){ setTimeout(playJourney, 200); });
+}
 
 /* ★ 数字滚动：进入视口时从 0 数到 data-target */
 function easeOutCubic(t){ return 1-Math.pow(1-t,3); }
