@@ -157,8 +157,9 @@ window.addEventListener('load', hideWechatToolbar);
 })();
 </script>
 
-<!-- ===== 微信内置浏览器 → 右上角轻提示「请用浏览器打开」=====
-  仅在右上角显示一行小字 + 箭头，不遮挡正文、不锁定滚动。
+<!-- ===== 微信内置浏览器 → 完全不展示网站内容，仅右上角提示「请用浏览器打开」=====
+  微信内打开时：正文全部隐藏，整页纯白，只在右上角保留一行提示。
+  非微信环境：#wechat-tip 保持 hidden，正文正常渲染，完全不受影响。
   检测逻辑：UA 含 MicroMessenger / wxwork，或存在微信注入的全局对象。 -->
 <script>
 (function(){
@@ -172,25 +173,29 @@ window.addEventListener('load', hideWechatToolbar);
     if (!inWechat && window.__wxjs_environment === 'miniprogram') inWechat = true;
   } catch(e) {}
 
+  /* 立即执行（此时 body 已存在，因为脚本位于 </body> 前） */
   function apply(){
     var tip = document.getElementById('wechat-tip');
     if (!tip) return;
-    /* 微信环境 → 显示右上角提示；其余情况一律隐藏 */
-    tip.hidden = !inWechat;
+    if (inWechat) {
+      /* 微信内：显示提示，隐藏全部正文内容 */
+      tip.hidden = false;
+      document.body.classList.add('wechat-blocked');
+    } else {
+      /* 非微信：隐藏提示，正文正常 */
+      tip.hidden = true;
+      document.body.classList.remove('wechat-blocked');
+    }
   }
 
-  /* DOM 就绪后再应用，避免节点尚未解析 */
-  document.addEventListener('DOMContentLoaded', apply);
+  /* DOM 就绪即应用；若此时脚本已晚于 DOMContentLoaded，也补一次 */
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', apply);
+  } else {
+    apply();
+  }
 
-  /* 用户点提示条 = 已确认，本会话内不再显示 */
-  document.addEventListener('DOMContentLoaded', function(){
-    var tip = document.getElementById('wechat-tip');
-    if (tip) {
-      tip.addEventListener('click', function(){ tip.hidden = true; });
-    }
-  });
-
-  /* 页面可见性变化时再校正一次 */
+  /* 页面重新可见时再校正一次 */
   document.addEventListener('visibilitychange', function(){
     if (document.visibilityState === 'visible') apply();
   });
@@ -211,22 +216,30 @@ window.addEventListener('load', hideWechatToolbar);
   --footroom: clamp(80px, calc(var(--vh, 1vh) * 14), 180px);
 }
 
-/* ==================== 微信内置浏览器 → 右上角轻提示「请用浏览器打开」 ==================== */
+/* ==================== 微信内置浏览器 → 完全不展示网站内容 ==================== */
 /*
-  设计要点：
-  1. 仅一行文字 + 箭头，固定在右上角，紧贴「···」菜单，不遮挡正文；
-  2. z-index 足够高，确保在页面一切元素之上；
-  3. 命中微信环境才显示，非微信环境保持 hidden，正文完全不受影响；
-  4. 不做全屏遮罩、不锁定滚动——用户可继续浏览，仅作友好提示。
+  行为：微信内打开时，正文全部隐藏，整页纯白背景，
+        只在右上角保留一行「↗ 请用浏览器打开」提示。
+  非微信环境：#wechat-tip 保持 hidden，正文正常，完全不受影响。
 */
+
+/* 遮住全部正文：所有直接子元素（section / spill-top 等）一律不可见 */
+body.wechat-blocked > *{ display:none !important; }
+
+/* 提示条本身必须可见（覆盖上面的通配隐藏） */
+body.wechat-blocked #wechat-tip{ display:inline-flex !important; }
+
+/* 整页纯白背景，避免正文隐藏后露出深色底色 */
+body.wechat-blocked{ background:#ffffff !important; }
+
+/* 提示条：右上角小胶囊 */
 .wechat-tip{ position:fixed; top:12px; right:14px; z-index:2147483647;
   display:none; align-items:center; gap:4px;
   padding:8px 13px; border-radius:20px;
   background:rgba(20,20,20,.88); color:#fff;
   font-size:13px; font-weight:600; line-height:1;
   font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
-  box-shadow:0 4px 16px rgba(0,0,0,.28); backdrop-filter:blur(6px);
-  -webkit-backdrop-filter:blur(6px);
+  box-shadow:0 4px 16px rgba(0,0,0,.18);
   animation:wechatTipIn .3s ease-out both; }
 @keyframes wechatTipIn{ from{ opacity:0; transform:translateY(-6px);} to{ opacity:1; transform:none;} }
 
