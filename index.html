@@ -124,24 +124,22 @@
   content:"";
   display:block;
   width:100%;
-  height:var(--headroom);
-  background:#0a0a0a;   /* 与首屏 hero 同色，衔接无痕 */
-  /* ★ 关键：这块是页面流的一部分，参与原生滚动，
-     因此上滑是"真滚动 + 系统橡皮筋"，手感与原生长页一致 */
+  height:0;               /* ★ 已禁用：不再产生首页上方的黑色缓冲带 */
+  background:transparent;
 }
 .spill-end{ position:relative; }
 .spill-end::after{
   content:"";
   display:block;
   width:100%;
-  height:var(--footroom);
-  background:#0a0a0a;   /* 与 footer 同色（footer 也是 #000） */
+  height:0;               /* ★ 已禁用：不再产生尾页下方的黑色缓冲带 */
+  background:transparent;
 }
 
-/* 安全区兜底：若浏览器不支持 env()（极旧安卓），用固定值保证不露白 */
+/* 安全区兜底：缓冲带已禁用，不再需要固定高度 */
 @supports not (padding: env(safe-area-inset-top)){
-  .spill-top::before{ height:80px; }
-  .spill-end::after  { height:90px; }
+  .spill-top::before{ height:0; }
+  .spill-end::after  { height:0; }
 }
 
 /* ==================== 原有样式（保留） ==================== */
@@ -1041,6 +1039,7 @@ h1,h2{ margin-bottom:20px; }             /* 大标题下间距 */
   .tag{ font-size:11px; letter-spacing:.18em; }
   /* 页脚：单列、行距充足 */
   .ft{ grid-template-columns:1fr; gap:26px; padding:60px 16px 80px; }
+  footer{ background:#000; }
   .contact .grid{ grid-template-columns:1fr; }
   .contact-card{ padding:26px 22px; }
 }
