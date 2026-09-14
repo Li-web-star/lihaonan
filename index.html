@@ -5,16 +5,24 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="李浩楠">
+<link rel="manifest" href='data:application/manifest+json,{"name":"李浩楠","start_url":"./","scope":"./","display":"standalone","background_color":"#0a0a0a"}'>
 <title>李浩楠 · Li Haonan</title>
 <style>
 /* ==================== 原有样式（保留） ==================== */
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;color:#1d1d1f;background:#f5f5f7;line-height:1.6}
 img{max-width:100%}
-nav{position:fixed;top:0;left:0;width:100%;z-index:100;background:transparent;backdrop-filter:blur(20px)}
-.nav-in{max-width:900px;margin:0 auto;height:50px;display:flex;align-items:center;justify-content:space-between;padding:0 16px}
+nav{position:fixed;top:0;left:0;width:100%;z-index:100;background:transparent;backdrop-filter:blur(20px);
+  /* ★ 智能显隐：默认 80% 可见；滚动中 .is-scrolling 变全透明；停止后恢复 */
+  transition:background-color .45s ease,opacity .45s ease;
+  background-color:rgba(0,0,0,.0);}   /* 起始全透明，由 JS 根据停留区块上色 */
+nav.is-scrolling{opacity:0}            /* 滚动中：完全透明（让出视野） */
+nav.is-visible{opacity:1}              /* 停止后：恢复（深色区块 80% / 浅色区块随 on-light） */
+.nav-in{width:100%;margin:0;height:50px;display:flex;align-items:center;justify-content:flex-end;padding:0 20px}
 .brand{color:#fff;font-size:17px;font-weight:600}
-nav.on-light .brand,nav.on-light .links a{color:#1d1d1f}
+nav.on-light .brand,nav.on-light{background-color:rgba(255,255,255,.72)}   /* 浅色区块：白底 72%（约80%通透） */
+nav.on-light .links a{color:#1d1d1f}
 nav .brand,nav .links a{transition:color .35s ease}
 /* 黑底区块上的兜底：极淡描边，保证全透明时也一定看得见 */
 nav.over-dark .brand,nav.over-dark .links a{text-shadow:0 1px 3px rgba(0,0,0,.6)}
@@ -32,6 +40,7 @@ strong{color:#e53935}
 .hero{height:100vh;min-height:520px;background:#0a0a0a;color:#fff;display:flex;align-items:center;justify-content:center;padding:0 20px;text-align:center}
 .hero-center{display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%}
 .hero-center h1{text-align:center;margin:0 auto}
+.pc-space{display:inline}               /* 电脑：显示空格 → "我是 李浩楠。" */
 .hero-cta{margin-top:36px}
 @media(max-width:760px){
   .hero-center h1{white-space:nowrap}
@@ -113,6 +122,34 @@ h1.title-center,h2.title-center{display:inline-block}
 a.cta{display:inline-block;background:var(--accent);color:#fff !important;padding:12px 30px;border-radius:999px;font-size:17px;font-weight:500;border:none;cursor:pointer;transition:background .25s ease,transform .15s ease;text-decoration:none}
 a.cta:hover{background:var(--accent-hover)} a.cta:active{transform:scale(.96)}
 a{color:var(--accent);text-decoration:none} a:hover{color:var(--accent-hover)}
+
+/* ★ 导航链接：紧凑靠右，去掉系统默认蓝，颜色跟随区块，当前停留项高亮 */
+.nav-in{justify-content:flex-end}          /* 链接组整体贴右 */
+nav .links{
+  width:auto;
+  display:flex;flex-direction:row;
+  align-items:center;justify-content:flex-end;
+  gap:22px;                                /* 项与项之间的固定间距（不再撑满整行） */
+  overflow-x:auto;white-space:nowrap;scrollbar-width:none;-webkit-overflow-scrolling:touch;
+}
+nav .links::-webkit-scrollbar{display:none}
+nav .links a{
+  flex:0 0 auto;text-align:center;
+  color:inherit;font-size:13px;font-weight:400;letter-spacing:.02em;
+  padding:4px 0;outline:none;-webkit-tap-highlight-color:transparent;
+  transition:color .35s ease,opacity .35s ease;
+}
+nav .links a:hover{opacity:.7}
+nav .links a.is-current{font-weight:600}
+nav .links a.is-current::after{content:"";display:block;width:16px;height:2px;border-radius:2px;margin:4px auto 0;background:currentColor}
+nav.on-light{background-color:rgba(255,255,255,.72)}   /* 浅色区块：白底 72%（约80%通透） */
+nav.on-light .links a{color:#1d1d1f}
+nav.on-light .links a.is-current{color:var(--accent)}
+nav.over-dark{background-color:rgba(0,0,0,.80)}       /* 深色区块：黑底 80% */
+nav.over-dark .links a{color:#fff}
+nav.over-dark .links a.is-current{color:#fff}
+nav .links a:active{opacity:.55}
+.brand{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)} /* 保留锚点语义，视觉隐藏 */
 .wrap{padding:100px 20px}
 
 /* ★规格表对齐：两列网格，键固定宽度右对齐，值统一从同一起始 x 左对齐 */
@@ -128,6 +165,41 @@ a{color:var(--accent);text-decoration:none} a:hover{color:var(--accent-hover)}
 .spec .red{color:var(--accent)}
 @media(max-width:600px){ .spec .grid-2{grid-template-columns:1fr} }
 
+/* ★ Hero 首页：内容垂直水平居中，箭头/标语紧跟标题下方 */
+.hero-center{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;gap:0}
+.hero-title{font-size:clamp(34px,8vw,60px);margin:0}
+.hero-title .m-br{display:none}           /* 桌面：单行 */
+.scroll-hint{
+  position:fixed;left:50%;bottom:26px;transform:translateX(-50%);z-index:90;
+  display:inline-flex;flex-direction:column;align-items:center;gap:8px;
+  color:rgba(255,255,255,.82);font-size:14px;letter-spacing:.06em;
+  text-decoration:none;
+  /* ★ 显示/隐藏由 JS 切换：is-off（离开首页）/ is-scrolling（滚动中） */
+  transition:opacity .5s ease;
+  opacity:1;
+}
+/* ★ 滚动中渐隐（is-scrolling），停止 120ms 后渐显 —— 优先级低于 is-off */
+.scroll-hint.is-scrolling{opacity:.15}
+/* ★ 彻底离开首页：隐藏，最高优先级 */
+.scroll-hint.is-off{opacity:0;pointer-events:none}
+/* ★ 接近底部：整体反转为「返回顶部 ↑」 */
+.scroll-hint.is-up .scroll-hint__arrow{transform:rotate(180deg)}   /* 箭头翻转朝上 */
+.scroll-hint__arrow{animation:hintBob 1.8s ease-in-out infinite;transition:transform .35s ease}
+/* 导航显隐过渡（配合 JS 的 is-scrolling / is-visible） */
+nav{will-change:opacity,background-color}
+@keyframes hintBob{0%,100%{transform:translateY(0);opacity:.6}50%{transform:translateY(7px);opacity:1}}
+.scroll-hint:hover{color:#fff}
+
+@media(max-width:760px){
+  .hero-title .m-br{display:inline}      /* 手机：两行 */
+  .pc-space{display:none}                /* ★ 手机：空格不显示（"我是李浩楠。"紧贴） */
+  .hero-title{font-size:clamp(30px,11vw,44px)}
+  .scroll-hint__text{font-size:12px}
+  nav{height:46px}
+  nav .links{gap:14px}                   /* 手机：间距收窄，六项一行放得下 */
+  nav .links a{font-size:12px}
+}
+
 /* 转场 */
 @view-transition{navigation:auto}
 html{transition:opacity .45s ease} html.is-leaving{opacity:0}
@@ -136,14 +208,13 @@ html{transition:opacity .45s ease} html.is-leaving{opacity:0}
 <body>
 <nav id="nav">
   <div class="nav-in">
-    <a href="#top" class="brand">李浩楠</a>
     <div class="links">
-      <a href="#top">首页</a>
-      <a href="#info">基本信息</a>
-      <a href="#interest">兴趣</a>
-      <a href="#certs">证书</a>
-      <a href="#timeline">成长</a>
-      <a href="#contact">联系</a>
+      <a href="#top" data-target="top">首页</a>
+      <a href="#info" data-target="info">基本信息</a>
+      <a href="#interest" data-target="interest">兴趣</a>
+      <a href="#certs" data-target="certs">证书</a>
+      <a href="#timeline" data-target="timeline">成长</a>
+      <a href="#contact" data-target="contact">联系</a>
     </div>
   </div>
 </nav>
@@ -151,17 +222,24 @@ html{transition:opacity .45s ease} html.is-leaving{opacity:0}
 <section class="hero" id="top">
   <div class="glow"></div>
   <div class="hero-center">
-    <h1>你好，我是<span class="pc-space">&nbsp;</span>李浩楠。</h1>
-    <a href="#info" class="cta hero-cta">了解我</a>
+    <h1 class="hero-title">你好，我是<span class="pc-space">&nbsp;</span><br class="m-br">李浩楠。</h1>
   </div>
 </section>
+<a href="#info" class="scroll-hint" aria-label="向下了解更多">
+  <span class="scroll-hint__text" data-down="向下了解更多" data-up="返回顶部">向下了解更多</span>
+  <svg class="scroll-hint__arrow" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <line x1="12" y1="5" x2="12" y2="19"></line>
+    <polyline class="arrow-down" points="6 13 12 19 18 13"></polyline>   <!-- 向下 -->
+    <polyline class="arrow-up" points="6 11 12 5 18 11" style="display:none"></polyline>  <!-- 向上（近底时切换） -->
+  </svg>
+</a>
 
 <!-- ========== 第二页：基本信息 + 自我介绍 合二为一 ========== -->
 <section class="wrap light" id="info" style="background:#fff">
   <div class="tag">PROFILE</div>
   <h2>先把基本盘说清楚，<br class="m-br">比什么都重要。</h2>
-  <p class="desc">我是<strong>李浩楠</strong>，今年 19 岁，男生，现居<strong>陕西西安</strong>。就读于<strong>陕西财经职业技术学院</strong>，2025 年入学，目前<strong>大二</strong>，专业是<strong>消防救援技术</strong>。</p>
-  <p class="desc">我喜欢<strong>摄影、跑步、羽毛球</strong>，目前正在<strong>备考专升本</strong>。手里已有<strong>四级电工证、C1 驾驶证、红十字救护培训证书</strong>，累计<strong>荣誉证书 10 余项</strong>。</p>
+  <p class="desc">我是<strong>李浩楠</strong>，今年 19<span class="pc-space"> </span>岁，男生，现居<strong>陕西西安</strong>。就读于<strong>陕西财经职业技术学院</strong>，2025 年入学，目前<strong>大二</strong>，专业是<strong>消防救援技术</strong>。</p>
+  <p class="desc">我喜欢<strong>摄影、跑步、羽毛球</strong>，目前正在<strong>备考专升本</strong>。手里已有<strong>四级电工证、C1 驾驶证、红十字救护培训证书</strong>，累计<strong>荣誉证书 10<span class="pc-space"> </span>余项</strong>。</p>
   <p class="sub" style="color:var(--muted);font-weight:600;margin-top:8px">一表看懂。</p>
   <div class="spec">
     <div class="grid-2">
@@ -169,9 +247,9 @@ html{transition:opacity .45s ease} html.is-leaving{opacity:0}
       <div>
         <div class="row"><span class="k">姓名</span><span class="v red">李浩楠</span></div>
         <div class="row"><span class="k">性别</span><span class="v">男</span></div>
-        <div class="row"><span class="k">年龄</span><span class="v red">19 岁</span></div>
+        <div class="row"><span class="k">年龄</span><span class="v red">19<span class="pc-space"> </span>岁</span></div>
         <div class="row"><span class="k">现居</span><span class="v">陕西西安</span></div>
-        <div class="row"><span class="k">入学</span><span class="v">2025 年</span></div>
+        <div class="row"><span class="k">入学</span><span class="v">2025<span class="pc-space"> </span>年</span></div>
         <div class="row"><span class="k">年级</span><span class="v">大二</span></div>
       </div>
       <!-- 右列 -->
@@ -179,8 +257,7 @@ html{transition:opacity .45s ease} html.is-leaving{opacity:0}
         <div class="row"><span class="k">专业</span><span class="v red">消防救援技术</span></div>
         <div class="row"><span class="k">目标</span><span class="v">备考专升本</span></div>
         <div class="row"><span class="k">兴趣</span><span class="v">摄影 · 跑步 · 羽毛球</span></div>
-        <div class="row"><span class="k">荣誉</span><span class="v red">10 余项</span></div>
-        <div class="row"><span class="k">邮箱</span><span class="v">2878697150@qq.com</span></div>
+        <div class="row"><span class="k">荣誉</span><span class="v red">10<span class="pc-space"> </span>余项</span></div>
         <div class="row"><span class="k">微信</span><span class="v">LovHoeN-07</span></div>
       </div>
     </div>
@@ -204,7 +281,7 @@ html{transition:opacity .45s ease} html.is-leaving{opacity:0}
     <div class="card dark-card"><div class="num">01</div><div class="level">职业资格 · 电气实操</div><h3>四级 / 中级电工证</h3><p>电气设备安装、维护与故障排查。</p></div>
     <div class="card dark-card"><div class="num">02</div><div class="level">小型汽车驾驶资格</div><h3>C1 驾驶证</h3><p>具备小型汽车驾驶资格。</p></div>
     <div class="card dark-card"><div class="num">03</div><div class="level">CPR · 创伤包扎</div><h3>红十字救护培训证书</h3><p>心肺复苏、创伤包扎等急救技能。</p></div>
-    <div class="card dark-card"><div class="num">04</div><div class="level">学习 · 训练 · 志愿</div><h3>荣誉证书 10 余项</h3><p>学习、训练与志愿服务中获得的荣誉。</p></div>
+    <div class="card dark-card"><div class="num">04</div><div class="level">学习 · 训练 · 志愿</div><h3>荣誉证书 10<span class="pc-space"> </span>余项</h3><p>学习、训练与志愿服务中获得的荣誉。</p></div>
   </div>
 </section>
 
@@ -224,7 +301,6 @@ html{transition:opacity .45s ease} html.is-leaving{opacity:0}
     <p class="sub">关于专业、专升本，或者只是想交个朋友——都欢迎。</p>
     <div style="margin-top:32px;display:flex;flex-direction:column;align-items:center;gap:16px">
       <a href="mailto:2878697150@qq.com" class="cta">写信给我 →</a>
-      <a href="mailto:2878697150@qq.com" style="color:#aaa;font-size:16px">2878697150@qq.com</a>
       <span style="color:#aaa;font-size:14px">微信 · LovHoeN-07</span>
     </div>
   </div>
@@ -234,7 +310,7 @@ html{transition:opacity .45s ease} html.is-leaving{opacity:0}
   <div class="ft">
     <div><div class="b">李浩楠</div><p>陕西财经职业技术学院 · 大二 · 消防救援技术</p><p>现居陕西西安 · 备考专升本</p></div>
     <div><div class="b">站点</div><a href="#top">首页</a><a href="#info">基本信息</a><a href="#interest">兴趣</a><a href="#certs">证书</a><a href="#timeline">成长</a></div>
-    <div><div class="b">联系</div><a href="mailto:2878697150@qq.com">邮箱 · 2878697150@qq.com</a><a href="#">微信 · LovHoeN-07</a></div>
+    <div><div class="b">联系</div><a href="mailto:2878697150@qq.com">写信给我</a><a href="#">微信 · LovHoeN-07</a></div>
   </div>
   <div class="copy">© 2026 李浩楠 · 保留所有权利。</div>
 </footer>
@@ -273,6 +349,13 @@ document.querySelectorAll('a.vt-link').forEach(a=>{
 /* B2. 「了解我」等锚点链接：原生 scroll-behavior 失效时兜底平滑滚动 */
 document.querySelectorAll('a[href^="#"]').forEach(a=>{
   a.addEventListener('click',function(e){
+    /* ★ 箭头反转为「返回顶部」时：强制目标 = #top */
+    if(this.classList.contains('scroll-hint') && this.classList.contains('is-up')){
+      e.preventDefault();
+      window.scrollTo({top:0,behavior:'smooth'});
+      history.pushState(null,null,'#top');
+      return;
+    }
     const id=this.getAttribute('href').slice(1);
     if(!id) return;
     const el=document.getElementById(id);
@@ -286,41 +369,112 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{
 
 /* C. 打开网站强制回到首页（含 iOS 添加到主屏幕的场景） */
 /* iOS 主屏打开会缓存上次滚动位置，且 bfcache 可能跳过 load，
-   因此采取「立即归零 + load 再归零」双保险。 */
+   还会把 URL 带成 page.html#contact 导致直接落在尾页，
+   因此采取「清哈希 + 立即归零 + pageshow/load 再归零」三保险。 */
 history.scrollRestoration='manual';
-window.scrollTo(0,0);
-window.addEventListener('pageshow',function(e){ window.scrollTo(0,0); });
-window.addEventListener('load',function(){ window.scrollTo(0,0); });
+function goHome(){
+  if(location.hash && location.hash!=='#top'){ history.replaceState(null,null,'#'); }
+  window.scrollTo(0,0);
+}
+goHome();
+window.addEventListener('pageshow',function(e){ goHome(); });
+window.addEventListener('load',function(){ goHome(); setTimeout(goHome,300); });
 
 /* D. 导航栏：全设备始终全透明；根据当前顶部背景智能切换文字颜色
-   关键：elementFromPoint 在 fixed 导航自身遮挡 / 伪元素 / 穿透场景下经常取到 nav 自己，
-   导致永远判定为「非浅色」→ 黑底上文字仍是白色 → 看不见。
-   因此改用「各区块打亮度标签 + IntersectionObserver 取视口顶部主区块」的方案，稳定可靠。 */
+   + 当前停留区块对应的导航项高亮（点别的不会残留蓝色，跟着停留位置走）
+   关键：elementFromPoint 在 fixed 导航自身遮挡下经常取到 nav 自己 → 永远判非浅色，
+   因此改用「各区块打亮度标签 + IntersectionObserver 取当前主区块」。 */
 var navEl=document.getElementById('nav');
-// 预标记每个大区块是浅色还是深色背景（以 data 属性记录）
-(document.querySelectorAll('section, footer')||[]).forEach(function(el){
+var navLinks=navEl ? navEl.querySelectorAll('.links a[data-target]') : [];
+// ① 给每个大区块打「亮/暗」标签
+(document.querySelectorAll('section[id], footer')||[]).forEach(function(el){
   var cs=window.getComputedStyle(el).backgroundColor;
   var m=/^rgb\((\d+),\s*(\d+),\s*(\d+)/.exec(cs);
   var light=false;
   if(m){ var r=+m[1],g=+m[2],b=+m[3]; light=(0.299*r+0.587*g+0.114*b)/255 > 0.5; }
   el.dataset.light=light?'1':'0';
 });
-var currentLight=false;
-function applyNavColor(){
+var currentId='top';
+function applyNavState(){
   if(!navEl) return;
-  navEl.classList.toggle('on-light', currentLight);
-  // 透明底时若处于深色区块，给导航一个极淡的「文字描边兜底」，保证黑底上也一定可见
-  navEl.classList.toggle('over-dark', !currentLight);
+  var light=(currentId==='top')
+    ? false
+    : ((document.getElementById(currentId)||{}).dataset||{}).light==='1';
+  navEl.classList.toggle('on-light', light);
+  navEl.classList.toggle('over-dark', !light);
+  // ★ 高亮 = 当前停留区块，而不是「上次点过哪个」
+  navLinks.forEach(function(a){ a.classList.toggle('is-current', a.dataset.target===currentId); });
 }
 var navIO=new IntersectionObserver(function(es){
-  // 取相交比例最大的那个区块作为「当前主区块」
   var top=null;
   es.forEach(function(e){ if(e.isIntersecting){ if(!top||e.intersectionRatio>top.intersectionRatio) top=e; } });
-  if(top){ currentLight=(top.target.dataset.light==='1'); applyNavColor(); }
+  if(top){ currentId=top.target.id || 'top'; applyNavState(); }
 },{threshold:[0.01,0.25,0.5,0.75]});
-(document.querySelectorAll('section, footer')||[]).forEach(function(el){ navIO.observe(el); });
-window.addEventListener('resize', applyNavColor);
-applyNavColor();
+(document.querySelectorAll('section[id], footer')||[]).forEach(function(el){ navIO.observe(el); });
+// 点击导航后：由 scroll 触发的 IO 会自动更新 currentId，这里只做瞬时反馈兜底
+navLinks.forEach(function(a){
+  a.addEventListener('click',function(){ setTimeout(applyNavState,50); });
+});
+window.addEventListener('resize', applyNavState);
+
+/* ★ 导航智能显隐：滚动中透明，停止 150ms 后恢复 80% */
+var navScrollTimer=null;
+function navScrolling(){
+  if(!navEl) return;
+  navEl.classList.add('is-scrolling');
+  navEl.classList.remove('is-visible');
+  clearTimeout(navScrollTimer);
+  navScrollTimer=setTimeout(function(){
+    navEl.classList.remove('is-scrolling');
+    navEl.classList.add('is-visible');     // 停止后恢复可见（底色由 on-light/over-dark 决定）
+  },150);
+}
+window.addEventListener('scroll', navScrolling, {passive:true});
+applyNavState();
+
+/* F. 「向下了解更多」箭头 —— 三态：
+   - 在首页内：滚动中渐隐(.is-scrolling)，停止 120ms 后渐显
+   - 离开首页：彻底隐藏(.is-off)
+   - ★ 接近页面底部（距底 < 12% 视口高）：反转为「返回顶部 ↑」(.is-up) */
+var hint=document.querySelector('.scroll-hint');
+var heroEl=document.getElementById('top');
+function syncHintDirection(){
+  if(!hint) return;
+  var nearBottom=(document.documentElement.scrollHeight
+                  - window.scrollY - window.innerHeight) < window.innerHeight*0.12;
+  hint.classList.toggle('is-up', nearBottom);
+  // ★ 文案 + 箭头方向 + 跳转目标，三处同步
+  var label=hint.querySelector('.scroll-hint__text');
+  if(label){ label.textContent=nearBottom ? label.dataset.up : label.dataset.down; }
+  var upArrow=hint.querySelector('.arrow-up'), downArrow=hint.querySelector('.arrow-down');
+  if(upArrow&&downArrow){ upArrow.style.display=nearBottom?'inline':'none'; downArrow.style.display=nearBottom?'none':'inline'; }
+  hint.setAttribute('href', nearBottom ? '#top' : '#info');
+  hint.setAttribute('aria-label', nearBottom ? '返回顶部' : '向下了解更多');
+}
+if(hint && heroEl){
+  var scrollTimer=null;
+  var isOff=true;
+
+  if('IntersectionObserver' in window){
+    new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        isOff=!e.isIntersecting;
+        hint.classList.toggle('is-off', isOff);
+        if(isOff) hint.classList.remove('is-scrolling');
+      });
+    },{threshold:0.15}).observe(heroEl);
+  }
+
+  window.addEventListener('scroll',function(){
+    syncHintDirection();
+    if(isOff) return;
+    hint.classList.add('is-scrolling');
+    clearTimeout(scrollTimer);
+    scrollTimer=setTimeout(function(){ hint.classList.remove('is-scrolling'); },120);
+  },{passive:true});
+  window.addEventListener('resize', syncHintDirection);
+  syncHintDirection();
+}
 
 /* E. 滚动浮现动画（保留） */
 var io=new IntersectionObserver(es=>{ es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }); },{threshold:0.1});
