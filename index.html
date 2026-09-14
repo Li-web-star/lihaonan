@@ -157,18 +157,9 @@ window.addEventListener('load', hideWechatToolbar);
 })();
 </script>
 
-<!-- ===== 微信内置浏览器 → 强制引导「用浏览器打开」=====
-  原理：微信 WebView 会在 UA / 全局对象上暴露特征：
-    · navigator.userAgent 含 "MicroMessenger" / "wxwork"（企业微信）
-    · window.__wxjs_environment === 'miniprogram'（小程序 web-view）
-    · 微信 7.0+ 还注入 WeixinJSBridge
-  命中任一即判定为「微信内置浏览器」，此时：
-    ① 显示全屏引导遮罩 #wechat-tip，遮住正文；
-    ② 提示用户点右上角「···」→「在浏览器中打开」；
-    ③ 监听 visibilitychange：用户从浏览器返回微信时，遮罩重新盖住，
-       防止绕过（微信外打开后永远不再拦截，靠 sessionStorage 记忆）。
-  说明：出于安全限制，网页【无法】自动跳到外部浏览器，必须由用户手动选择，
-       这是微信的强制规则，所有站点（含 apple.com）都只能这么做。 -->
+<!-- ===== 微信内置浏览器 → 右上角轻提示「请用浏览器打开」=====
+  仅在右上角显示一行小字 + 箭头，不遮挡正文、不锁定滚动。
+  检测逻辑：UA 含 MicroMessenger / wxwork，或存在微信注入的全局对象。 -->
 <script>
 (function(){
   'use strict';
@@ -181,42 +172,25 @@ window.addEventListener('load', hideWechatToolbar);
     if (!inWechat && window.__wxjs_environment === 'miniprogram') inWechat = true;
   } catch(e) {}
 
-  /* 已经在外部浏览器打开过一次，本会话内不再拦截（避免来回切换骚扰） */
-  var opened = false;
-  try { opened = sessionStorage.getItem('opened_in_browser') === '1'; } catch(e) {}
-
   function apply(){
     var tip = document.getElementById('wechat-tip');
-    var body = document.body;
     if (!tip) return;
-    if (inWechat && !opened) {
-      tip.style.display = 'flex';
-      if (body) body.classList.add('wechat-locked');
-    } else {
-      tip.style.display = 'none';
-      if (body) body.classList.remove('wechat-locked');
-    }
+    /* 微信环境 → 显示右上角提示；其余情况一律隐藏 */
+    tip.hidden = !inWechat;
   }
 
-  /* 立即执行（此时 DOM 中 #wechat-tip 尚未解析，display 由 CSS 默认隐藏，
-     此处先记标记，等 DOMContentLoaded 再真正显示，避免先闪正文） */
+  /* DOM 就绪后再应用，避免节点尚未解析 */
+  document.addEventListener('DOMContentLoaded', apply);
+
+  /* 用户点提示条 = 已确认，本会话内不再显示 */
   document.addEventListener('DOMContentLoaded', function(){
-    apply();
     var tip = document.getElementById('wechat-tip');
-    /* 用户点「我已用浏览器打开」按钮：记录记忆 + 隐藏遮罩，便于自测 */
     if (tip) {
-      var btn = tip.querySelector('[data-wechat-ok]');
-      if (btn) {
-        btn.addEventListener('click', function(){
-          try { sessionStorage.setItem('opened_in_browser', '1'); } catch(e) {}
-          opened = true;
-          apply();
-        });
-      }
+      tip.addEventListener('click', function(){ tip.hidden = true; });
     }
   });
 
-  /* 页面隐藏（用户切到浏览器打开）再回来时，若仍未标记则继续拦截 */
+  /* 页面可见性变化时再校正一次 */
   document.addEventListener('visibilitychange', function(){
     if (document.visibilityState === 'visible') apply();
   });
@@ -237,67 +211,33 @@ window.addEventListener('load', hideWechatToolbar);
   --footroom: clamp(80px, calc(var(--vh, 1vh) * 14), 180px);
 }
 
-/* ==================== 微信内置浏览器 → 强制「用浏览器打开」引导遮罩 ==================== */
+/* ==================== 微信内置浏览器 → 右上角轻提示「请用浏览器打开」 ==================== */
 /*
   设计要点：
-  1. 遮罩 z-index 高于页面一切元素（含 .spill-top 的 9999），确保完全盖住正文；
-  2. 正文锁定：body.wechat-locked 禁止滚动、隐藏溢出，避免遮罩下仍可滑动；
-  3. 视觉沿用站点暗色主题 + 品牌红点缀，与整体风格一致；
-  4. [hidden] 为默认隐藏态（DOM 已就绪但非微信环境时不显示，避免闪烁）。
+  1. 仅一行文字 + 箭头，固定在右上角，紧贴「···」菜单，不遮挡正文；
+  2. z-index 足够高，确保在页面一切元素之上；
+  3. 命中微信环境才显示，非微信环境保持 hidden，正文完全不受影响；
+  4. 不做全屏遮罩、不锁定滚动——用户可继续浏览，仅作友好提示。
 */
-.wechat-tip{ position:fixed; inset:0; z-index:2147483647;
-  display:none; flex-direction:column; align-items:center; justify-content:center;
-  padding:32px 28px; box-sizing:border-box;
-  background:linear-gradient(160deg, #0a0a0a 0%, #141414 55%, #1a0507 100%);
-  color:#fff; text-align:center;
-  -webkit-overflow-scrolling:touch; }
+.wechat-tip{ position:fixed; top:12px; right:14px; z-index:2147483647;
+  display:none; align-items:center; gap:4px;
+  padding:8px 13px; border-radius:20px;
+  background:rgba(20,20,20,.88); color:#fff;
+  font-size:13px; font-weight:600; line-height:1;
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+  box-shadow:0 4px 16px rgba(0,0,0,.28); backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+  animation:wechatTipIn .3s ease-out both; }
+@keyframes wechatTipIn{ from{ opacity:0; transform:translateY(-6px);} to{ opacity:1; transform:none;} }
 
 /* 微信环境命中后由 JS 显示（覆盖 [hidden]） */
-.wechat-tip:not([hidden]){ display:flex; }
+.wechat-tip:not([hidden]){ display:inline-flex; }
 
-.wechat-tip__inner{ position:relative; max-width:360px; width:100%;
-  display:flex; flex-direction:column; align-items:center; gap:18px;
-  animation:wechatTipIn .35s ease-out both; }
-@keyframes wechatTipIn{ from{ opacity:0; transform:translateY(14px) scale(.98);} to{ opacity:1; transform:none;} }
+/* 箭头指向右上角「···」菜单 */
+.wechat-tip__arrow{ font-size:15px; line-height:1; transform:translateY(-1px); }
 
-/* 右上角「···」示意：用三个点 + 一个气泡框暗示菜单入口 */
-.wechat-tip__dots{ position:absolute; top:-6px; right:6px;
-  display:flex; flex-direction:column; align-items:flex-end; gap:6px; }
-.wechat-tip__dots span{ display:block; width:6px; height:6px; border-radius:50%;
-  background:rgba(255,255,255,.85); }
-.wechat-tip__dots span:first-child{ width:52px; height:30px; border-radius:8px;
-  background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.28); }
-
-.wechat-tip__icon{ color:#d8232a; margin-top:8px;
-  filter:drop-shadow(0 6px 22px rgba(216,35,42,.45)); }
-
-.wechat-tip__title{ margin:0; font-size:24px; font-weight:800; letter-spacing:.5px;
-  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif; }
-
-.wechat-tip__desc{ margin:0; font-size:15px; line-height:1.7; color:rgba(255,255,255,.82); }
-.wechat-tip__desc b{ color:#fff; font-weight:700; }
-
-/* 指向右上角菜单的箭头提示 */
-.wechat-tip__arrow{ font-size:15px; font-weight:700; color:#d8232a;
-  letter-spacing:1px; animation:wechatArrow 1.4s ease-in-out infinite; }
-@keyframes wechatArrow{ 0%,100%{ transform:translateX(0); opacity:.75;} 50%{ transform:translateX(6px); opacity:1;} }
-
-.wechat-tip__btn{ margin-top:10px; padding:14px 32px; border:none; border-radius:12px;
-  background:#d8232a; color:#fff; font-size:16px; font-weight:700; cursor:pointer;
-  font-family:inherit; transition:transform .15s ease, background .2s ease; }
-.wechat-tip__btn:active{ transform:scale(.96); background:#b81c22; }
-
-.wechat-tip__note{ margin:0; font-size:12px; line-height:1.6; color:rgba(255,255,255,.5); }
-
-/* 锁定正文：禁止滚动、隐藏溢出，遮罩下不可交互 */
-body.wechat-locked{ overflow:hidden !important; position:fixed !important;
-  width:100% !important; height:100% !important; }
-
-/* 超小屏适配 */
 @media (max-width:360px){
-  .wechat-tip{ padding:24px 18px; }
-  .wechat-tip__title{ font-size:21px; }
-  .wechat-tip__desc{ font-size:14px; }
+  .wechat-tip{ font-size:12px; padding:7px 11px; }
 }
 
 /* ==================== 首尾缓冲带（苹果官网式弹性余量）====================
@@ -1359,36 +1299,11 @@ body{ -webkit-tap-highlight-color:rgba(0,0,0,.08); -webkit-touch-callout:none; }
 <body>
 <div class="spill-top" aria-hidden="true"></div>
 
-<!-- ===== 微信内置浏览器引导遮罩（默认隐藏，命中微信环境时由脚本显示）===== -->
-<div id="wechat-tip" class="wechat-tip" role="dialog" aria-modal="true" aria-labelledby="wechat-tip-title" hidden>
-  <div class="wechat-tip__inner">
-    <!-- 右上角「···」示意：提示用户点它 -->
-    <div class="wechat-tip__dots" aria-hidden="true">
-      <span></span><span></span><span></span>
-    </div>
-
-    <div class="wechat-tip__icon" aria-hidden="true">
-      <!-- 浏览器图标（内联 SVG，无外部依赖） -->
-      <svg viewBox="0 0 64 64" width="72" height="72" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="32" cy="32" r="26"></circle>
-        <path d="M18 30c0-9 6-14 14-14s14 5 14 14"></path>
-        <path d="M32 44V24"></path>
-        <path d="M24 36l8 8 8-8"></path>
-      </svg>
-    </div>
-
-    <h2 id="wechat-tip-title" class="wechat-tip__title">请在浏览器中打开</h2>
-    <p class="wechat-tip__desc">
-      当前在微信内置浏览器中打开，页面可能无法正常滑动与显示。<br>
-      请点击右上角「<b>···</b>」菜单，选择「<b>在浏览器中打开</b>」即可获得完整体验。
-    </p>
-
-    <!-- 箭头指向右上角菜单（视觉引导） -->
-    <div class="wechat-tip__arrow" aria-hidden="true">右上角 →</div>
-
-    <button type="button" class="wechat-tip__btn" data-wechat-ok>我已用浏览器打开</button>
-    <p class="wechat-tip__note">（如仍停留在微信内，请务必通过右上角菜单切换）</p>
-  </div>
+<!-- ===== 微信内置浏览器 → 右上角轻提示（默认隐藏，命中微信环境时由脚本显示）=====
+  仅一行文字 + 箭头，贴在右上角，不遮挡正文，不打扰浏览。 -->
+<div id="wechat-tip" class="wechat-tip" hidden>
+  <span class="wechat-tip__arrow" aria-hidden="true">↗</span>
+  <span class="wechat-tip__text">请用浏览器打开</span>
 </div>
 
 <section class="hero" id="top" data-theme="dark">
