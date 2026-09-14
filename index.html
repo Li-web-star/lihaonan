@@ -22,7 +22,8 @@ nav{position:fixed;top:0;left:0;width:100%;z-index:100;background:rgba(0,0,0,.8)
 .dark{background:#0a0a0a;color:#fff}
 .light{background:#fff;color:#1d1d1f}
 .tag{color:#e53935;font-size:12px;letter-spacing:2px;font-weight:700;margin-bottom:14px}
-h1,h2{font-size:clamp(32px,7vw,52px);font-weight:800;line-height:1.2;margin-bottom:16px;letter-spacing:-.02em}
+/* 大标题：强制居中 + 行宽平衡，解决末尾标点/换行造成的视觉偏左 */
+h1,h2{font-size:clamp(32px,7vw,52px);font-weight:800;line-height:1.2;margin-bottom:16px;letter-spacing:-.02em;text-align:center;text-wrap:balance}
 .sub{font-size:clamp(16px,3.5vw,20px);color:#a1a1a6;margin-bottom:10px}
 .desc{font-size:17px;color:#444;max-width:680px;margin:0 auto 14px;line-height:1.8}
 strong{color:#e53935}
@@ -89,7 +90,8 @@ footer{background:#000;color:#aaa;padding:40px 20px 30px;font-size:13px}
 </style>
 </head>
 <body>
-<nav>
+<!-- 板块顺序：黑(Hero) → 白(about) → 黑(info) → 白(interest) → 黑(certs) → 白(timeline) → 黑(contact) → 黑(footer) 严格一黑一白交替 -->
+<nav id="nav">
   <div class="nav-in">
     <span class="brand">李浩楠</span>
     <div class="links">
@@ -121,23 +123,23 @@ footer{background:#000;color:#aaa;padding:40px 20px 30px;font-size:13px}
   <p class="desc">比起「厉害」，我更想做一个踏实、靠谱、愿意持续学习的人。</p>
 </section>
 
-<section class="wrap light" id="info" style="background:#fff">
+<section class="wrap dark" id="info" style="background:#0a0a0a">
   <div class="tag">PROFILE</div>
   <h2>先把基本盘<br>说清楚。</h2>
-  <p class="sub" style="color:#555;font-weight:600">一表看懂。</p>
+  <p class="sub" style="color:#aaa;font-weight:600">一表看懂。</p>
   <div class="spec">
-    <div class="row"><span class="k">姓名</span><span class="v red">李浩楠</span></div>
-    <div class="row"><span class="k">性别</span><span class="v">男</span></div>
-    <div class="row"><span class="k">年龄</span><span class="v red">19 岁</span></div>
-    <div class="row"><span class="k">现居</span><span class="v">陕西西安</span></div>
-    <div class="row"><span class="k">入学</span><span class="v">2025 年</span></div>
-    <div class="row"><span class="k">年级</span><span class="v">大二</span></div>
-    <div class="row"><span class="k">专业</span><span class="v red">消防救援技术</span></div>
-    <div class="row"><span class="k">目标</span><span class="v">备考专升本</span></div>
-    <div class="row"><span class="k">兴趣</span><span class="v">摄影 · 跑步 · 羽毛球</span></div>
-    <div class="row"><span class="k">荣誉证书</span><span class="v red">10 余项</span></div>
-    <div class="row"><span class="k">邮箱</span><span class="v">2878697150@qq.com</span></div>
-    <div class="row"><span class="k">微信</span><span class="v">LovHoeN-07</span></div>
+    <div class="row" style="border-color:#333"><span class="k" style="color:#aaa">姓名</span><span class="v red">李浩楠</span></div>
+    <div class="row" style="border-color:#333"><span class="k" style="color:#aaa">性别</span><span class="v">男</span></div>
+    <div class="row" style="border-color:#333"><span class="k" style="color:#aaa">年龄</span><span class="v red">19 岁</span></div>
+    <div class="row" style="border-color:#333"><span class="k" style="color:#aaa">现居</span><span class="v">陕西西安</span></div>
+    <div class="row" style="border-color:#333"><span class="k" style="color:#aaa">入学</span><span class="v">2025 年</span></div>
+    <div class="row" style="border-color:#333"><span class="k" style="color:#aaa">年级</span><span class="v">大二</span></div>
+    <div class="row" style="border-color:#333"><span class="k" style="color:#aaa">专业</span><span class="v red">消防救援技术</span></div>
+    <div class="row" style="border-color:#333"><span class="k" style="color:#aaa">目标</span><span class="v">备考专升本</span></div>
+    <div class="row" style="border-color:#333"><span class="k" style="color:#aaa">兴趣</span><span class="v">摄影 · 跑步 · 羽毛球</span></div>
+    <div class="row" style="border-color:#333"><span class="k" style="color:#aaa">荣誉证书</span><span class="v red">10 余项</span></div>
+    <div class="row" style="border-color:#333"><span class="k" style="color:#aaa">邮箱</span><span class="v">2878697150@qq.com</span></div>
+    <div class="row" style="border-color:#333"><span class="k" style="color:#aaa">微信</span><span class="v">LovHoeN-07</span></div>
   </div>
 </section>
 
@@ -222,7 +224,7 @@ footer{background:#000;color:#aaa;padding:40px 20px 30px;font-size:13px}
     <div style="margin-top:32px;display:flex;flex-direction:column;align-items:center;gap:16px">
       <a href="mailto:2878697150@qq.com" class="cta">写信给我 →</a>
       <a href="mailto:2878697150@qq.com" style="color:#aaa;font-size:16px">2878697150@qq.com</a>
-      <span style="color:#555;font-size:14px">微信 · LovHoeN-07</span>
+      <span style="color:#aaa;font-size:14px">微信 · LovHoeN-07</span>
     </div>
   </div>
 </section>
@@ -253,6 +255,12 @@ var io=new IntersectionObserver(function(es){
   es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});
 },{threshold:0.1});
 document.querySelectorAll('.wrap,.hero,.ft').forEach(function(el){el.classList.add('reveal');io.observe(el);});
+
+// 打开网站时强制回到顶部，保证显示的是首页（Hero）
+window.addEventListener('load',function(){
+  window.scrollTo(0,0);
+  history.scrollRestoration = 'manual'; // 禁用浏览器自动恢复滚动位置
+});
 </script>
 </body>
 </html>
