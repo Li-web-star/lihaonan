@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="李浩楠">
@@ -13,8 +13,8 @@
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;color:#1d1d1f;background:#f5f5f7;line-height:1.6}
 img{max-width:100%}
-nav{position:fixed;top:0;left:0;width:100%;z-index:100;background:transparent;backdrop-filter:blur(20px);
-  /* ★ 智能显隐：默认 80% 可见；滚动中 .is-scrolling 变全透明；停止后恢复 */
+nav{position:fixed;top:0;left:0;width:100%;z-index:100;background:transparent;
+  /* ★ 模糊仅作用于 nav 自身背景，用 ::before 隔离，绝不渗透到子元素 */
   transition:background-color .45s ease,opacity .45s ease;
   background-color:rgba(0,0,0,.0);}   /* 起始全透明，由 JS 根据停留区块上色 */
 nav.is-scrolling{opacity:0}            /* 滚动中：完全透明（让出视野） */
@@ -37,21 +37,17 @@ h1,h2{font-size:clamp(32px,7vw,52px);font-weight:800;line-height:1.2;margin-bott
 .sub{font-size:clamp(16px,3.5vw,20px);color:#a1a1a6;margin-bottom:10px}
 .desc{font-size:17px;color:#444;max-width:680px;margin:0 auto 14px;line-height:1.8}
 strong{color:#e53935}
-.hero{height:100vh;min-height:520px;background:#0a0a0a;color:#fff;display:flex;align-items:center;justify-content:center;padding:0 20px;text-align:center}
-.hero-center{display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%}
+.hero{height:100vh;height:100svh;min-height:520px;background:#0a0a0a;color:#fff;display:flex;align-items:center;justify-content:center;padding:0 20px;text-align:center;position:relative;overflow:hidden}
+.hero-center{display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;filter:none}
 .hero-center h1{text-align:center;margin:0 auto}
-.pc-space{display:inline}               /* 电脑：显示空格 → "我是 李浩楠。" */
 .hero-cta{margin-top:36px}
-@media(max-width:760px){
-  .hero-center h1{white-space:nowrap}
-}
-@media(max-width:760px){ .hero{height:100vh;min-height:520px} }
+@media(max-width:760px){ .hero{height:100vh;height:100svh;min-height:520px} }
 .glow{position:fixed;top:20%;left:50%;width:min(90vw,600px);height:min(90vw,600px);transform:translateX(-50%);border-radius:50%;background:radial-gradient(circle,rgba(229,57,53,.3),transparent 65%);z-index:-1}
 .spec{max-width:680px;margin:32px auto 0;text-align:left}
 .row{display:flex;justify-content:space-between;padding:15px 4px;border-bottom:1px solid #e0e0e0;gap:12px;font-size:16px}
 .row:first-child{border-top:1px solid #e0e0e0}
 .k{color:#666;flex:0 0 auto}
-.v{font-weight:600;text-align:right;word-break:break-word}
+.v{font-weight:600;text-align:right}
 .red{color:#e53935}
 .grid{display:grid;gap:16px;margin-top:40px;text-align:left}
 .grid.cols-3{grid-template-columns:repeat(3,1fr)}
@@ -84,7 +80,7 @@ footer{background:#000;color:#aaa;padding:40px 20px 30px;font-size:13px}
   .grid.cols-3,.grid.cols-4{grid-template-columns:1fr}
   .tl{grid-template-columns:1fr}
   .node{padding-left:18px}
-  .row{font-size:15px;padding:13px 2px}
+  .row{font-size:15px;padding:18px 2px}
   .card{padding:22px 18px}
   .ft{grid-template-columns:1fr;gap:22px}
   h1,h2{font-size:clamp(30px,10vw,44px)}
@@ -107,21 +103,40 @@ footer{background:#000;color:#aaa;padding:40px 20px 30px;font-size:13px}
 }
 
 /* ==================== 追加：苹果风 + 对齐 + 跳页 ==================== */
-:root{--bg:#f5f5f7;--card:#ffffff;--text:#1d1d1f;--muted:#6e6e73;--accent:#0071e3;--accent-hover:#0077ed;--line:#e5e5ea}
+:root{--bg:#f5f5f7;--card:#ffffff;--text:#1d1d1f;--muted:#6e6e73;--accent:#e53935;--accent-hover:#f05a5e;--line:#e5e5ea}
 body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue","Microsoft YaHei",sans-serif;color:var(--text);background:var(--bg);-webkit-font-smoothing:antialiased}
+
+/* ★ 明暗区块：文字色自动跟随，保证黑白交替下文字清晰 */
+.dark{background:#0a0a0a;color:#fff}
+.dark .sub,.dark .desc,.dark .copy{color:#a1a1a6}
+.dark .tag{color:#e53935}
+.dark .stagger-item{color:#fff}
+.light{background:#fff;color:#1d1d1f}
 
 /* 大标题居中（补偿末标点偏心）
    注意：text-wrap:balance 只在多行时生效，会与手动 <br> 分行冲突，
    因此手机端改回 normal，由 <br class="m-br"> 精确控制分行点。 */
-h1,h2{text-align:center;font-weight:600;letter-spacing:-0.02em;line-height:1.28;text-wrap:balance;will-change:transform}
+h1,h2{text-align:center;font-weight:600;letter-spacing:-0.02em;line-height:1.28;text-wrap:balance}
 @media(max-width:760px){ h1,h2{text-wrap:normal} }
 h1.title-center,h2.title-center{display:inline-block}
+/* ★ 居中补偿改用 padding（不参与渲染合成），彻底避免整块模糊 */
 
 /* 苹果风卡片 / 按钮 / 链接 */
+/* ★ 卡片自适应：跟随所在区块明暗（黑白交替下都和谐） */
 .card{background:var(--card);border-radius:20px;box-shadow:0 8px 30px rgba(0,0,0,.06);border:1px solid var(--line)}
-a.cta{display:inline-block;background:var(--accent);color:#fff !important;padding:12px 30px;border-radius:999px;font-size:17px;font-weight:500;border:none;cursor:pointer;transition:background .25s ease,transform .15s ease;text-decoration:none}
-a.cta:hover{background:var(--accent-hover)} a.cta:active{transform:scale(.96)}
-a{color:var(--accent);text-decoration:none} a:hover{color:var(--accent-hover)}
+.dark .card{background:#1c1c1e;color:#fff;border-color:#333;box-shadow:0 8px 30px rgba(0,0,0,.4)}
+.dark .card p,.dark .card .level{color:#aaa}
+.card.dark-card{background:#1c1c1e;color:#fff;border:1px solid #333}
+.card.dark-card p,.card.dark-card .level{color:#aaa}
+/* ★ CTA「写信给我」：纯文字 + 一根下划线 + 箭头，跟随区块明暗，hover 仅位移与透明 */
+a.cta.cta-text{display:inline-flex;align-items:center;gap:8px;background:transparent;color:inherit !important;
+  padding:6px 0;border:none;border-bottom:1px solid currentColor;border-radius:0;
+  font-size:19px;font-weight:500;letter-spacing:.01em;cursor:pointer;
+  transition:opacity .35s ease,gap .35s ease;text-decoration:none}
+a.cta.cta-text .arrow{display:inline-block;transition:transform .35s ease}
+a.cta.cta-text:hover{opacity:.62}
+a.cta.cta-text:hover .arrow{transform:translateX(6px)}
+a{color:#e53935;text-decoration:none} a:hover{color:#f05a5e}
 
 /* ★ 导航链接：紧凑靠右，去掉系统默认蓝，颜色跟随区块，当前停留项高亮 */
 .nav-in{justify-content:flex-end}          /* 链接组整体贴右 */
@@ -144,7 +159,7 @@ nav .links a.is-current{font-weight:600}
 nav .links a.is-current::after{content:"";display:block;width:16px;height:2px;border-radius:2px;margin:4px auto 0;background:currentColor}
 nav.on-light{background-color:rgba(255,255,255,.72)}   /* 浅色区块：白底 72%（约80%通透） */
 nav.on-light .links a{color:#1d1d1f}
-nav.on-light .links a.is-current{color:var(--accent)}
+nav.on-light .links a.is-current{color:#e53935}
 nav.over-dark{background-color:rgba(0,0,0,.80)}       /* 深色区块：黑底 80% */
 nav.over-dark .links a{color:#fff}
 nav.over-dark .links a.is-current{color:#fff}
@@ -152,18 +167,34 @@ nav .links a:active{opacity:.55}
 .brand{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)} /* 保留锚点语义，视觉隐藏 */
 .wrap{padding:100px 20px}
 
-/* ★规格表对齐：两列网格，键固定宽度右对齐，值统一从同一起始 x 左对齐 */
-.spec{max-width:760px}
-.spec .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:0 56px}
-.spec .row{
-  display:flex;align-items:baseline;   /* 左右两端文字首行对齐 */
-  gap:16px;padding:14px 0;border-bottom:1px solid var(--line);
+/* ★规格表：上中下三行，每行两条（标签右对齐 / 值左对齐，一根下划线贯穿整行，纯文字，绝不换行）
+   布局：上=姓名·年龄 / 中=学校·专业 / 下=年级·目标 */
+.spec{max-width:760px;margin-left:auto;margin-right:auto;width:100%}       /* 居中收窄，行长大=更易读 */
+.spec .row-line{
+  display:flex;align-items:baseline;
+  gap:48px;padding:30px 8px;                                    /* 行高统一，表格页放大 */
+  border-bottom:1px solid var(--line);
 }
-.spec .row:first-child{border-top:1px solid var(--line)}
-.spec .k{flex:0 0 84px;color:var(--muted);font-size:15px;text-align:right;padding-top:1px}
-.spec .v{flex:1;font-size:16px;font-weight:600;color:var(--text);text-align:left;word-break:break-word}
-.spec .red{color:var(--accent)}
-@media(max-width:600px){ .spec .grid-2{grid-template-columns:1fr} }
+.spec .row-line:first-child{border-top:1px solid var(--line)}
+.spec .cell{flex:1;display:flex;align-items:baseline;gap:20px;min-width:0}   /* ★ 每行左右两格，等宽 */
+.spec .k{flex:0 0 auto;width:96px;color:var(--muted);font-size:15px;text-align:right;padding-top:1px;letter-spacing:.02em;white-space:nowrap}
+.spec .v{flex:1;font-size:19px;font-weight:600;color:var(--text);text-align:left;white-space:nowrap}   /* ★ nowrap：绝不换到第二行 */
+.spec .red{color:var(--text)}
+@media(max-width:600px){
+  .spec{max-width:100%}
+  .spec .row-line{gap:24px;padding:24px 4px}
+  .spec .cell{gap:14px}
+  .spec .k{width:72px;font-size:14px}
+  .spec .v{font-size:16px}
+}
+
+/* ★ 区块配色：严格 ABAB 一黑一白交替
+   顺序：首页(黑) → 信息(白) → 兴趣(黑) → 证书(白) → 成长(黑) → 联系(白) */
+#info     { background:#ffffff; color:#1d1d1f; min-height:100vh; min-height:100svh; display:flex; flex-direction:column; justify-content:center; align-items:center; width:100%; }   /* B：白 + 满屏 */
+#interest { background:#0a0a0a; color:#ffffff }   /* A：黑 */
+#certs    { background:#ffffff; color:#1d1d1f }   /* B：白 */
+#timeline { background:#0a0a0a; color:#ffffff }   /* A：黑 */
+#contact  { background:#ffffff; color:#1d1d1f }   /* B：白 */
 
 /* ★ Hero 首页：内容垂直水平居中，箭头/标语紧跟标题下方 */
 .hero-center{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;gap:0}
@@ -205,9 +236,36 @@ nav{will-change:opacity,background-color}
 @view-transition{navigation:auto}
 html{transition:opacity .45s ease} html.is-leaving{opacity:0}
 
-/* ==================== 视觉丰富化（进度条 / 动画 / 锚点导航） ==================== */
+/* ==================== 视觉丰富化（满屏 / 创新层） ==================== */
 
-/* （进度条已移除 —— 仅删除进度条，错峰动画 / 数字滚动 / 侧边导航均保留） */
+/* ★ 每个区块至少占满一屏，内容垂直居中（修复「不满屏」）
+   —— min-height 必须挂在【区块 ID】上（背景色的载体），
+   若只挂在 .wrap（max-width:900px 窄条）上，背景铺不满整屏。
+   四个中间区块 + 联系页：强制满屏 + flex 居中。 */
+#interest,#certs,#timeline,#contact{
+  min-height:100vh;min-height:100svh;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;
+  width:100%;
+}
+/* #info 单独声明（防御性，避免分组选择器解析遗漏） */
+#info{ min-height:100vh;min-height:100svh; display:flex; flex-direction:column; justify-content:center; align-items:center; }
+/* .wrap 仍是内容容器（居中 + 内边距），不再单独负责满屏 */
+.wrap{min-height:100vh;min-height:100svh;display:flex;flex-direction:column;justify-content:center}
+.contact{min-height:100vh;min-height:100svh}
+
+/* ★ 磁吸光标：自定义圆点，靠近可交互元素时吸附放大（创新点 2，仅桌面） */
+@media(min-width:901px){
+  body{cursor:none}
+  .cursor{position:fixed;top:0;left:0;width:12px;height:12px;border-radius:50%;
+    background:rgba(229,57,53,.9);pointer-events:none;z-index:9999;
+    transform:translate(-50%,-50%);transition:width .25s ease,height .25s ease,background .25s ease,mix-blend-mode 0s;mix-blend-mode:difference}
+  .cursor.is-hover{width:40px;height:40px;background:rgba(255,255,255,.9)}
+}
+@media(max-width:900px){ .cursor{display:none} }
+
+/* ★ 滚动驱动：标题随滚动仅做透明度变化（克制档）
+   —— 刻意不用 transform:scale / will-change，避免整块进 GPU 合成层导致模糊 */
+.hero-title{transition:opacity .15s linear}
 
 /* ★ 进入动画：基础块（淡入 + 轻微上移，克制档） */
 .reveal{opacity:0;transform:translateY(28px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1)}
@@ -218,7 +276,6 @@ html{transition:opacity .45s ease} html.is-leaving{opacity:0}
 .stagger > *{opacity:0;transform:translateY(26px);
   transition:opacity .6s cubic-bezier(.2,.7,.2,1),transform .6s cubic-bezier(.2,.7,.2,1)}
 .stagger.in > *{opacity:1;transform:none}
-/* 每项延迟：最多 8 项，超出归零循环 */
 .stagger.in > *:nth-child(1){transition-delay:.00s}
 .stagger.in > *:nth-child(2){transition-delay:.08s}
 .stagger.in > *:nth-child(3){transition-delay:.16s}
@@ -228,28 +285,83 @@ html{transition:opacity .45s ease} html.is-leaving{opacity:0}
 .stagger.in > *:nth-child(7){transition-delay:.48s}
 .stagger.in > *:nth-child(8){transition-delay:.56s}
 
-/* ★ 数字滚动：.count-up 元素从 0 数到 data-target；未激活时透明，避免初始值闪现 */
+/* ★ 数字滚动：.count-up 元素从 0 数到 data-target */
 .count-up{font-variant-numeric:tabular-nums;opacity:0;transition:opacity .4s ease .15s}
 .count-up.is-counted{opacity:1}
 
-/* ★ 桌面侧边锚点导航：区块圆点 + 当前高亮 */
-.side-nav{position:fixed;top:50%;right:22px;transform:translateY(-50%);z-index:95;
-  display:flex;flex-direction:column;gap:14px;opacity:0;pointer-events:none;transition:opacity .4s ease}
-.side-nav.is-ready{opacity:1;pointer-events:auto}
-.side-nav a{width:9px;height:9px;border-radius:50%;background:rgba(120,120,128,.45);
-  transition:transform .25s ease,background .25s ease,box-shadow .25s ease;outline:none}
-.side-nav a:hover{transform:scale(1.4);background:rgba(120,120,128,.8)}
-.side-nav a.is-current{background:var(--accent);box-shadow:0 0 0 4px rgba(0,113,227,.18);transform:scale(1.45)}
-.side-nav a .tip{position:absolute;right:18px;top:50%;transform:translateY(-50%) translateX(6px);
-  background:#1d1d1f;color:#fff;font-size:12px;padding:4px 10px;border-radius:8px;
-  white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .25s ease,transform .25s ease}
-.side-nav a .tip::after{content:"";position:absolute;right:-5px;top:50%;transform:translateY(-50%);
-  border:5px solid transparent;border-left-color:#1d1d1f}
-.side-nav a:hover .tip,.side-nav a:focus-visible .tip{opacity:1;transform:translateY(-50%) translateX(0)}
-@media(max-width:900px){ .side-nav{display:none} }   /* 移动端隐藏，靠顶部导航 */
+/* ===== 满屏修复：宽内容区块的内容区铺满 ===== */
+/* 默认 .wrap 仍是 900px 居中（hero/contact 受益）；下面针对需要宽的区块放宽 */
+#info      > .wrap,
+#interest  > .wrap,
+#certs     > .wrap,
+#timeline  > .wrap {
+  max-width: 1120px;      /* 宽内容区块的内容区上限，两侧留适度呼吸 */
+}
+
+/* 表格：占满可用宽度，下划线贯穿整宽 */
+.spec { width: 100%; max-width: 920px; margin: 0 auto; }
+
+/* 兴趣 / 证书：卡片网格铺满 */
+#interest .grid,
+#certs   .grid { width: 100%; }
+
+/* ★ 移动端标题强制单行（首页除外）：所有 h2 永不换行、字号自适应收缩 */
+@media (max-width: 760px) {
+  .single-line {
+    white-space: nowrap !important;
+    overflow: visible;
+    font-size: clamp(26px, 8.4vw, 40px);
+    letter-spacing: -0.01em;
+  }
+}
+
+/* 成长时间线：三栏并排，居中可用空间 */
+#timeline .tl { width: 100%; max-width: 1040px; margin: 0 auto; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+#timeline .node { padding-left: 20px; }
+#timeline .node-label { white-space: nowrap; }
+#timeline .node h4 { font-size: 17px; line-height: 1.35; }
+#timeline .node p { font-size: 14px; line-height: 1.55; }
+
+/* ★ 手机堆叠：三栏变单列，每栏独立成块，左对齐、竖线统一、等高卡片保证整齐 */
+@media (max-width: 760px) {
+  #timeline .tl {
+    grid-template-columns: 1fr;
+    gap: 18px;
+    max-width: 480px;
+  }
+  #timeline .node {
+    padding: 4px 0 4px 20px;
+    border-left: 3px solid #e53935;
+    text-align: left;
+  }
+}
+
+/* 区块本身确保满屏（兜底，覆盖原有规则） */
+#info, #interest, #certs, #timeline {
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;   /* 内容少则垂直居中，满屏且高级 */
+  align-items: center;
+  padding: 100px 20px;
+  box-sizing: border-box;
+}
+
+/* 桌面：内容真正居中且铺满可用空间（配合 .wrap max-width:1120） */
+@media (min-width: 901px) {
+  #info      > .wrap,
+  #interest  > .wrap,
+  #certs     > .wrap,
+  #timeline  > .wrap {
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+}
 </style>
 </head>
 <body>
+<div class="cursor" aria-hidden="true"></div>
 <nav id="nav">
   <div class="nav-in">
     <div class="links">
@@ -266,7 +378,7 @@ html{transition:opacity .45s ease} html.is-leaving{opacity:0}
 <section class="hero" id="top">
   <div class="glow"></div>
   <div class="hero-center">
-    <h1 class="hero-title">你好，<br class="m-br">我是 李浩楠。</h1>
+    <h1 class="hero-title">This is 李浩楠.</h1>
   </div>
 </section>
 <a href="#info" class="scroll-hint" aria-label="向下了解更多">
@@ -281,36 +393,28 @@ html{transition:opacity .45s ease} html.is-leaving{opacity:0}
 <!-- ========== 第二页：基本信息 + 自我介绍 合二为一 ========== -->
 <section class="wrap light stagger" id="info" style="background:#fff">
   <div class="tag">PROFILE</div>
-  <h2 class="stagger-item">先把基本盘说清楚，<br class="m-br">比什么都重要。</h2>
-  <p class="desc stagger-item">我是<strong>李浩楠</strong>，今年 <span class="count-up" data-target="19">19</span><span class="pc-space"> </span>岁，男生，现居<strong>陕西西安</strong>。就读于<strong>陕西财经职业技术学院</strong>，<span class="count-up" data-target="2025" data-suffix=" 年">2025 年</span>入学，目前<strong>大二</strong>，专业是<strong>消防救援技术</strong>。</p>
-  <p class="desc stagger-item">我喜欢<strong>摄影、跑步、羽毛球</strong>，目前正在<strong>备考专升本</strong>。手里已有<strong>四级电工证、C1 驾驶证、红十字救护培训证书</strong>，累计<strong>荣誉证书 <span class="count-up" data-target="10">10</span><span class="pc-space"> </span>余项</strong>。</p>
-  <p class="sub" style="color:var(--muted);font-weight:600;margin-top:8px">一表看懂。</p>
+  <h2 class="stagger-item single-line">一个人一张表</h2>
   <div class="spec">
-    <div class="grid-2">
-      <!-- 左列 -->
-      <div>
-        <div class="row stagger-item"><span class="k">姓名</span><span class="v red">李浩楠</span></div>
-        <div class="row stagger-item"><span class="k">性别</span><span class="v">男</span></div>
-        <div class="row stagger-item"><span class="k">年龄</span><span class="v red">19<span class="pc-space"> </span>岁</span></div>
-        <div class="row stagger-item"><span class="k">现居</span><span class="v">陕西西安</span></div>
-        <div class="row stagger-item"><span class="k">入学</span><span class="v">2025<span class="pc-space"> </span>年</span></div>
-        <div class="row stagger-item"><span class="k">年级</span><span class="v">大二</span></div>
-      </div>
-      <!-- 右列 -->
-      <div>
-        <div class="row stagger-item"><span class="k">专业</span><span class="v red">消防救援技术</span></div>
-        <div class="row stagger-item"><span class="k">目标</span><span class="v">备考专升本</span></div>
-        <div class="row stagger-item"><span class="k">兴趣</span><span class="v">摄影 · 跑步 · 羽毛球</span></div>
-        <div class="row stagger-item"><span class="k">荣誉</span><span class="v red"><span class="count-up" data-target="10">10</span><span class="pc-space"> </span>余项</span></div>
-        <div class="row stagger-item"><span class="k">微信</span><span class="v">LovHoeN-07</span></div>
-      </div>
+    <!-- ★ 上中下三行，每行两条：左=标签(右对齐) 右=值(左对齐)，一行一根下划线，纯文字，绝不换行
+         布局：上=姓名·年龄 / 中=学校·专业 / 下=年级·目标 -->
+    <div class="row-line stagger-item">
+      <div class="cell"><span class="k">姓名</span><span class="v">李浩楠</span></div>
+      <div class="cell"><span class="k">年龄</span><span class="v">19 岁</span></div>
+    </div>
+    <div class="row-line stagger-item">
+      <div class="cell"><span class="k">学校</span><span class="v">陕西财经职业技术学院</span></div>
+      <div class="cell"><span class="k">专业</span><span class="v">消防救援技术</span></div>
+    </div>
+    <div class="row-line stagger-item">
+      <div class="cell"><span class="k">年级</span><span class="v">大二</span></div>
+      <div class="cell"><span class="k">目标</span><span class="v">备考专升本</span></div>
     </div>
   </div>
 </section>
 
-<section class="wrap light stagger" id="interest">
+<section class="wrap dark stagger" id="interest">
   <div class="tag">INTERESTS</div>
-  <h2 class="stagger-item">热爱，是最高效的<br class="m-br">学习。</h2>
+  <h2 class="stagger-item single-line">热爱不必声张</h2>
   <div class="grid cols-3">
     <div class="card stagger-item"><div class="num">01</div><h3 class="stagger-item">摄影</h3><p class="tag2">把日常留住。</p><p>用手机记录生活里容易被忽略的瞬间。</p></div>
     <div class="card stagger-item"><div class="num">02</div><h3 class="stagger-item">跑步</h3><p class="tag2">把身体练扎实。</p><p>几乎每天都跑步，既保持体能，也释放压力。</p></div>
@@ -318,33 +422,34 @@ html{transition:opacity .45s ease} html.is-leaving{opacity:0}
   </div>
 </section>
 
-<section class="wrap dark stagger" id="certs" style="background:#0a0a0a">
+<section class="wrap stagger" id="certs">
   <div class="tag">CERTIFICATES</div>
-  <h2 class="stagger-item">手里拿着的，<br class="m-br">都是走过的路。</h2>
+  <h2 class="stagger-item single-line">岁月皆有回响</h2>
   <div class="grid cols-4">
-    <div class="card dark-card"><div class="num">01</div><div class="level">职业资格 · 电气实操</div><h3 class="stagger-item">四级 / 中级电工证</h3><p>电气设备安装、维护与故障排查。</p></div>
-    <div class="card dark-card"><div class="num">02</div><div class="level">小型汽车驾驶资格</div><h3 class="stagger-item">C1 驾驶证</h3><p>具备小型汽车驾驶资格。</p></div>
-    <div class="card dark-card"><div class="num">03</div><div class="level">CPR · 创伤包扎</div><h3 class="stagger-item">红十字救护培训证书</h3><p>心肺复苏、创伤包扎等急救技能。</p></div>
-    <div class="card dark-card"><div class="num">04</div><div class="level">学习 · 训练 · 志愿</div><h3 class="stagger-item">荣誉证书 10<span class="pc-space"> </span>余项</h3><p>学习、训练与志愿服务中获得的荣誉。</p></div>
+    <div class="card"><div class="num">01</div><div class="level">职业资格 · 电气实操</div><h3 class="stagger-item">四级 / 中级电工证</h3><p>电气设备安装、维护与故障排查。</p></div>
+    <div class="card"><div class="num">02</div><div class="level">小型汽车驾驶资格</div><h3 class="stagger-item">C1 驾驶证</h3><p>具备小型汽车驾驶资格。</p></div>
+    <div class="card"><div class="num">03</div><div class="level">CPR · 创伤包扎</div><h3 class="stagger-item">红十字救护培训证书</h3><p>心肺复苏、创伤包扎等急救技能。</p></div>
+    <div class="card"><div class="num">04</div><div class="level">学习 · 训练 · 志愿</div><h3 class="stagger-item">荣誉证书 10<span class="pc-space"> </span>余项</h3><p>学习、训练与志愿服务中获得的荣誉。</p></div>
   </div>
 </section>
 
-<section class="wrap light stagger" id="timeline">
+<section class="wrap dark stagger" id="timeline">
   <div class="tag">JOURNEY</div>
-  <h2 class="stagger-item">每一步，<br class="m-br">都算数。</h2>
+  <h2 class="stagger-item single-line">慢也是速度</h2>
   <div class="tl">
     <div class="node stagger-item"><div class="node-label">入学</div><h4>进入陕西财经职业技术学院</h4><p>选择消防救援技术专业，开启系统的应急救援学习。</p></div>
     <div class="node stagger-item"><div class="node-label">当下</div><h4>大二精进中，备考专升本</h4><p>把学历和专业都再往上推一步，一步步往前走。</p></div>
+    <div class="node stagger-item"><div class="node-label">未来</div><h4>往上走，去更高的地方</h4><p>深耕消防救援领域，进入更高层院校继续深造。</p></div>
   </div>
 </section>
 
-<section class="wrap dark contact" id="contact" style="background:#0a0a0a">
+<section class="wrap contact" id="contact">
   <div>
     <div class="tag">CONTACT</div>
-    <h2>随时，都可以聊聊。</h2>
+    <h2 class="single-line">我在这里等你</h2>
     <p class="sub">关于专业、专升本，或者只是想交个朋友——都欢迎。</p>
     <div style="margin-top:32px;display:flex;flex-direction:column;align-items:center;gap:16px">
-      <a href="mailto:2878697150@qq.com" class="cta">写信给我 →</a>
+      <a href="mailto:2878697150@qq.com" class="cta cta-text">写信给我<span class="arrow">→</span></a>
       <span style="color:#aaa;font-size:14px">微信 · LovHoeN-07</span>
     </div>
   </div>
@@ -557,37 +662,40 @@ document.querySelectorAll('.count-up').forEach(function(el){ countIO.observe(el)
 document.querySelectorAll('.wrap,.hero,.ft').forEach(el=>{ el.classList.add('reveal'); io.observe(el); });
 </script>
 <script>
-/* （进度条已移除 —— 保留：侧边锚点导航 / 数字滚动 / 错峰动画 / 导航智能显隐） */
-</script>
-<nav class="side-nav" id="sideNav" aria-label="区块导航"></nav>
-<script>
-/* H. 桌面侧边锚点导航：按 section[id] 自动生成圆点，复用 currentId */
-var sideNav=document.getElementById('sideNav');
-var sideMap={
-  top:'首页', info:'基本信息', interest:'兴趣',
-  certs:'证书', timeline:'成长', contact:'联系'
-};
-if(sideNav && window.innerWidth>900){
-  var ordered=['top','info','interest','certs','timeline','contact'];
-  ordered.forEach(function(id){
-    var a=document.createElement('a');
-    a.href='#'+id; a.dataset.target=id;
-    var tip=document.createElement('span');tip.className='tip';tip.textContent=sideMap[id]||id;
-    a.title=sideMap[id]||id;              // 原生 tooltip 兜底，不依赖 CSS 气泡
-    a.appendChild(tip);
-    sideNav.appendChild(a);
-  });
-  // 复用 D 段维护的 currentId：每帧同步高亮
-  function syncSideNav(){ var cur=window.currentId||'top';
-    sideNav.querySelectorAll('a').forEach(function(a){
-      a.classList.toggle('is-current', a.dataset.target===cur);
+/* H. 创新层：主题色随区块 + 磁吸光标 + 滚动驱动标题缩放（圆点导航已移除） */
+(function(){
+  var themeMap={info:'info',interest:'interest',certs:'certs',timeline:'timeline',contact:'contact'};
+  function applyTheme(){
+    var id=window.currentId||'top';
+    document.body.dataset.theme=themeMap[id]||'top';
+  }
+  setInterval(applyTheme,120); applyTheme();
+
+  var cursor=document.querySelector('.cursor');
+  if(cursor && window.matchMedia('(min-width:901px)').matches){
+    var mx=window.innerWidth/2, my=window.innerHeight/2, cx=mx, cy=my;
+    document.addEventListener('mousemove',function(e){ mx=e.clientX; my=e.clientY; });
+    function loop(){
+      cx+=(mx-cx)*0.22; cy+=(my-cy)*0.22;
+      cursor.style.transform='translate('+cx+'px,'+cy+'px) translate(-50%,-50%)';
+      requestAnimationFrame(loop);
+    }
+    loop();
+    document.querySelectorAll('a,button,.card,.cta,[data-target]').forEach(function(el){
+      el.addEventListener('mouseenter',function(){ cursor.classList.add('is-hover'); });
+      el.addEventListener('mouseleave',function(){ cursor.classList.remove('is-hover'); });
     });
   }
-  setInterval(syncSideNav,120);   // currentId 由 IO 驱动，轮询成本低
-  window.addEventListener('resize', function(){ syncSideNav(); });
-  /* 显示：停留 > 600ms 后浮现，避免刚加载就满屏元素 */
-  setTimeout(function(){ sideNav.classList.add('is-ready'); },600);
-}
+
+  var heroTitle=document.querySelector('.hero-title');
+  if(heroTitle){
+    window.addEventListener('scroll',function(){
+      var y=window.scrollY;
+      /* ★ 只用 opacity，刻意不用 transform:scale（避免整块进 GPU 合成层导致模糊） */
+      heroTitle.style.opacity=Math.max(0,1-y/420);
+    },{passive:true});
+  }
+})();
 </script>
 </body>
 </html>
