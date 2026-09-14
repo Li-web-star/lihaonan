@@ -194,7 +194,11 @@ footer{background:#000;color:#aaa;padding:40px 20px 30px;font-size:13px}
 .ft{max-width:760px;margin:0 auto;padding-bottom:28px;border-bottom:1px solid #333}
 .ft .b{color:#fff;font-size:16px;font-weight:600;margin-bottom:8px}
 /* ★ 页脚联系方式：纯文本、不可点击、不响应指针，仅作信息展示 */
-.ft-text{display:block;color:#aaa;line-height:2;cursor:default;-webkit-tap-highlight-color:transparent}
+.ft-text{display:block;color:#aaa;line-height:2;cursor:default;pointer-events:none;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+/* ★ footer 整体：禁止任何点击/触摸反馈（iOS 高亮、hover、active 全部清除） */
+footer{ -webkit-tap-highlight-color:transparent; }
+footer *{ pointer-events:none !important; -webkit-tap-highlight-color:transparent !important; }
+footer .copy{ pointer-events:none !important; }
 .ft-text::before{content:attr(data-label) " · ";color:#888;font-size:12px;letter-spacing:.02em}
 .copy{max-width:900px;margin:20px auto 0;color:#666;font-size:12px;text-align:center}
 .reveal{opacity:0;transform:translateY(24px);transition:opacity 1s cubic-bezier(.22,.71,.22,1), transform 1s cubic-bezier(.22,.71,.22,1)}
@@ -379,8 +383,8 @@ html{transition:opacity .45s ease} html.is-leaving{opacity:0}
 .hero-text--static{ transition:none !important; opacity:1 !important; transform:none !important; }
 /* 首页整块随滚动平滑淡出（JS 仅切换 .is-out，此处负责缓动）
    ★ 优化：不常驻 will-change，改由 JS 在动画前后临时设置，避免长期占用合成层/显存 */
-.hero{ transition:opacity 1.2s var(--ease), transform 1.2s var(--ease); }
-.hero.is-out{ opacity:0; transform:translateY(-24px); pointer-events:none; }
+.hero{ transition:none; }
+.hero.is-out{ opacity:1; transform:none; pointer-events:auto; }
 .hero-text{ color:#fff; white-space:nowrap; }
 /* 光晕：更慢、更柔和地呼吸，营造氛围 */
 .glow{ opacity:0; }
@@ -764,6 +768,8 @@ a.cta.cta-text:focus-visible{ outline:none; box-shadow:0 0 0 4px rgba(229,57,53,
   padding:26px 22px;
   text-decoration:none; color:inherit;
   text-align:left;
+  cursor:pointer;
+  -webkit-tap-highlight-color:rgba(229,57,53,.15);
   transition:transform .5s cubic-bezier(.2,.7,.2,1), box-shadow .5s ease, border-color .5s ease;
 }
 .contact-card:hover{
@@ -1758,6 +1764,53 @@ document.querySelectorAll('.wrap,.hero,.ft').forEach(el=>{ el.classList.add('rev
 
 
 /* ============================================================
+   ★ 联系卡片：点击复制邮箱 / 微信
+   ------------------------------------------------------------
+   邮箱与微信两张卡片点击后，将对应文本写入剪贴板，
+   按钮文字淡出 → 显示"已复制 ✓" → 停留后淡回原文。
+   仅作用于 #contact 内的 .contact-card，不影响 footer。
+   ============================================================ */
+(function(){
+  var copyZone=document.getElementById('contact');
+  if(!copyZone) return;
+  function copyText(text){
+    /* ★ 使用最基础、兼容性最好的 execCommand 方式，不依赖 clipboard API，
+       避免 file:// / iOS / 非安全上下文下写剪贴板失败 → "复制失败" */
+    try{
+      var ta=document.createElement('textarea');
+      ta.value=text;
+      ta.style.cssText='position:fixed;top:0;left:0;opacity:0;';
+      document.body.appendChild(ta);
+      ta.focus(); ta.select();
+      var ok=false;
+      try{ ok=document.execCommand('copy'); }catch(e){ ok=false; }
+      document.body.removeChild(ta);
+      return ok;
+    }catch(e){
+      return false;
+    }
+  }
+  copyZone.addEventListener('click', function(e){
+    var card=e.target.closest('.contact-card');
+    if(!card) return;
+    var text=card.getAttribute('data-mail') || card.getAttribute('data-copy');
+    if(!text) return;
+    e.preventDefault();
+    var label=card.querySelector('.action-label');
+    var original=label ? label.textContent : '';
+    var ok=copyText(text);
+    if(label) label.textContent=ok ? '已复制 ✓' : '复制失败';
+    if(card) card.classList.add('is-copied');
+    clearTimeout(card.__timer);
+    card.__timer=setTimeout(function(){
+      if(label) label.textContent=original;
+      if(card) card.classList.remove('is-copied');
+    }, 2000);
+  });
+})();
+
+
+/* ============================================================
    ★ 滚动速度上限（阻尼）控制器 —— 已移除（还原为初始状态）
    ------------------------------------------------------------
    说明：该控制器曾用 wheel/touchmove 的 preventDefault + 累加器
@@ -1774,78 +1827,8 @@ document.querySelectorAll('.wrap,.hero,.ft').forEach(el=>{ el.classList.add('rev
    ============================================================ */
 
 
-(function(){
-  function copy(text){
-    if(navigator.clipboard && window.isSecureContext){
-      return navigator.clipboard.writeText(text);
-    }
-    return new Promise(function(resolve,reject){
-      try{
-        var ta=document.createElement('textarea');
-        ta.value=text; ta.style.position='fixed'; ta.style.opacity='0';
-        document.body.appendChild(ta); ta.select();
-        document.execCommand('copy'); document.body.removeChild(ta);
-        resolve();
-      }catch(e){ reject(e); }
-    });
-  }
-  /* ★ 丝滑反馈：只改 .action-label 文字，走 opacity 过渡
-        流程：淡出(0.6s) → 换字 → 淡入(0.6s) → 停留 3.2s → 淡出 → 复原，全程约 5.6s
-        邮箱与微信两张卡片共用同一节奏，均适当放慢，看得更从容 */
-  var FB_HOLD = 3200;   /* ★ 反馈文字停留时长（ms），从容可读 */
-  function setLabel(card, labelEl, text){
-    if(!labelEl) return;
-    if(card) card.__fbActive = true;              /* ★ 加锁，防止动画期间重复点击 */
-    labelEl.classList.add('is-out');              /* ① 旧文字淡出 */
-    var timer=null;
-    function finish(){ clearTimeout(timer); labelEl.removeEventListener('transitionend', finish); }
-    labelEl.addEventListener('transitionend', function handler(){
-      labelEl.removeEventListener('transitionend', handler);
-      if(labelEl.classList.contains('is-out')){   /* 淡出结束才换字，避免中途闪现 */
-        labelEl.textContent=text;
-        labelEl.classList.remove('is-out');       /* ② 新文字淡入 */
-      }
-    });
-    /* 兜底：即使 transitionend 不触发也继续（如 reduced-motion）。与 CSS 过渡时长 0.6s 对齐 */
-    timer=setTimeout(function(){ if(labelEl.classList.contains('is-out')){ labelEl.textContent=text; labelEl.classList.remove('is-out'); } }, 800);
-  }
-  function feedback(el, ok){
-    var card=el.closest('.contact-card');
-    var label=el.querySelector('.action-label');
-    var original=label ? label.textContent : el.textContent;
-    var feedbackText=ok ? '已复制 ✓' : '复制失败';
-    setLabel(card, label, feedbackText);          /* 切换为反馈文字（淡入淡出） */
-    if(card) card.classList.add('is-copied');
-    /* ★ 停留足够久后再淡回原文 */
-    clearTimeout(el.__fbTimer);
-    el.__fbTimer=setTimeout(function(){
-      setLabel(card, label, original);            /* 淡回原文 */
-      if(card) card.classList.remove('is-copied');
-      if(card) card.__fbActive = false;           /* ★ 解锁，允许再次点击 */
-    }, FB_HOLD);
-  }
-  /* ★ 微信卡片：事件委托 + 单次防抖，避免点击穿透到卡片外层导致重复触发 */
-  var copyZone=document.getElementById('contact');
-  if(copyZone){
-    copyZone.addEventListener('click', function(e){
-      var trigger=e.target.closest('[data-copy]');
-      if(!trigger) return;
-      var text=trigger.getAttribute('data-copy');
-      if(!text || trigger.__fbActive) return;     /* ★ 动画进行中忽略重复点击 */
-      e.preventDefault();
-      copy(text).then(function(){ feedback(trigger,true); }).catch(function(){ feedback(trigger,false); });
-    });
-    /* ★ 邮箱卡片：与微信卡片统一为「立即复制」，点击后复制邮箱地址（不再跳转 mailto） */
-    copyZone.addEventListener('click', function(e){
-      var trigger=e.target.closest('[data-mail]');
-      if(!trigger) return;
-      var mail=trigger.getAttribute('data-mail');
-      if(!mail || trigger.__fbActive) return;
-      e.preventDefault();
-      copy(mail).then(function(){ feedback(trigger,true); }).catch(function(){ feedback(trigger,false); });
-    });
-  }
-})();
+/* ★ 联系卡片：纯展示模式，已移除复制交互逻辑
+   （邮箱/微信仅作信息展示，点击无任何效果，避免误导用户） */
 
 /* ============================================================
    J. 全局动画驱动（Hero 入场 / 进度条 / 视差 / 标题装饰线）
@@ -2020,21 +2003,7 @@ if (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches
 </script>
 <script>
 (function(){
-  var heroEl=document.getElementById('top');
-  if(heroEl){
-    var heroTicking=false;
-    function updateHero(){
-      heroTicking=false;
-      /* 滚动超过一屏的 55% → 标记淡出，CSS 负责缓动 */
-      var shouldHide = window.scrollY > window.innerHeight * 0.55;
-      heroEl.classList.toggle('is-out', shouldHide);
-    }
-    window.addEventListener('scroll',function(){
-      if(!heroTicking){ requestAnimationFrame(updateHero); heroTicking=true; }
-    },{passive:true});
-    window.addEventListener('resize', updateHero);
-    updateHero();
-  }
+  /* ★ 首页不再随滚动淡出 —— 始终保持原始颜色和可见状态 */
 })();
 </script>
 <script>
