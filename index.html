@@ -48,6 +48,120 @@
   } catch(e) {}
 </script>
 
+<!-- ===== 反劫持：清理运营商 / 浏览器扩展注入的顶部广告占位 =====
+  现象：Safari（尤其带扩展或走公共 WiFi）打开后，页面顶部出现一块"广告位"，
+  但看不到图标和名字 —— 通常是劫持脚本被 CSP / 清理逻辑阻断后，只剩下
+  一个空的 fixed/absolute 悬浮容器（有宽高、有 z-index），占位却不显示内容。
+  处理思路：
+    ① 启动期：移除不属于本站的元素（非同源 iframe、外部脚本创建的顶层节点）；
+    ② 运行时：MutationObserver 监听 <body> 新增节点，命中广告特征立即移除；
+    ③ 占位兜底：周期扫描「fixed/absolute + 高 z-index + 无实际内容」的孤儿节点；
+    ④ 严格 CSP（connect-src 'self' 等）已在上方配置，阻断远程广告脚本加载。
+  注意：本站所有 fixed 元素（.spill-top / .wechat-tip / .glow）都在白名单内，不会被误删。 -->
+<script>
+(function(){
+  'use strict';
+  var KNOWN_IDS = /^(wechat-tip|spill-top|spill-end|hero|info|interests|certs|timeline|contact|site-footer)$/;
+  var AD_SIGN   = /(ad|ads|advert|banner|floating|floatbar|pop(ad|up|win)|coupon|popup|layer|mask-ad|iframe-ads|__ad|sogou|baidu|360|qqpcmgr|topbar|shortcutbar|tip-bar)/i;
+  var whitelisted = true; // 白名单外一律视为可疑
+
+  /* 判断一个节点是否为已知的本页合法元素 */
+  function isOurs(el){
+    try {
+      // 同源 iframe / 本页脚本创建的可疑节点才进入判定
+      if (!el || el.nodeType !== 1) return true;
+      var id = el.id || '';
+      if (KNOWN_IDS.test(id)) return true;
+      if (el.classList && el.classList.contains('wechat-tip')) return true;
+      // 属于本页已有 section 的后代 → 正常内容
+      if (el.closest && el.closest('section, footer, header, main, [aria-hidden="true"]')) {
+        // 但如果是顶层新插入到 body 的独立悬浮容器，仍要检查
+        if (el.parentNode === document.body && /fixed|sticky/.test(getComputedStyle(el).position || '')) {
+          return false;
+        }
+        return true;
+      }
+      return false;
+    } catch(e){ return true; }
+  }
+
+  /* 命中广告特征的悬浮占位：有定位、高 z-index、内容为空 */
+  function looksLikeAdPlaceholder(el){
+    try {
+      if (!el || el.nodeType !== 1) return false;
+      var cs = getComputedStyle(el);
+      var pos = cs.position;
+      if (pos !== 'fixed' && pos !== 'sticky' && pos !== 'absolute') return false;
+      var z = parseInt(cs.zIndex, 10);
+      if (!(z >= 1000) && !(el.id && AD_SIGN.test(el.id))) {
+        // 没有高 z-index 且没有广告特征 id，再用尺寸/内容判断
+        if (el.children.length === 0 && !(el.textContent || '').trim()) return false;
+      }
+      // 白名单：本页合法 fixed 元素
+      if (KNOWN_IDS.test(el.id || '')) return false;
+      if (el.classList && (el.classList.contains('wechat-tip') || el.classList.contains('spill-top'))) return false;
+      // 没有实质文本内容的空壳 → 视为广告占位
+      var text = (el.textContent || '').trim();
+      if (!text && el.children.length <= 1) return true;
+      // id / class 命中广告特征
+      if (AD_SIGN.test(el.id || '') || AD_SIGN.test((el.className || '') + '')) return true;
+      return false;
+    } catch(e){ return false; }
+  }
+
+  function clean(){
+    var body = document.body;
+    if (!body) return;
+    // ① 顶层悬浮占位扫描
+    var nodes = body.children;
+    for (var i = nodes.length - 1; i >= 0; i--) {
+      var el = nodes[i];
+      if (el.id === 'wechat-tip' || el.id === 'spill-top') continue; // 保留白名单
+      if (looksLikeAdPlaceholder(el)) {
+        try { body.removeChild(el); } catch(e) {}
+      }
+    }
+    // ② 删除被隐藏但仍占位的 iframe（运营商劫持常见）
+    var iframes = body.querySelectorAll('iframe');
+    for (var j = 0; j < iframes.length; j++) {
+      var f = iframes[j];
+      try { if (!f.src || f.src === location.href || /ads|ad\.|doubleclick|googletag|baidu|sogou|360\.cn/.test(f.src)) { f.parentNode.removeChild(f); } } catch(e) {}
+    }
+  }
+
+  // 启动期立即清理一次
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', clean, { once: true });
+  } else {
+    clean();
+  }
+  // 渲染完成后、首屏动画前再扫一次（捕获延迟注入的广告）
+  window.addEventListener('load', function(){ clean(); setTimeout(clean, 800); setTimeout(clean, 2500); });
+
+  // 运行时监听动态注入
+  try {
+    var mo = new MutationObserver(function(muts){
+      for (var m = 0; m < muts.length; m++) {
+        var added = muts[m].addedNodes;
+        for (var n = 0; n < added.length; n++) {
+          var node = added[n];
+          if (node.nodeType !== 1) continue;
+          if (!isOurs(node)) { try { node.parentNode && node.parentNode.removeChild(node); } catch(e){} continue; }
+          if (looksLikeAdPlaceholder(node)) { try { node.parentNode.removeChild(node); } catch(e){} }
+        }
+      }
+    });
+    if (document.body) {
+      mo.observe(document.body, { childList: true, subtree: false });
+    } else {
+      document.addEventListener('DOMContentLoaded', function(){
+        mo.observe(document.body, { childList: true, subtree: false });
+      });
+    }
+  } catch(e) {}
+})();
+</script>
+
 <!-- ============ SEO / 社交分享 ============ -->
 <meta name="description" content="李浩楠的个人主页 · 电子信息工程专业 · 兴趣、成长与荣誉一览">
 <meta name="keywords" content="李浩楠,个人主页,电子信息工程">
@@ -157,50 +271,11 @@ window.addEventListener('load', hideWechatToolbar);
 })();
 </script>
 
-<!-- ===== 微信内置浏览器 → 完全不展示网站内容，仅右上角提示「请用浏览器打开」=====
-  微信内打开时：正文全部隐藏，整页纯白，只在右上角保留一行提示。
-  非微信环境：#wechat-tip 保持 hidden，正文正常渲染，完全不受影响。
-  检测逻辑：UA 含 MicroMessenger / wxwork，或存在微信注入的全局对象。 -->
-<script>
-(function(){
-  'use strict';
-  var ua = (navigator.userAgent || '').toLowerCase();
-  var inWechat = /micromessenger/i.test(ua) || /wxwork/i.test(ua);
-
-  /* 兜底：UA 检测不到时，用微信注入的全局对象二次确认 */
-  try {
-    if (!inWechat && window.WeixinJSBridge) inWechat = true;
-    if (!inWechat && window.__wxjs_environment === 'miniprogram') inWechat = true;
-  } catch(e) {}
-
-  /* 立即执行（此时 body 已存在，因为脚本位于 </body> 前） */
-  function apply(){
-    var tip = document.getElementById('wechat-tip');
-    if (!tip) return;
-    if (inWechat) {
-      /* 微信内：显示提示，隐藏全部正文内容 */
-      tip.hidden = false;
-      document.body.classList.add('wechat-blocked');
-    } else {
-      /* 非微信：隐藏提示，正文正常 */
-      tip.hidden = true;
-      document.body.classList.remove('wechat-blocked');
-    }
-  }
-
-  /* DOM 就绪即应用；若此时脚本已晚于 DOMContentLoaded，也补一次 */
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', apply);
-  } else {
-    apply();
-  }
-
-  /* 页面重新可见时再校正一次 */
-  document.addEventListener('visibilitychange', function(){
-    if (document.visibilityState === 'visible') apply();
-  });
-})();
-</script>
+<!-- ===== 微信 / QQ 内置浏览器 → 正常展示首页（不拦截、不隐藏正文）=====
+  历史说明：这里曾经在微信环境给 body 加 wechat-blocked 类、隐藏全部正文，
+  只留右上角「请用浏览器打开」。现已移除该拦截逻辑——
+  微信内直接渲染完整首页，与 Safari / Chrome 行为一致。
+  （下方 #wechat-tip 元素及样式保留但永不显示，便于日后如需温和引导可复用。） -->
 
 <style>
 /* ==================== 安全区域变量（刘海 / 灵动岛 / Home Indicator） ==================== */
@@ -216,23 +291,11 @@ window.addEventListener('load', hideWechatToolbar);
   --footroom: clamp(80px, calc(var(--vh, 1vh) * 14), 180px);
 }
 
-/* ==================== 微信内置浏览器 → 完全不展示网站内容 ==================== */
-/*
-  行为：微信内打开时，正文全部隐藏，整页纯白背景，
-        只在右上角保留一行「↗ 请用浏览器打开」提示。
-  非微信环境：#wechat-tip 保持 hidden，正文正常，完全不受影响。
-*/
+/* ==================== 微信内置浏览器 → 与正常浏览器一致（不再拦截）====================
+   wechat-blocked 相关规则已废弃删除；正文始终可见。
+   下方 .wechat-tip 样式保留（元素默认 hidden，当前不会被任何脚本显示）。 */
 
-/* 遮住全部正文：所有直接子元素（section / spill-top 等）一律不可见 */
-body.wechat-blocked > *{ display:none !important; }
-
-/* 提示条本身必须可见（覆盖上面的通配隐藏） */
-body.wechat-blocked #wechat-tip{ display:inline-flex !important; }
-
-/* 整页纯白背景，避免正文隐藏后露出深色底色 */
-body.wechat-blocked{ background:#ffffff !important; }
-
-/* 提示条：右上角小胶囊 */
+/* 提示条：右上角小胶囊（默认隐藏，仅作历史遗留，不影响渲染） */
 .wechat-tip{ position:fixed; top:12px; right:14px; z-index:2147483647;
   display:none; align-items:center; gap:4px;
   padding:8px 13px; border-radius:20px;
