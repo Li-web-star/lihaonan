@@ -207,7 +207,6 @@
 <meta name="screen-orientation" content="portrait">
 <meta name="full-screen" content="yes">
 <meta name="browsermode" content="application">
-<meta name="apple-itunes-app" content="app-id=, app-argument=#">
 
 <!-- 微信分享走系统原生（无需 wx.config），本页无可分享内容时不主动弹分享菜单 -->
 
@@ -1371,6 +1370,20 @@ body{ -webkit-tap-highlight-color:rgba(0,0,0,.08); -webkit-touch-callout:none; }
   #info { background: #ffffff; }
 }
 </style>
+
+<script>
+/* 防止 iOS Safari Smart App Banner（apple-itunes-app meta 触发） */
+(function(){
+  var m = document.querySelector('meta[name="apple-itunes-app"]');
+  if (m) m.parentNode.removeChild(m);
+  /* Safari 渲染横幅后会给 body/html 加顶部内边距，复位 */
+  window.addEventListener('load', function(){
+    if (document.body) document.body.style.paddingTop = '';
+    if (document.documentElement) document.documentElement.style.paddingTop = '';
+  });
+})();
+</script>
+
 </head>
 <body>
 <div class="spill-top" aria-hidden="true"></div>
