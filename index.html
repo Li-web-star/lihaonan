@@ -501,8 +501,8 @@ html{transition:opacity .45s ease} html.is-leaving{opacity:0}
   display:inline-flex; flex-wrap:wrap; justify-content:center; align-items:center;
   /* ★ 起始态：微下移 + 略透，加载后缓停到原位 */
   opacity:0; transform:translateY(12px);
-  /* ★ 放慢到 2.6s（上一版 1.8s）：整体缓停更从容，与逐字错峰衔接更自然 */
-  transition:opacity 2.6s cubic-bezier(.22,.71,.22,1), transform 2.6s cubic-bezier(.22,.71,.22,1);
+  /* ★ 放慢到 3.1s（上一版 2.6s）：整体缓停更从容，与逐字错峰衔接更自然 */
+  transition:opacity 3.1s cubic-bezier(.22,.71,.22,1), transform 3.1s cubic-bezier(.22,.71,.22,1);
 }
 .hero-loaded .hero-title{ opacity:1; transform:none; }
 /* ★ 入场动画完成后释放 will-change，避免长期占用合成层显存 */
@@ -511,8 +511,8 @@ html{transition:opacity .45s ease} html.is-leaving{opacity:0}
 .hero-title .ch{
   display:inline-block;
   opacity:0; transform:translateY(10px);
-  /* ★ 单字过渡放慢到 1.6s（上一版 1.15s），起始位移收敛到 8px，轻柔不拖沓 */
-  transition:opacity 1.6s cubic-bezier(.22,.71,.22,1), transform 1.6s cubic-bezier(.22,.71,.22,1);
+  /* ★ 单字过渡放慢到 1.9s（上一版 1.6s），起始位移收敛到 8px，轻柔不拖沓 */
+  transition:opacity 1.9s cubic-bezier(.22,.71,.22,1), transform 1.9s cubic-bezier(.22,.71,.22,1);
   transition-delay:var(--d, 0ms);   /* ★ JS 内联设置，逐字错峰 */
 }
 .hero-loaded .hero-title .ch{ opacity:1; transform:none; }
@@ -537,7 +537,7 @@ html{transition:opacity .45s ease} html.is-leaving{opacity:0}
    ★ 优化：will-change 仅在动画期间（.is-animating）启用，避免全量元素长期占合成层 */
 .reveal{ }
 .reveal.is-animating{ will-change:opacity, transform; }
-.reveal.in{ transition:opacity 1s cubic-bezier(.22,.71,.22,1), transform 1s cubic-bezier(.22,.71,.22,1); }
+.reveal.in{ transition:opacity 1.2s cubic-bezier(.22,.71,.22,1), transform 1.2s cubic-bezier(.22,.71,.22,1); }
 
 /* 变体：从左侧滑入（用于卡片网格） */
 .reveal-left{ opacity:0; transform:translateX(-32px); }
@@ -575,8 +575,15 @@ html{transition:opacity .45s ease} html.is-leaving{opacity:0}
   0%{ opacity:0; transform:translateY(8px) scale(.9); }
   100%{ opacity:1; transform:none; }
 }
-.card .num{ transition:transform .5s cubic-bezier(.2,.7,.2,1); }
-.card:hover .num{ transform:scale(1.15); color:#f05a5e; }
+.card .num{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:48px; height:26px; line-height:1;
+  /* ★ 关键：transform-origin 锁定在自身中心，配合固定宽高，
+     缩放时布局框（bbox）不再左右漂移，彻底解决「数字向左滑动」 */
+  transform-origin:center center;
+  transition:transform .65s cubic-bezier(.2,.7,.2,1), color .65s ease;
+}
+.card:hover .num{ transform:scale(1.12); color:#f05a5e; }
 
 /* ---------- 8. CTA 按钮持续引导动效（已在 CSS 中，此处补充焦点态） ---------- */
 a.cta.cta-text:focus-visible{ outline:none; box-shadow:0 0 0 4px rgba(229,57,53,.28); }
@@ -939,16 +946,20 @@ a.cta.cta-text:focus-visible{ outline:none; box-shadow:0 0 0 4px rgba(229,57,53,
   display:inline-flex; align-items:center; gap:8px;
   font-size:14px; font-weight:500; color:var(--text);
   padding:7px 16px; border:1.5px solid var(--line); border-radius:999px;
+  cursor:pointer;               /* ★ 明确可点击，只有点它才触发复制 */
+  -webkit-tap-highlight-color:transparent;
   /* ★ 放慢到 1.4s：按下"立即复制/点击复制"柔和过渡，节奏更从容 */
   transition:background-color 1.4s cubic-bezier(.22,.71,.22,1),
              color 1.4s cubic-bezier(.22,.71,.22,1),
              border-color 1.4s cubic-bezier(.22,.71,.22,1),
              transform 1.4s ease, opacity 1.4s ease;
 }
-.contact-card:hover .contact-action,
+.contact-action:focus-visible{ outline:none; box-shadow:0 0 0 4px rgba(229,57,53,.28); }
+.contact-action:hover,
+.contact-action:focus-visible,
 .contact-card.is-copied .contact-action{ background:var(--accent); border-color:var(--accent); color:#fff; }
 /* ★ :active 按压态：只柔和一点（轻微缩小 + 略降透明度），过渡放慢到 1.4s */
-.contact-card:active .contact-action{ transform:scale(.97); opacity:.78; }
+.contact-action:active{ transform:scale(.97); opacity:.78; }
 /* ★ 文字容器：淡出 → 淡入，错峰切换，告别硬切 —— 放慢到 1.4s，看得更从容 */
 .contact-action .action-label{
   display:inline-block;
@@ -994,9 +1005,9 @@ a.cta.cta-text:focus-visible{ outline:none; box-shadow:0 0 0 4px rgba(229,57,53,
 /* ==================== 排版节奏变量（统一控制全局速度） ==================== */
 :root{
   /* ★ 动画时长：整体放缓，读者有足够时间"跟上"每一帧 */
-  --d-fast:.55s;      /* 短反馈（数字弹入、标签变色） */
-  --d-base:.85s;      /* 基础移动（卡片、行滑入） */
-  --d-slow:1.1s;      /* 较慢（轴线生长、时间轴节点） */
+  --d-fast:.68s;      /* 短反馈（数字弹入、标签变色）—— 略慢一丢丢 */
+  --d-base:1.02s;     /* 基础移动（卡片、行滑入）—— 略慢一丢丢 */
+  --d-slow:1.3s;      /* 较慢（轴线生长、时间轴节点）—— 略慢一丢丢 */
   --ease:cubic-bezier(.22,.71,.22,1);  /* 苹果风减速曲线：快出 → 缓停，不生硬 */
 
   /* ★ 自适应速率系数（由 JS 根据滚动速度实时写入，默认 1）：
@@ -1402,21 +1413,21 @@ body{ -webkit-tap-highlight-color:rgba(0,0,0,.08); -webkit-touch-callout:none; }
     <p class="sub contact-sub">聊专业，交朋友，都行。</p>
 
     <div class="contact-grid">
-      <div class="contact-card stagger-item" data-mail="2878697150@qq.com" tabindex="0" role="button" aria-label="复制邮箱">
+      <div class="contact-card stagger-item" data-mail="2878697150@qq.com" aria-label="邮箱 2878697150@qq.com">
         <span class="contact-icon" aria-hidden="true">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4.5" width="19" height="15" rx="2.5"/><polyline points="3,6 12,13 21,6"/></svg>
         </span>
         <span class="contact-meta">邮箱 · Email</span>
         <span class="contact-value">2878697150@qq.com</span>
-        <span class="contact-action contact-action--mail"><span class="action-label">立即复制</span></span>
+        <span class="contact-action contact-action--mail" tabindex="0" role="button" aria-label="立即复制邮箱"><span class="action-label">立即复制</span></span>
       </div>
-      <div class="contact-card stagger-item" data-copy="LovHoeN-07" tabindex="0" role="button" aria-label="复制微信">
+      <div class="contact-card stagger-item" data-copy="LovHoeN-07" aria-label="微信 LovHoeN-07">
         <span class="contact-icon" aria-hidden="true">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5C21 16.5 12 21 12 21S3 16.5 3 11.5a9 9 0 1 1 18 0z"/><circle cx="12" cy="11.5" r="3"/></svg>
         </span>
         <span class="contact-meta">微信 · WeChat</span>
         <span class="contact-value">LovHoeN-07</span>
-        <span class="contact-action contact-action--copy" data-copy="LovHoeN-07"><span class="action-label">点击复制</span></span>
+        <span class="contact-action contact-action--copy" data-copy="LovHoeN-07" tabindex="0" role="button" aria-label="立即复制微信"><span class="action-label">立即复制</span></span>
       </div>
     </div>
   </div>
@@ -1574,13 +1585,10 @@ document.querySelectorAll('a.vt-link').forEach(a=>{
   window.__resetHomeCorrection = function(){ corrected = false; };
 
   function goTop(){
-    /* 无 hash 或 hash 为 # / #top → 明确回到首页顶部 */
-    var hash = location.hash || '';
-    var isHome = (hash === '' || hash === '#' || hash.toLowerCase() === '#top');
-    if(!isHome){
-      /* 带具体锚点（#info 等）→ 交给浏览器原生锚点定位，不干预 */
-      return;
-    }
+    /* ★ 修复：无论 URL 是否带 hash（#info / #contact / 分享链接 / bfcache 恢复），
+       打开网站一律回到首页顶部，避免出现「一进来却是其他页面」的问题。
+       原逻辑对具体锚点直接 return、交给浏览器定位，导致带 hash 打开时停在对应区块。 */
+    if(corrected) return;              /* 保证只校正一次（首次加载） */
     corrected = true;
     window.__goTopCalled = (window.__goTopCalled || 0) + 1;   /* 测试可观测标记 */
     /* ★ 修正：首页起点 = 文档最顶端 (0)。
@@ -1591,6 +1599,15 @@ document.querySelectorAll('a.vt-link').forEach(a=>{
     zero();
     requestAnimationFrame(zero);
     requestAnimationFrame(function(){ requestAnimationFrame(zero); });
+
+    /* 同步清掉地址栏里的 hash，避免浏览器在 load 后再次按锚点自动滚动；
+       使用 replaceState 不产生新的历史记录，history.length 保持 = 1，
+       不会触发 iOS 微信底部 ← → 导航栏。 */
+    try{
+      if(location.hash && typeof history.replaceState === 'function'){
+        history.replaceState(null, '', location.pathname + location.search + '#');
+      }
+    }catch(e){}
   }
 
   /* 时机①：DOM 解析完即可校正（比 load 更早，避免白屏期已滚动） */
@@ -1694,7 +1711,7 @@ function runCountUp(el){
   var suffix=el.dataset.suffix||'';
   el.textContent='0'+suffix;
   if(target<=0){ el.textContent=finalText; return; }
-  var dur=1100, start=performance.now();
+  var dur=1500, start=performance.now();   /* ★ 放慢一丢丢：1100 → 1500 */
   function step(now){
     var p=Math.min((now-start)/dur,1); var v=Math.round(easeOutCubic(p)*target);
     el.textContent=v+suffix;
@@ -1962,7 +1979,12 @@ document.querySelectorAll('.wrap,.hero,.ft').forEach(el=>{ el.classList.add('rev
     }
   }
   copyZone.addEventListener('click', function(e){
-    var card=e.target.closest('.contact-card');
+    /* ★ 修复：只有点击「立即复制 / 点击复制」按钮（.contact-action）本身才触发复制，
+       点击卡片其它区域（图标、标签、邮箱文字等）一律无效。
+       原逻辑对整个 .contact-card 任意位置点击都会复制，导致"没点按钮也能复制成功"。 */
+    var action=e.target.closest('.contact-action');
+    if(!action) return;                       /* 没点到按钮 → 直接忽略 */
+    var card=action.closest('.contact-card');
     if(!card) return;
     var text=card.getAttribute('data-mail') || card.getAttribute('data-copy');
     if(!text) return;
@@ -1977,6 +1999,16 @@ document.querySelectorAll('.wrap,.hero,.ft').forEach(el=>{ el.classList.add('rev
       if(label) label.textContent=original;
       if(card) card.classList.remove('is-copied');
     }, 2000);
+  });
+
+  /* ★ 键盘支持：聚焦到「立即复制」按钮后按 Enter / 空格 触发复制 */
+  copyZone.addEventListener('keydown', function(e){
+    var action=e.target.closest('.contact-action');
+    if(!action) return;
+    if(e.key === 'Enter' || e.key === ' '){
+      e.preventDefault();
+      action.click();
+    }
   });
 })();
 
