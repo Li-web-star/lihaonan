@@ -48,6 +48,86 @@
   } catch(e) {}
 </script>
 
+<!-- ============ 广告清理：移除非本站注入的悬浮元素 ============
+     兜底方案：防运营商劫持 / 浏览器扩展 / CDN 注入的广告。
+     ① 删除带常见广告关键词的元素（ad / banner / sponsor / iframe 等）
+     ② 删除 body 直接子元素中「非本站内容」的悬浮 div（position:fixed/absolute）
+     ③ 使用 MutationObserver 持续监控，防止动态注入
+     注意：本站正常元素（.spill-top / #wechat-tip 等）不受影响 -->
+<script>
+(function(){
+  'use strict';
+  var AD_KEYWORDS = ['ad-', 'ads-', 'advert', 'banner', 'sponsor', 'promo',
+                      'doubleclick', 'googlesyndication', 'baidu', 'alimama',
+                      'iframe', 'ins-', '__ad', 'popup', 'float'];
+
+  function isAdElement(el){
+    if(!el || el.nodeType !== 1) return false;
+    var cls = (el.className || '') + '';
+    var id  = (el.id || '') + '';
+    var src = (el.getAttribute && el.getAttribute('src')) || '';
+    for(var i = 0; i < AD_KEYWORDS.length; i++){
+      var kw = AD_KEYWORDS[i];
+      if(cls.indexOf(kw) >= 0 || id.indexOf(kw) >= 0 || src.indexOf(kw) >= 0){
+        return true;
+      }
+    }
+    return false;
+  }
+
+  function removeAds(){
+    /* ① 删除明确带广告关键词的元素 */
+    var all = document.getElementsByTagName('*');
+    for(var i = all.length - 1; i >= 0; i--){
+      if(isAdElement(all[i])){
+        try { all[i].parentNode.removeChild(all[i]); } catch(e) {}
+      }
+    }
+    /* ② 删除 body 直接子元素中「悬浮 + 不在白名单」的未知 div */
+    var whitelist = ['spill-top','wechat-tip','hero','info','interest','certs','timeline','contact','footer'];
+    var bodyChildren = document.body.children;
+    for(var j = bodyChildren.length - 1; j >= 0; j--){
+      var child = bodyChildren[j];
+      if(child.tagName === 'DIV' && child.children.length === 0){
+        var cs = getComputedStyle(child);
+        if((cs.position === 'fixed' || cs.position === 'absolute') && whitelist.indexOf(child.id) < 0){
+          /* 只删除明显是外部注入的（无 id、无 class 或含广告特征） */
+          if(!child.id || isAdElement(child)){
+            try { child.parentNode.removeChild(child); } catch(e) {}
+          }
+        }
+      }
+    }
+  }
+
+  /* DOM 就绪即执行一次 */
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', removeAds);
+  } else {
+    removeAds();
+  }
+  window.addEventListener('load', removeAds);
+
+  /* ③ 持续监控动态注入（防某些延迟加载的广告脚本） */
+  if(window.MutationObserver){
+    var observer = new MutationObserver(function(mutations){
+      var shouldClean = false;
+      for(var i = 0; i < mutations.length; i++){
+        var nodes = mutations[i].addedNodes;
+        for(var j = 0; j < nodes.length; j++){
+          if(nodes[j].nodeType === 1 && isAdElement(nodes[j])){
+            shouldClean = true; break;
+          }
+        }
+        if(shouldClean) break;
+      }
+      if(shouldClean) removeAds();
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+  }
+})();
+</script>
+
 <!-- ============ SEO / 社交分享 ============ -->
 <meta name="description" content="李浩楠的个人主页 · 电子信息工程专业 · 兴趣、成长与荣誉一览">
 <meta name="keywords" content="李浩楠,个人主页,电子信息工程">
