@@ -1,3 +1,12 @@
+
+
+聊天历史记录
+
+暂无会话历史记录哦～
+
+打开大学搜题酱APP或WakeUp课程表APP在 「我的」页点击「电脑端扫码」
+下载大学搜题酱App
+帮助
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -48,136 +57,51 @@
   } catch(e) {}
 </script>
 
-<!-- ============================================================
-     广告/推广/扩展注入防御 —— 双保险（CSS 隐身 + JS 清除）
-     ------------------------------------------------------------
-     ★ 根本原因（经反复排查确认）：
-       广告来自 SAFARI 浏览器的扩展/内容拦截器注入。
-       证据：① 无痕模式无广告 → Apple 官方说明无痕模式自动关闭所有扩展
-            ② 夸克浏览器无广告 → 夸克自带广告拦截不注入
-            ③ 电脑/其他浏览器无广告 → 仅 Safari 移动端有
-
-     ★ 双保险设计：
-       ① CSS：广告特征元素 display:none（即使 JS 未执行也不可见）
-       ② JS ：规则型检测（不依赖时序，随时可用）
-             + 白名单快照（load 后建立，清理漏网之鱼）
-     ------------------------------------------------------------ -->
-<style id="ad-block-style">
-/* 保险①：CSS 层 —— 广告出现即"隐身" */
-iframe, embed, object { display:none !important; }
-
-/* Safari 扩展注入的典型特征（本站绝无此类元素） */
-[class*="smartbanner"],[class*="smart-banner"],[class*="smart_banner"],
-[class*="rating"],[class*="star"],[class*="stars"],
-[class*="ad-"],[class*="-ad"],[class*="ads"],[class*="_ad"],
-[class*="banner"],[class*="sponsor"],[class*="promo"],
-[id*="smartbanner"],[id*="smart-banner"] {
-  display:none !important; visibility:hidden !important; height:0 !important;
-  max-height:0 !important; overflow:hidden !important; opacity:0 !important;
-  pointer-events:none !important; position:static !important;
-}
-</style>
-
+<!-- ============ 广告清理：移除非本站注入的悬浮元素 ============
+     兜底方案：防运营商劫持 / 浏览器扩展 / CDN 注入的广告。
+     ① 删除带常见广告关键词的元素（ad / banner / sponsor / iframe 等）
+     ② 删除 body 直接子元素中「非本站内容」的悬浮 div（position:fixed/absolute）
+     ③ 使用 MutationObserver 持续监控，防止动态注入
+     注意：本站正常元素（.spill-top / #wechat-tip 等）不受影响 -->
 <script>
-/* 保险②：JS 层 —— 规则型检测（主） + 白名单快照（辅） */
+/* 广告清理：仅移除浏览器扩展注入的五星评分浮层（不影响本站任何内容） */
 (function(){
   'use strict';
 
-  var knownNodes = null;
-  var armed = false;
-
-  /* 白名单快照：load 后建立（此时 DOM 已稳定） */
-  function snapshot(){
-    if(armed || !document.body) return;
-    if(typeof WeakSet === 'undefined'){ armed = true; return; }
-    knownNodes = new WeakSet();
-    var stack = [document.body];
-    while(stack.length > 0){
-      var node = stack.pop();
-      try { knownNodes.add(node); } catch(e) {}
-      for(var i = 0; i < node.children.length; i++) stack.push(node.children[i]);
-    }
-    armed = true;
-  }
-
-  function isForeign(el){
-    if(!el || el.nodeType !== 1) return false;
-    if(!armed || !knownNodes) return false;
-    try { return !knownNodes.has(el); } catch(e) { return false; }
-  }
-
-  /* ★ 规则型广告检测（主防线，不依赖时序） */
-  function looksLikeAd(el){
-    if(!el || el.nodeType !== 1) return false;
-    var tag = (el.tagName || '').toUpperCase();
-    if(tag === 'SCRIPT' || tag === 'STYLE' || tag === 'LINK' || tag === 'META') return false;
-    var cls = (el.className && el.className.toString && el.className.toString()) || '';
-    var id  = el.id || '';
-    var h = el.outerHTML || '';
-    /* 特征①：类名/ID 含广告关键词 */
-    if(/\b(smart[-_]?banner|smartbanner|rating|star|stars|ad|ads|banner|sponsor|promo)\b/i.test(cls + ' ' + id)) return true;
-    /* 特征②：含 3+ 星级 Unicode 字符 ★☆✦✧⭐ */
-    var stars = (h.match(/[★☆✦✧⭐]/g) || []).length;
-    if(stars >= 3) return true;
-    /* 特征③：iframe / embed / object */
-    if(tag === 'IFRAME' || tag === 'EMBED' || tag === 'OBJECT') return true;
-    return false;
-  }
-
   function clean(){
     if(!document.body) return;
-    var all = document.body.getElementsByTagName('*');
+    /* 只针对固定/绝对定位的悬浮元素，且内容含 5 颗星（扩展广告特征） */
+    var all = document.getElementsByTagName('*');
     for(var i = all.length - 1; i >= 0; i--){
       var el = all[i];
+      if(el.nodeType !== 1) continue;
+      if(el === document.body) continue;
+      /* 绝不碰 script / style / link / meta */
       var tag = (el.tagName || '').toUpperCase();
       if(tag === 'SCRIPT' || tag === 'STYLE' || tag === 'LINK' || tag === 'META') continue;
-      /* ★ 规则型（armed 前后都生效）+ 白名单（armed 后生效） */
-      if(looksLikeAd(el) || (armed && isForeign(el))){
+      /* 只处理悬浮定位的元素（广告特征） */
+      var cs = el.style;
+      var pos = cs.position;
+      if(pos !== 'fixed' && pos !== 'absolute') continue;
+      /* 内容含 5 个及以上星号 → 五星评分广告 */
+      var txt = (el.textContent || '').trim();
+      var stars = (txt.match(/[★☆]/g) || []).length
+                + (txt.match(/[\u2605\u2606]/g) || []).length;
+      if(stars >= 5){
         try { el.parentNode.removeChild(el); } catch(e) {}
       }
     }
   }
 
-  /* ---- load 后建立白名单快照 ---- */
-  function arm(){
-    setTimeout(function(){ snapshot(); clean(); }, 0);
+  /* DOM 就绪后执行一次，页面加载完成后再扫一次 */
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', clean);
+  } else {
+    clean();
   }
-  if(document.readyState === 'complete'){ arm(); }
-  else { window.addEventListener('load', arm); }
-
-  /* MutationObserver：实时监控新增节点 */
-  if(window.MutationObserver){
-    var obs = new MutationObserver(function(muts){
-      if(!document.body) return;
-      for(var m = 0; m < muts.length; m++){
-        var nodes = muts[m].addedNodes;
-        for(var n = 0; n < (nodes && nodes.length); n++){
-          var node = nodes[n];
-          if(node.nodeType !== 1) continue;
-          var tag = (node.tagName || '').toUpperCase();
-          if(tag === 'SCRIPT' || tag === 'STYLE' || tag === 'LINK' || tag === 'META') continue;
-          /* ★ 规则型优先（不依赖 armed），白名单兜底 */
-          if(looksLikeAd(node) || (armed && isForeign(node))){
-            try { node.parentNode.removeChild(node); } catch(e) {}
-          }
-        }
-      }
-      clean();
-    });
-    function startObs(){
-      if(document.body){ try { obs.observe(document.body, { childList: true, subtree: true }); } catch(e) {} }
-      else { setTimeout(startObs, 10); }
-    }
-    startObs();
-  }
-
-  /* 兜底轮询 + 页面回到前台清理 */
-  setInterval(clean, 1500);
-  window.addEventListener('focus', clean);
-  document.addEventListener('visibilitychange', function(){ if(!document.hidden) clean(); });
-
-  /* ★ 立即执行（head 中同步运行，尽早清除已注入的广告） */
-  if(document.body) clean();
+  window.addEventListener('load', clean);
+  /* 页面加载后额外延时扫一次（扩展常在此时注入） */
+  setTimeout(clean, 2000);
 })();
 </script>
 
@@ -1473,16 +1397,52 @@ body{ -webkit-tap-highlight-color:rgba(0,0,0,.08); -webkit-touch-callout:none; }
   #info { background: #ffffff; }
 }
 
-/* ============ 广告/推广防御 CSS（极简安全版）============
-   ★ 关键：CSS 绝不隐藏 body 直接子元素（section 等），避免误伤内容。
-   真正的清理由 <head> JS（白名单优先策略）完成；CSS 只做精确打击。
-   以下选择器都带明确广告特征属性，不可能匹配本站正常元素。 */
-/* ① 广告载体：iframe / embed / object（本站无此类元素，安全） */
-iframe, embed, object { display: none !important; }
+/* ============ ★★★★★ 广告/推广防御 CSS（三重保险之 CSS 层）============
+   强制隐藏：GitHub Pages 推广横幅 / 运营商劫持注入 / 浏览器扩展悬浮窗
+   规则尽量精确，不影响本站白名单元素 */
+/* ① 删除 iframe / embed / object（广告载体） */
+iframe, embed, object, [id*="ad-"], [id*="ads-"], [class*="ad-"], [class*="ads-"],
+[id*="banner"], [class*="banner"], [id*="sponsor"], [class*="sponsor"],
+[id*="promo"], [class*="promo"], [id*="popup"], [class*="popup"],
+[id*="float"], [class*="float"], [id*="sticky"], [class*="sticky"],
 
-/* ② 精确：body 直接子级的 GitHub star/fork 推广链接（本站无 <a> 直接子级） */
-body > a[href*="github.com"][href*="stargazers"],
-body > a[href*="github.com"][href*="fork"] { display: none !important; }
+/* ② GitHub Pages 推广横幅特征：顶部悬浮 + 含 star/fork 链接 */
+body > a[href*="github.com"][style*="fixed"],
+body > div > a[href*="github.com"][target="_blank"],
+
+/* ③ 任何 body 直接子元素中的悬浮元素（不在白名单内） */
+body > iframe, body > embed, body > object,
+body > div[style*="position: fixed"], body > div[style*="position:fixed"],
+body > div[style*="position: absolute"], body > div[style*="position:absolute"],
+
+/* ④ 含星级评分图标的悬浮容器 */
+body > div[style*="z-index"]:not([id]):not([class]),
+body > div[id=""]:not([class]),
+
+/* ⑤ 顶部全宽推广条（高度 < 100px 且贴顶） */
+body > [style*="top: 0"], body > [style*="top:0"],
+
+/* ⑥ 任何包含 "star" 或 "fork" 文字的顶部悬浮元素 */
+body > *:has(a[href*="github"]) {
+  display: none !important;
+  visibility: hidden !important;
+  width: 0 !important;
+  height: 0 !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  position: absolute !important;
+  left: -9999px !important;
+  top: -9999px !important;
+  z-index: -9999 !important;
+  clip: rect(0,0,0,0) !important;
+  overflow: hidden !important;
+}
+
+/* ⑦ 终极兜底：body 第一个元素如果是非白名单的悬浮 div → 隐藏
+   （配合 JS 删除使用，CSS 先隐藏避免闪烁） */
+body > div:first-child:not(.spill-top):not(#wechat-tip):not(#hero):not(.hero):not(#top):not(.wrap) {
+  display: none !important;
+}
 </style>
 </head>
 <body>
