@@ -48,134 +48,136 @@
   } catch(e) {}
 </script>
 
-<!-- ============ 广告/推广防御：白名单优先策略 ============
-     核心思路（与"基于规则的检测"根本不同）：
-     ★ 不猜测"哪些是广告"，而是先记住"哪些是自己的" ★
+<!-- ============================================================
+     广告/推广/扩展注入防御 —— 双保险（CSS 隐身 + JS 清除）
+     ------------------------------------------------------------
+     ★ 根本原因（经反复排查确认）：
+       广告来自 SAFARI 浏览器的扩展/内容拦截器注入。
+       证据：① 无痕模式无广告 → Apple 官方说明无痕模式自动关闭所有扩展
+            ② 夸克浏览器无广告 → 夸克自带广告拦截不注入
+            ③ 电脑/其他浏览器无广告 → 仅 Safari 移动端有
 
-     原理：
-     1. 快照时机 = window.load 之后（requestAnimationFrame 延迟一帧），
-        此时 bootHero() 等所有本站脚本已完成 DOM 构建
-     2. 快照 = "最终态的本站 DOM"（含动态创建的 .ch 逐字拆分），
-        所有元素引用存入 WeakSet「knownNodes」= 白名单
-     3. 快照完成（armed=true）后，任何"不在 knownNodes 中"的新节点
-        → 视为外来注入 → 立即删除
-     4. MutationObserver 持续监控，新增节点实时审查
-     5. setInterval 兜底轮询（每 1.5 秒）
+     ★ 双保险设计：
+       ① CSS：广告特征元素 display:none（即使 JS 未执行也不可见）
+       ② JS ：规则型检测（不依赖时序，随时可用）
+             + 白名单快照（load 后建立，清理漏网之鱼）
+     ------------------------------------------------------------ -->
+<style id="ad-block-style">
+/* 保险①：CSS 层 —— 广告出现即"隐身" */
+iframe, embed, object { display:none !important; }
 
-     关键：快照完成前处于"宽限期"，MutationObserver 只记录不删除，
-          确保 bootHero 等动态创建的内容不会被误判为广告。
-     注意：本站所有元素（含 .spill-top / #wechat-tip / script / style 等）均受保护 -->
+/* Safari 扩展注入的典型特征（本站绝无此类元素） */
+[class*="smartbanner"],[class*="smart-banner"],[class*="smart_banner"],
+[class*="rating"],[class*="star"],[class*="stars"],
+[class*="ad-"],[class*="-ad"],[class*="ads"],[class*="_ad"],
+[class*="banner"],[class*="sponsor"],[class*="promo"],
+[id*="smartbanner"],[id*="smart-banner"] {
+  display:none !important; visibility:hidden !important; height:0 !important;
+  max-height:0 !important; overflow:hidden !important; opacity:0 !important;
+  pointer-events:none !important; position:static !important;
+}
+</style>
+
 <script>
-/* ===== 广告防御：白名单优先（延迟快照 + 宽限期）=====
-   关键：快照在 window.load 后（rAF 延迟一帧）才执行，
-   确保 bootHero 等动态 DOM 已在白名单内；快照前为宽限期，不删节点。 */
+/* 保险②：JS 层 —— 规则型检测（主） + 白名单快照（辅） */
 (function(){
   'use strict';
 
-  var knownNodes = null;       /* WeakSet：快照后已存在的节点 = 白名单 */
-  var snapshotted = false;     /* 是否已做过快照 */
-  var armed = false;           /* 是否已武装（快照完成，开始清理） */
+  var knownNodes = null;
+  var armed = false;
 
-  /* 收集当前 body 下所有元素节点，标记为"合法本站内容" */
+  /* 白名单快照：load 后建立（此时 DOM 已稳定） */
   function snapshot(){
-    if(snapshotted || !document.body) return;
-    if(typeof WeakSet === 'undefined'){ snapshotted = true; armed = true; return; }
+    if(armed || !document.body) return;
+    if(typeof WeakSet === 'undefined'){ armed = true; return; }
     knownNodes = new WeakSet();
-
-    /* 非递归遍历，收集所有元素节点（含 bootHero 动态创建的 .ch） */
     var stack = [document.body];
     while(stack.length > 0){
       var node = stack.pop();
       try { knownNodes.add(node); } catch(e) {}
-      var children = node.children;
-      if(children && children.length){
-        for(var i = 0; i < children.length; i++){
-          stack.push(children[i]);
-        }
-      }
+      for(var i = 0; i < node.children.length; i++) stack.push(node.children[i]);
     }
-    snapshotted = true;
-    armed = true;  /* ★ 快照完成才武装，此后新节点才算"外来" */
+    armed = true;
   }
 
-  /* 判断一个元素是否是"外来注入" */
   function isForeign(el){
     if(!el || el.nodeType !== 1) return false;
-    if(!armed || !knownNodes) return false;   /* 未武装前：全部放行 */
+    if(!armed || !knownNodes) return false;
     try { return !knownNodes.has(el); } catch(e) { return false; }
   }
 
-  /* 单次全量清理：删除所有外来节点 */
+  /* ★ 规则型广告检测（主防线，不依赖时序） */
+  function looksLikeAd(el){
+    if(!el || el.nodeType !== 1) return false;
+    var tag = (el.tagName || '').toUpperCase();
+    if(tag === 'SCRIPT' || tag === 'STYLE' || tag === 'LINK' || tag === 'META') return false;
+    var cls = (el.className && el.className.toString && el.className.toString()) || '';
+    var id  = el.id || '';
+    var h = el.outerHTML || '';
+    /* 特征①：类名/ID 含广告关键词 */
+    if(/\b(smart[-_]?banner|smartbanner|rating|star|stars|ad|ads|banner|sponsor|promo)\b/i.test(cls + ' ' + id)) return true;
+    /* 特征②：含 3+ 星级 Unicode 字符 ★☆✦✧⭐ */
+    var stars = (h.match(/[★☆✦✧⭐]/g) || []).length;
+    if(stars >= 3) return true;
+    /* 特征③：iframe / embed / object */
+    if(tag === 'IFRAME' || tag === 'EMBED' || tag === 'OBJECT') return true;
+    return false;
+  }
+
   function clean(){
-    if(!document.body || !armed || !knownNodes) return;
+    if(!document.body) return;
     var all = document.body.getElementsByTagName('*');
     for(var i = all.length - 1; i >= 0; i--){
       var el = all[i];
-      if(isForeign(el)){
-        var tag = (el.tagName || '').toUpperCase();
-        if(tag === 'SCRIPT' || tag === 'STYLE' || tag === 'LINK' || tag === 'META') continue;
+      var tag = (el.tagName || '').toUpperCase();
+      if(tag === 'SCRIPT' || tag === 'STYLE' || tag === 'LINK' || tag === 'META') continue;
+      /* ★ 规则型（armed 前后都生效）+ 白名单（armed 后生效） */
+      if(looksLikeAd(el) || (armed && isForeign(el))){
         try { el.parentNode.removeChild(el); } catch(e) {}
       }
     }
   }
 
-  /* ---- 快照时机：window.load 后延迟一帧，确保所有本站脚本已执行 ---- */
+  /* ---- load 后建立白名单快照 ---- */
   function arm(){
-    /* 用 requestAnimationFrame 延迟到"下一帧绘制前"，
-       此时 bootHero() 等同步回调已全部执行完 */
-    if(window.requestAnimationFrame){
-      requestAnimationFrame(function(){
-        snapshot();   /* 此时 DOM = 最终态（含 .ch 逐字拆分） */
-        clean();      /* 快照后立刻清理一次（捕获在 load 期间注入的广告） */
-      });
-    } else {
-      setTimeout(snapshot, 50);
-    }
+    setTimeout(function(){ snapshot(); clean(); }, 0);
   }
+  if(document.readyState === 'complete'){ arm(); }
+  else { window.addEventListener('load', arm); }
 
-  if(document.readyState === 'complete'){
-    arm();
-  } else {
-    window.addEventListener('load', arm);
-  }
-
-  /* MutationObserver：快照前"只记录不删除"（宽限期），快照后"实时删除" */
+  /* MutationObserver：实时监控新增节点 */
   if(window.MutationObserver){
     var obs = new MutationObserver(function(muts){
-      if(!armed){ return; }   /* ★ 宽限期内：不处理，避免误删动态内容 */
+      if(!document.body) return;
       for(var m = 0; m < muts.length; m++){
         var nodes = muts[m].addedNodes;
         for(var n = 0; n < (nodes && nodes.length); n++){
           var node = nodes[n];
           if(node.nodeType !== 1) continue;
-          if(knownNodes && knownNodes.has(node)) continue;  /* 白名单 */
           var tag = (node.tagName || '').toUpperCase();
           if(tag === 'SCRIPT' || tag === 'STYLE' || tag === 'LINK' || tag === 'META') continue;
-          try { node.parentNode.removeChild(node); } catch(e) {}
+          /* ★ 规则型优先（不依赖 armed），白名单兜底 */
+          if(looksLikeAd(node) || (armed && isForeign(node))){
+            try { node.parentNode.removeChild(node); } catch(e) {}
+          }
         }
       }
       clean();
     });
     function startObs(){
-      if(document.body){
-        try { obs.observe(document.body, { childList: true, subtree: true }); } catch(e) {}
-      } else {
-        setTimeout(startObs, 10);
-      }
+      if(document.body){ try { obs.observe(document.body, { childList: true, subtree: true }); } catch(e) {} }
+      else { setTimeout(startObs, 10); }
     }
     startObs();
   }
 
-  /* 兜底轮询：快照后开始清理，每 1.5 秒一次 */
-  setInterval(function(){
-    if(armed) clean();
-  }, 1500);
+  /* 兜底轮询 + 页面回到前台清理 */
+  setInterval(clean, 1500);
+  window.addEventListener('focus', clean);
+  document.addEventListener('visibilitychange', function(){ if(!document.hidden) clean(); });
 
-  /* 页面回到前台时额外清理（广告常在此刻注入） */
-  window.addEventListener('focus', function(){ if(armed) clean(); });
-  document.addEventListener('visibilitychange', function(){
-    if(!document.hidden && armed) clean();
-  });
+  /* ★ 立即执行（head 中同步运行，尽早清除已注入的广告） */
+  if(document.body) clean();
 })();
 </script>
 
