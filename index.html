@@ -55,44 +55,185 @@
      ③ 使用 MutationObserver 持续监控，防止动态注入
      注意：本站正常元素（.spill-top / #wechat-tip 等）不受影响 -->
 <script>
-/* 广告清理：仅移除浏览器扩展注入的五星评分浮层（不影响本站任何内容） */
+/* ============================================================
+   广告/推广防御（终极版）
+   ------------------------------------------------------------
+   触发场景：浏览器扩展 / 运营商劫持 在页面注入悬浮广告
+   （已在无痕模式复现：无广告 → 确认为扩展注入，非本站问题）
+
+   策略：
+   A. 脚本置于 <head> 最顶部 → 在 body 解析前就先运行，抢在扩展之前
+   B. clean() 用【通用规则】判定广告，不只靠"星号数量"：
+        - 是 body 直接子级 且 是悬浮定位(fixed/absolute) 且 不在白名单
+        - 含星级字符（★☆）/ star 文字 / 评分字样
+        - 含指向 github 的推广链接（star/fork 横幅）
+   C. 用 requestAnimationFrame 持续守护 6 秒，覆盖扩展延迟注入
+   D. MutationObserver 兜底：DOM 一有新节点就立刻审查
+   白名单：所有本站元素，绝不误删
+   ============================================================ */
 (function(){
   'use strict';
 
-  function clean(){
-    if(!document.body) return;
-    /* 只针对固定/绝对定位的悬浮元素，且内容含 5 颗星（扩展广告特征） */
-    var all = document.getElementsByTagName('*');
-    for(var i = all.length - 1; i >= 0; i--){
-      var el = all[i];
-      if(el.nodeType !== 1) continue;
-      if(el === document.body) continue;
-      /* 绝不碰 script / style / link / meta */
-      var tag = (el.tagName || '').toUpperCase();
-      if(tag === 'SCRIPT' || tag === 'STYLE' || tag === 'LINK' || tag === 'META') continue;
-      /* 只处理悬浮定位的元素（广告特征） */
-      var cs = el.style;
-      var pos = cs.position;
-      if(pos !== 'fixed' && pos !== 'absolute') continue;
-      /* 内容含 5 个及以上星号 → 五星评分广告 */
-      var txt = (el.textContent || '').trim();
-      var stars = (txt.match(/[★☆]/g) || []).length
-                + (txt.match(/[\u2605\u2606]/g) || []).length;
-      if(stars >= 5){
-        try { el.parentNode.removeChild(el); } catch(e) {}
-      }
-    }
+  /* 白名单：本站已知 id / 标签 / class —— 这些绝不删除 */
+  var KNOWN_IDS = {
+    'spill-top':1, 'wechat-tip':1, 'top':1, 'info':1, 'interest':1,
+    'certs':1, 'timeline':1, 'contact':1, 'footer':1,
+    'hero':1, 'hero-center':1, 'hero-title':1, 'hero-text':1, 'glow':1
+  };
+  var KNOWN_TAGS = { 'SECTION':1, 'FOOTER':1, 'HEADER':1, 'MAIN':1, 'NAV':1, 'FORM':1 };
+  var PROTECTED  = { 'SCRIPT':1, 'STYLE':1, 'LINK':1, 'META':1, 'BASE':1, 'TEMPLATE':1, 'BODY':1, 'HTML':1 };
+
+  function isLegit(el){
+    if(!el || el.nodeType !== 1) return true;
+    var tag = (el.tagName || '').toUpperCase();
+    if(PROTECTED[tag]) return true;
+    if(KNOWN_IDS[el.id]) return true;
+    if(KNOWN_TAGS[tag]) return true;
+    var cls = (el.className && el.className + '') || '';
+    if(cls.indexOf('hero') >= 0 || cls.indexOf('wrap') >= 0) return true;
+    return false;
   }
 
-  /* DOM 就绪后执行一次，页面加载完成后再扫一次 */
+  /* 判定：某个元素是不是"广告/推广" */
+  function isAd(el){
+    if(!el || el.nodeType !== 1) return false;
+    if(isLegit(el)) return false;
+    var tag = (el.tagName || '').toUpperCase();
+    if(PROTECTED[tag]) return false;
+
+    /* 规则 1：iframe / embed / object —— 广告载体，直接删 */
+    if(tag === 'IFRAME' || tag === 'EMBED' || tag === 'OBJECT') return true;
+
+    /* 计算样式（悬浮定位是广告的核心特征） */
+    var cs = null;
+    try { cs = getComputedStyle(el); } catch(e) {}
+    var pos = (cs && cs.position) || el.style.position;
+
+    /* 规则 2：悬浮定位 + 含星级字符（覆盖文字星、图片星描述） */
+    var txt = (el.textContent || '').trim();
+    var stars = (txt.match(/[★☆]/g) || []).length
+              + (txt.match(/[\u2605\u2606\u2726-\u272D\u2730\u2736\u273B\u273D]/g) || []).length;
+    var low = txt.toLowerCase();
+    var hasRating = low.indexOf('star') >= 0 || low.indexOf('rating') >= 0
+                  || low.indexOf('fork') >= 0 || low.indexOf('github') >= 0
+                  || low.indexOf('评分') >= 0 || low.indexOf('星级') >= 0;
+
+    if((pos === 'fixed' || pos === 'absolute') && (stars >= 1 || hasRating)){
+      /* 含任何星号或评分字样 + 悬浮定位 → 广告 */
+      /* 但排除：含大量正文的元素（>80字，视为正常内容） */
+      if(txt.length > 80 && stars < 5) return false;
+      return true;
+    }
+
+    /* 规则 3：悬浮定位 + 指向 github 的推广链接（GitHub Pages 横幅特征） */
+    if(pos === 'fixed' || pos === 'absolute'){
+      var links = el.getElementsByTagName && el.getElementsByTagName('a');
+      if(links){
+        for(var l = 0; l < links.length; l++){
+          var href = (links[l].getAttribute('href') || '').toLowerCase();
+          if(href.indexOf('github') >= 0 && (href.indexOf('star') >= 0 || href.indexOf('fork') >= 0)){
+            return true;
+          }
+        }
+      }
+    }
+
+    /* 规则 4（关键）：覆盖「灰色占位块 + 星星图标」类纯图片广告
+       —— 这类广告往往没有文字（stars=0），只有 <img> + 悬浮定位。
+       判定：悬浮定位 + 含 <img>（通常是图标/星星图）→ 广告 */
+    if((pos === 'fixed' || pos === 'absolute') && el.getElementsByTagName){
+      var imgs = el.getElementsByTagName('img');
+      if(imgs && imgs.length > 0){
+        /* 含图片 + 悬浮 → 视为广告图标容器（本站无此类元素） */
+        return true;
+      }
+    }
+
+    /* 规则 5：兜底 —— 贴顶的悬浮空/小容器
+       body 直接子级 + fixed + 无明显文字内容（≤20字）→ 很可能是注入的占位广告 */
+    if(pos === 'fixed' || pos === 'absolute'){
+      var rect = null;
+      try { rect = el.getBoundingClientRect && el.getBoundingClientRect(); } catch(e) {}
+      var top = (rect && rect.top) || (parseFloat(el.style.top) || 0);
+      if(top <= 10 && txt.length <= 20){
+        /* 贴顶（top≤10px）+ 几乎无文字 → 占位广告特征 */
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  /* 单次完整扫描：从 body 开始深度优先删除广告节点 */
+  var cleaning = false;
+  function clean(){
+    if(cleaning) return;          /* 防止 MutationObserver 递归触发 */
+    if(!document.body) return;
+    cleaning = true;
+    try {
+      var all = document.getElementsByTagName('*');
+      for(var i = all.length - 1; i >= 0; i--){
+        var el = all[i];
+        if(isAd(el)){
+          try { el.parentNode.removeChild(el); } catch(e) {}
+        }
+      }
+    } catch(e) {}
+    cleaning = false;
+  }
+
+  /* 立即执行（head 中同步运行，body 尚空，先占位） */
+  clean();
+
+  /* DOM 就绪 + 加载完成 各扫一次 */
   if(document.readyState === 'loading'){
     document.addEventListener('DOMContentLoaded', clean);
-  } else {
-    clean();
   }
   window.addEventListener('load', clean);
-  /* 页面加载后额外延时扫一次（扩展常在此时注入） */
-  setTimeout(clean, 2000);
+
+  /* requestAnimationFrame 持续守护 6 秒：覆盖扩展的延迟/分帧注入 */
+  var guardStart = Date.now();
+  function guard(){
+    clean();
+    if(Date.now() - guardStart < 6000){
+      requestAnimationFrame(guard);
+    }
+  }
+  requestAnimationFrame(guard);
+
+  /* MutationObserver：任何新增 DOM 节点立刻审查（最后一次防御） */
+  if(window.MutationObserver){
+    var obs = new MutationObserver(function(muts){
+      var need = false;
+      for(var m = 0; m < muts.length; m++){
+        var nodes = muts[m].addedNodes;
+        for(var n = 0; n < (nodes && nodes.length); n++){
+          var node = nodes[n];
+          if(node.nodeType !== 1) continue;
+          if(isLegit(node)) continue;
+          /* 新插入的悬浮/星级/外部元素 → 触发清理 */
+          if(isAd(node) ||
+             (node.tagName && (node.tagName === 'IFRAME' || node.tagName === 'EMBED')) ||
+             (node.style && (node.style.position === 'fixed' || node.style.position === 'absolute'))){
+            need = true;
+            break;
+          }
+        }
+        if(need) break;
+      }
+      if(need) clean();
+    });
+    function startObs(){
+      if(document.body){
+        try { obs.observe(document.body, { childList:true, subtree:true }); } catch(e) {}
+      } else {
+        setTimeout(startObs, 10);
+      }
+    }
+    startObs();
+    /* 观察 30 秒后断开，交给 rAF 守护收尾 */
+    setTimeout(function(){ try{ obs.disconnect(); }catch(e){} }, 30000);
+  }
 })();
 </script>
 
