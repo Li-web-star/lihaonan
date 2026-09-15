@@ -1,12 +1,3 @@
-
-
-聊天历史记录
-
-暂无会话历史记录哦～
-
-打开大学搜题酱APP或WakeUp课程表APP在 「我的」页点击「电脑端扫码」
-下载大学搜题酱App
-帮助
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -233,50 +224,20 @@ window.addEventListener('load', hideWechatToolbar);
 })();
 </script>
 
-<!-- ===== 微信内置浏览器 → 完全不展示网站内容，仅右上角提示「请用浏览器打开」=====
-  微信内打开时：正文全部隐藏，整页纯白，只在右上角保留一行提示。
-  非微信环境：#wechat-tip 保持 hidden，正文正常渲染，完全不受影响。
-  检测逻辑：UA 含 MicroMessenger / wxwork，或存在微信注入的全局对象。 -->
+<!-- ===== 微信内置浏览器：直接正常展示网站，不做任何拦截 =====
+  历史说明：此前此处在微信内会把正文全部隐藏、仅显示「请用浏览器打开」。
+  现已移除拦截逻辑，微信 / QQ 内置浏览器中也能正常加载并浏览主页。 -->
 <script>
 (function(){
   'use strict';
-  var ua = (navigator.userAgent || '').toLowerCase();
-  var inWechat = /micromessenger/i.test(ua) || /wxwork/i.test(ua);
-
-  /* 兜底：UA 检测不到时，用微信注入的全局对象二次确认 */
-  try {
-    if (!inWechat && window.WeixinJSBridge) inWechat = true;
-    if (!inWechat && window.__wxjs_environment === 'miniprogram') inWechat = true;
-  } catch(e) {}
-
-  /* 立即执行（此时 body 已存在，因为脚本位于 </body> 前） */
-  function apply(){
-    var tip = document.getElementById('wechat-tip');
-    if (!tip) return;
-    if (inWechat) {
-      /* 微信内：显示提示，隐藏全部正文内容 */
-      tip.hidden = false;
-      document.body.classList.add('wechat-blocked');
-    } else {
-      /* 非微信：隐藏提示，正文正常 */
-      tip.hidden = true;
-      document.body.classList.remove('wechat-blocked');
-    }
-  }
-
-  /* DOM 就绪即应用；若此时脚本已晚于 DOMContentLoaded，也补一次 */
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', apply);
-  } else {
-    apply();
-  }
-
-  /* 页面重新可见时再校正一次 */
-  document.addEventListener('visibilitychange', function(){
-    if (document.visibilityState === 'visible') apply();
-  });
+  /* 确保任何环境（含微信）下提示条都隐藏、正文都正常显示 */
+  var tip = document.getElementById('wechat-tip');
+  if (tip) tip.hidden = true;
+  document.body.classList.remove('wechat-blocked');
 })();
 </script>
+
+
 
 <style>
 /* ==================== 安全区域变量（刘海 / 灵动岛 / Home Indicator） ==================== */
@@ -292,21 +253,10 @@ window.addEventListener('load', hideWechatToolbar);
   --footroom: clamp(80px, calc(var(--vh, 1vh) * 14), 180px);
 }
 
-/* ==================== 微信内置浏览器 → 完全不展示网站内容 ==================== */
-/*
-  行为：微信内打开时，正文全部隐藏，整页纯白背景，
-        只在右上角保留一行「↗ 请用浏览器打开」提示。
-  非微信环境：#wechat-tip 保持 hidden，正文正常，完全不受影响。
-*/
+/* ==================== 微信内置浏览器：正常展示（不再拦截）==================== */
+/* （原 wechat-blocked 拦截规则已移除，微信 / QQ 内均可正常浏览主页） */
 
-/* 遮住全部正文：所有直接子元素（section / spill-top 等）一律不可见 */
-body.wechat-blocked > *{ display:none !important; }
 
-/* 提示条本身必须可见（覆盖上面的通配隐藏） */
-body.wechat-blocked #wechat-tip{ display:inline-flex !important; }
-
-/* 整页纯白背景，避免正文隐藏后露出深色底色 */
-body.wechat-blocked{ background:#ffffff !important; }
 
 /* 提示条：右上角小胶囊 */
 .wechat-tip{ position:fixed; top:12px; right:14px; z-index:2147483647;
