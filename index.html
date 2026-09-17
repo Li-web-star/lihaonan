@@ -255,6 +255,41 @@ window.addEventListener('load', hideWechatToolbar);
 .node__content,.node__content *{pointer-events:none !important;cursor:default !important}
 #timeline .num,#interest .num,#certs .num{transition:none !important;transform:none !important}
 #timeline .card:hover .num,#interest .card:hover .num,#certs .card:hover .num{transform:none !important;color:inherit !important}
+
+/* ===== [FIX] 全屏铺满：中间区块背景横向拉通 =====
+   原站点首尾区块(.hero / footer)无 .wrap 类 -> 满屏；
+   中间 info/interest/certs/timeline/contact 均为 section.wrap，
+   被 .wrap{max-width:900px} 与 #xxx>.wrap{max-width:1120px} 锁死而留白。
+   处理：背景块解除宽度限制 + 左右内边距随视口缩放；
+         宽度上限下沉到背景块内部的内容上，文字依旧居中且不超长。 */
+section.wrap#info,
+section.wrap#interest,
+section.wrap#certs,
+section.wrap#timeline,
+section.wrap#contact {
+  max-width: none !important;
+  width: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding-left: clamp(20px, 4vw, 64px) !important;
+  padding-right: clamp(20px, 4vw, 64px) !important;
+}
+section.wrap#info      > *,
+section.wrap#interest  > *,
+section.wrap#certs     > *,
+section.wrap#timeline  > *,
+section.wrap#contact   > * { max-width: 1120px; margin-left: auto; margin-right: auto; }
+section.wrap#interest  > .grid,
+section.wrap#certs     > .grid,
+section.wrap#info      > .spec { max-width: 1120px; }
+@media (max-width: 760px) {
+  section.wrap#info,
+  section.wrap#interest,
+  section.wrap#certs,
+  section.wrap#timeline,
+  section.wrap#contact { padding-left: 18px !important; padding-right: 18px !important; }
+}
+/* ===== [/FIX] ===== */
 </style>
 
 <script>
