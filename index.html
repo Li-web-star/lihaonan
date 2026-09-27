@@ -253,7 +253,7 @@ window.addEventListener('load', hideWechatToolbar);
     letter-spacing:inherit; white-space:inherit;}.contact-title .d-alt, .journey-title .d-alt{display:inline-block !important;}}@media (max-width: 760px){.t .d-alt{display:none !important;}.t .m{display:inline;
     white-space:normal;
     word-break:break-word;
-    font-size:inherit;}}</style>
+    font-size:inherit;}}.hero-sub{margin:24px 0 0;color:#a1a1a6;font-size:clamp(13px,1.6vw,16px);font-weight:400;letter-spacing:.08em;line-height:1.5;text-align:center;white-space:nowrap;opacity:0;transform:translateY(10px)}.hero-loaded .hero-sub{animation:heroSubIn 1.2s cubic-bezier(.22,.71,.22,1) 1.4s forwards}@keyframes heroSubIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}.hero-sub__cn{display:none}@media (max-width:760px){.hero-sub{margin-top:20px;font-size:15px;letter-spacing:.05em}.hero-sub__en{display:none}.hero-sub__cn{display:inline}}@media (prefers-reduced-motion: reduce){.hero-loaded .hero-sub{animation:none}.hero-sub{opacity:1;transform:none}}</style>
 
 <script>
 
@@ -276,6 +276,7 @@ window.addEventListener('load', hideWechatToolbar);
 <section class="hero" id="top" data-theme="dark">
   <div class="hero-center">
     <h1 class="hero-title" lang="zh-CN" dir="ltr" aria-label="This is 李浩楠."><span class="hero-text">This is 李浩楠.</span></h1>
+    <p class="hero-sub"><span class="hero-sub__en">Hope is being able to see that there is light despite all of the darkness.</span><span class="hero-sub__cn">慢慢来，一切都准时</span></p>
   </div>
 
 </section>
@@ -871,9 +872,9 @@ document.querySelectorAll('.wrap,.hero,.ft').forEach(el=>{ el.classList.add('rev
       textEl.dataset.split='1';
     }
     
-    requestAnimationFrame(function(){
-      requestAnimationFrame(function(){ document.body.classList.add('hero-loaded'); });
-    });
+    var addLoaded = function(){ if(!document.body.classList.contains('hero-loaded')) document.body.classList.add('hero-loaded'); };
+    requestAnimationFrame(function(){ requestAnimationFrame(addLoaded); });
+    setTimeout(addLoaded, 200);
     
     var allDone = function(){
       var ht = document.querySelector('.hero-title');
