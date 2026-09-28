@@ -247,7 +247,7 @@ window.addEventListener('load', hideWechatToolbar);
   margin-left: 0 !important;
   margin-right: 0 !important;
   padding-left: clamp(20px, 4vw, 64px) !important;
-  padding-right: clamp(20px, 4vw, 64px) !important;}section.wrap#info      > *, section.wrap#interest  > *, section.wrap#certs     > *, section.wrap#timeline  > *, section.wrap#contact   > *{max-width: 1120px; margin-left: auto; margin-right: auto;}section.wrap#certs     > .grid{max-width:1120px;}section.wrap#interest  > .grid{max-width:1040px;}section.wrap#info      > .spec{max-width:760px;}@media (max-width: 760px){section.wrap#info, section.wrap#interest, section.wrap#certs, section.wrap#timeline, section.wrap#contact{padding-left: 18px !important; padding-right: 18px !important;}#info,#interest,#certs,#timeline{padding-top:72px;padding-bottom:88px}}.d-alt{display:none;}@media (min-width: 761px){.t .m{display:none;}.t .d-alt{display:inline !important;
+  padding-right: clamp(20px, 4vw, 64px) !important;}section.wrap#info      > *, section.wrap#interest  > *, section.wrap#certs     > *, section.wrap#timeline  > *, section.wrap#contact   > *{max-width: 1120px; margin-left: auto; margin-right: auto;}section.wrap#certs     > .grid{max-width:1120px;}section.wrap#interest  > .grid{max-width:1040px;}section.wrap#info > .info-card{max-width:none !important;width:100% !important;margin:0 !important;border:none !important;border-radius:0 !important;box-shadow:none !important;padding:0 !important}.info-card{margin:0;padding:0;background:transparent;border:none;text-align:center}.info-card__name{font-size:clamp(40px,8vw,72px);font-weight:700;color:var(--text);margin:0 0 12px;letter-spacing:.04em}.info-card__sub{font-size:clamp(16px,2.5vw,22px);color:var(--muted);margin:0 0 36px;letter-spacing:.02em}.info-card__divider{width:60px;height:2px;background:var(--line);margin:0 auto 30px}.info-card__tags{display:flex;flex-wrap:wrap;justify-content:center;gap:14px}.info-card__tag{display:inline-flex;align-items:center;padding:12px 24px;border:1px solid var(--line);border-radius:999px;font-size:clamp(14px,1.8vw,18px);color:var(--text);background:#f7f7f8;transition:border-color .3s var(--ease),color .3s var(--ease)}.info-card__tag:hover{border-color:var(--accent);color:var(--accent)}.stagger.in .info-card__tag{animation:tagPop .5s var(--ease) both}.stagger.in .info-card__tag:nth-child(1){animation-delay:.1s}.stagger.in .info-card__tag:nth-child(2){animation-delay:.18s}.stagger.in .info-card__tag:nth-child(3){animation-delay:.26s}.stagger.in .info-card__tag:nth-child(4){animation-delay:.34s}@keyframes tagPop{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}@media (max-width:760px){.info-card__name{font-size:36px}.info-card__sub{font-size:16px;margin-bottom:28px}.info-card__tag{font-size:15px;padding:10px 18px}}@media (max-width:480px){.info-card__name{font-size:30px}.info-card__sub{font-size:14px}.info-card__tag{font-size:14px;padding:9px 16px}}@media (max-width: 760px){section.wrap#info, section.wrap#interest, section.wrap#certs, section.wrap#timeline, section.wrap#contact{padding-left: 18px !important; padding-right: 18px !important;}#info,#interest,#certs,#timeline{padding-top:72px;padding-bottom:88px}}.d-alt{display:none;}@media (min-width: 761px){.t .m{display:none;}.t .d-alt{display:inline !important;
     opacity:1 !important;
     font-size:inherit; font-weight:inherit; color:inherit;
     letter-spacing:inherit; white-space:inherit;}.contact-title .d-alt, .journey-title .d-alt{display:inline-block !important;}}@media (max-width: 760px){.t .d-alt{display:none !important;}.t .m{display:inline;
@@ -282,16 +282,16 @@ window.addEventListener('load', hideWechatToolbar);
 </section>
 
 <section class="wrap light stagger" id="info" data-theme="light" style="background:#fff">
-  <div class="tag">PROFILE</div>
-  <h2 class="stagger-item t sec-title"><span class="d-alt">简历这东西，越简越好</span><span class="m">一张表，就够了</span></h2>
-  <div class="spec info-spec">
-    <div class="row-line info-row"><span class="k"><span class="k-in">姓名</span>&#8203;</span><span class="v">李浩楠</span></div>
-    <div class="row-line info-row"><span class="k"><span class="k-in">年龄</span>&#8203;</span><span class="v">19 岁</span></div>
-    <div class="row-line info-row"><span class="k"><span class="k-in">政治面貌</span>&#8203;</span><span class="v">共青团员</span></div>
-    <div class="row-line info-row"><span class="k"><span class="k-in">学校</span>&#8203;</span><span class="v">陕西财经职业技术学院</span></div>
-    <div class="row-line info-row"><span class="k"><span class="k-in">专业</span>&#8203;</span><span class="v">消防救援技术</span></div>
-    <div class="row-line info-row"><span class="k"><span class="k-in">年级</span>&#8203;</span><span class="v">大二</span></div>
-    <div class="row-line info-row"><span class="k"><span class="k-in">目标</span>&#8203;</span><span class="v">备考专升本</span></div>
+  <div class="info-card">
+    <h3 class="info-card__name">李浩楠</h3>
+    <p class="info-card__sub">陕西财经职业技术学院 · 消防救援技术</p>
+    <div class="info-card__divider"></div>
+    <div class="info-card__tags">
+      <span class="info-card__tag">19 岁</span>
+      <span class="info-card__tag">共青团员</span>
+      <span class="info-card__tag">大二</span>
+      <span class="info-card__tag">备考专升本</span>
+    </div>
   </div>
 </section>
 
